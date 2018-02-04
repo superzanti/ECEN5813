@@ -20,7 +20,7 @@
  * @param base is the base we want to convert to, bases 2-16 are supported
  * @return uint8_t the length of the string (including the minus sign)
  */
-uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base);
+uint8_t my_itoa(int32_t data, void * ptr, uint32_t base);
 
 /**
  * @brief function to convert an ascii string into an integer
@@ -42,7 +42,7 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base);
  * @param base is the base we want to convert from, bases 2-16 are supported
  * @return int8_t the converted number
  */
-int32_t my_atoi(uint8_t * ptr, uint8_t digits, uint32_t base);
+int32_t my_atoi(void * ptr, uint8_t digits, uint32_t base);
 
 
 #endif /* __CONVERSION_H__

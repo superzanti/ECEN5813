@@ -19,7 +19,7 @@
  * @param length the number of bytes to move
  * @return uint8_t a pointer to the destination
  */
-uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length);
+void * my_memmove(void * src, void * dst, size_t length);
 
 /**
  * @brief function to copy one byte array to another (no overlap)
@@ -36,9 +36,9 @@ uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length);
  * @param src a pointer to the array of bytes that we will copy from
  * @param dst a pointer to the array of bytes that we will copy to
  * @param length the number of bytes to copy
- * @return uint8_t a pointer to the destination
+ * @return void a pointer to the destination
  */
-uint8_t * my_memcpy(uint8_t * src, uint8_t * dst, size_t length);
+void * my_memcpy(void * src, void * dst, size_t length);
 
 /**
  * @brief function to set an array of bytes all to the same value
@@ -53,9 +53,9 @@ uint8_t * my_memcpy(uint8_t * src, uint8_t * dst, size_t length);
  * @param src a pointer to the array of bytes that we will write over
  * @param length the number of bytes to iterate through
  * @param value the value to write to every byte in the array
- * @return uint8_t a pointer to the source (simply returns src)
+ * @return void a pointer to the source (simply returns src)
  */
-int8_t * my_memset(uint8_t * src, size_t length, uint8_t value);
+void * my_memset(void * src, size_t length, uint8_t value);
 
 /**
  * @brief function to write 0 to an array of bytes
@@ -69,9 +69,9 @@ int8_t * my_memset(uint8_t * src, size_t length, uint8_t value);
  *
  * @param src a pointer to the array of bytes that we will write to 0
  * @param length the number of bytes to write
- * @return uint8_t a pointer to the source (simply returns src)
+ * @return void a pointer to the source (simply returns src)
  */
-uint8_t * my_memzero(uint8_t * src, size_t length);
+void * my_memzero(uint8_t * src, size_t length);
 
 /**
  * @brief function to reverse an array of bytes
@@ -86,9 +86,9 @@ uint8_t * my_memzero(uint8_t * src, size_t length);
  *
  * @param src a pointer to the array of bytes that we will reverse
  * @param length the number of bytes to reverse
- * @return uint8_t a pointer to the source (simply returns src)
+ * @return void a pointer to the source (simply returns src)
  */
-uint8_t * my_reverse(uint8_t * src, size_t length);
+void * my_reverse(void * src, size_t length);
 
 /**
  * @brief function to allowcate an array of size_t
@@ -103,9 +103,9 @@ uint8_t * my_reverse(uint8_t * src, size_t length);
  * using only pointer arithmetic.
  *
  * @param length the length of the array to create
- * @return uint8_t a pointer to the memory location in dynamic memory
+ * @return void a pointer to the memory location in dynamic memory
  */
-int32_t * reserve_words(size_t length);
+void * reserve_words(size_t length);
 
 /**
  * @brief function to free the dynamic memory created
@@ -122,6 +122,6 @@ int32_t * reserve_words(size_t length);
  * @param src a pointer to the start of the memory we need to free
  * @return uint8_t an error code (0 or 1) iff the operation was successful
  */
-uint8_t free_words(uint32_t * src);
+uint8_t free_words(void * src);
 
 #endif /* __MEMORY_H__
