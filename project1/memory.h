@@ -92,7 +92,6 @@ uint8_t * my_reverse(uint8_t * src, size_t length);
 
 /**
  * @brief function to allowcate an array of size_t
- * (the size of an unsigned int on the processor)
  * 
  * create an area in dynamic memory that is
  * reserved for future used. Specifically, this
