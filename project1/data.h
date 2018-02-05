@@ -1,6 +1,18 @@
+/**
+ * @file data.h
+ * @brief functions to examine platform specific data type behavior
+ *
+ * @author Jake Cazden
+ * @date February 4, 2017
+ *
+ */
 #ifndef __DATA_H__
 #define __DATA_H__
 
+#define LITTLE_ENDIAN 0
+#define BIG_ENDIAN 1
+#define SWAP_NO_ERROR 0
+#define SWAP_ERROR -1
 /**
  * @brief function prints the size of c standard types
  *
@@ -52,4 +64,30 @@ void print_stdint_type_sizes();
  * @return void returns nothing
  */
 void print_pointer_sizes();
+
+
+/**
+ * @brief this function reverses the endianness of a datatype
+ *
+ * this function uses my_reverse to swap a piece of data's bytewise endianness
+ * it then returns a success or failure code accordingly
+ *
+ * returns either SWAP_NO_ERROR or SWAP_ERROR
+ *
+ * @param data is a pointer to the first byte of the data input
+ * @param type_length holds the length of the data as with sizeof(data)
+ * @return int32_t a macro return code signifying swap success or failure;
+ */
+int32_t swap_data_endianness(uint8_t * data, size_t type_length);
+
+/**
+ * @brief this function determines the endianness of the system
+ *
+ * this function manually creates a multibyte varible, then determines
+ * if it is stored in big or little endian format
+ *
+ * @param this function takes in no parameters
+ * @return int32_t returns BIG_ENDIAN=1 or LITTLE_ENDIAN=0
+ */
+uint32_t determine_endianness();
 #endif /* __DATA_H__
