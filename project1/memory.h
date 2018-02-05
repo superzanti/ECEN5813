@@ -1,6 +1,9 @@
 #ifndef __MEMORY_H__
 #define __MEMORY_H__
 
+/* Type definitions needed for function prototypes */
+#include <stdint.h>
+
 /**
  * @brief function to copy one byte array to another (overlap)
  * 

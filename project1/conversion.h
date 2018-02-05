@@ -10,6 +10,18 @@
 #define __CONVERSION_H__
 
 /**
+ * @brief take the exponent of a number
+ *
+ * This function takes in a number (base)
+ * and raises it to an exponent (power)
+ *
+ * @param base is equal to X in the expression X^Y (where ^ is exponent)
+ * @param power is equal to Y in the expression X^Y (where ^ is exponent)
+ * @return int8_t the result of the exponent
+ */
+int32_t exp(int32_t base,int32_t power);
+
+/**
  * @brief function to convert an integer to ascii equivalant
  * 
  * This function takes in an integer and converts it

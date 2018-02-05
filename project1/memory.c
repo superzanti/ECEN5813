@@ -1,6 +1,13 @@
 #include "memory.h"
 
-extern void __HeapBase, __HeapLimit;
+/* Only need the following if we cant use
+ * built in malloc and free functions
+ * extern void __HeapBase, __HeapLimit;
+ */
+
+#ifndef NULL
+#define NULL (0)
+#endif
 
 uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length)
 {
@@ -52,7 +59,7 @@ uint8_t * my_memset(uint8_t * src, size_t length, uint8_t value)
 
 uint8_t * my_memzero(uint8_t * src, size_t length)
 {
-    /* just call my_memset with a vlue of 0 */
+    /* just call my_memset with a value of 0 */
     return my_memset(src, length, 0); 
 }
 
@@ -66,10 +73,11 @@ uint8_t * my_reverse(uint8_t * src, size_t length)
     /* create a temporary array */
     uint8_t my_array[length];
     /* copy the source into the temporary array */
-    my_memcpy(src, my_array, length)
+    my_memcpy(src, my_array, length);
     /* create an address that points to the end of the array */
     uint8_t * my_array_ptr = &my_array[length-1];
     /* loop for how many bytes there are */
+    size_t i = 0;
     for(i=0;i<length;i++)
     {
         /* copy the destination of the pointer
@@ -83,11 +91,12 @@ void * reserve_words(size_t length)
 {
     void* src;
     /* malloc will return null if it fails */
-    src = malloc(length*sizeof(void*));
+    src = (void*)malloc(length*sizeof(void*));
     return src;
 }
 
 uint8_t free_words(void * src)
 {
     free(src);
+    return 0;
 }

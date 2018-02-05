@@ -9,6 +9,9 @@
 #ifndef __DATA_H__
 #define __DATA_H__
 
+/* Type definitions needed for function prototypes */
+#include <stdint.h>
+
 #define LITTLE_ENDIAN 0
 #define BIG_ENDIAN 1
 #define SWAP_NO_ERROR 0
@@ -76,9 +79,9 @@ void print_pointer_sizes();
  *
  * @param data is a pointer to the first byte of the data input
  * @param type_length holds the length of the data as with sizeof(data)
- * @return int32_t a macro return code signifying swap success or failure;
+ * @return uint32_t a macro return code signifying swap success or failure;
  */
-int32_t swap_data_endianness(uint8_t * data, size_t type_length);
+uint32_t swap_data_endianness(uint8_t * data, size_t type_length);
 
 /**
  * @brief this function determines the endianness of the system
@@ -87,7 +90,7 @@ int32_t swap_data_endianness(uint8_t * data, size_t type_length);
  * if it is stored in big or little endian format
  *
  * @param this function takes in no parameters
- * @return int32_t returns BIG_ENDIAN=1 or LITTLE_ENDIAN=0
+ * @return uint32_t returns BIG_ENDIAN=1 or LITTLE_ENDIAN=0
  */
 uint32_t determine_endianness();
 #endif /* __DATA_H__

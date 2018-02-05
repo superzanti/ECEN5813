@@ -1,6 +1,9 @@
 #ifndef __ARCH_ARM32_H__
 #define __ARCH_ARM32_H__
 
+/* Type definitions needed for function prototypes */
+#include <stdint.h>
+
 #define __SCB_ADDRESS (0xE0000000)
 #define __AIRCR_ADDRESS_OFFSET (0xED0C)
 #define __AIRCR (__SCB_ADDRESS & __AIRCR_ADDRESS_OFFSET)

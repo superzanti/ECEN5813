@@ -35,7 +35,7 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
         data=0-data;/*make the number positive*/
     }
     uint32_t i;
-    uint32_t remainder=0;
+    uint32_t remainder=0; /* TODO remainder never referenced? */
     for(i=0;i<32;i++)/*figure out the magnitude of the number*/
     {
         if(data==data%exp(base,i))
@@ -45,7 +45,7 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
     }
     uint32_t j=i-1;
     uint8_t num;
-    for(j;j>=0;j--)
+    for(j;j>=0;j--) /* TODO unsigned integer will always be greater than or equal to 0 (j is unsigned) */
     {
         num=(data-data%exp(base,j))/exp(base,j);/*calculate the MSB*/
         data-=num*exp(base,j);/*subtract off the MSB*/
@@ -90,7 +90,7 @@ int32_t my_atoi(void * ptr, uint8_t digits, uint32_t base)
     uint8_t negative = 0;
     int32_t return_value;
     /* check to see if the integer is negative*/
-    if(*ptr=='-')
+    if(*(int*)ptr=='-')/* using int is okay here */
     {
         negative = 1;
     }
@@ -98,32 +98,32 @@ int32_t my_atoi(void * ptr, uint8_t digits, uint32_t base)
     for(i=negative;i<digits;i++)
     {
         /* the digit is between a 0 and a 9 */
-        if (*ptr >= 48 && *ptr <= 57)
+        if (*(int*)ptr >= 48 && *(int*)ptr <= 57)
         {
-            if((*ptr - 48) >= base)
+            if((*(int*)ptr - 48) >= base)
                 /* an error has occured, we've encountered an unsupported character */
                 return 0;
-            return_value = (*ptr++ - 48) * exp(base, i);
+            return_value = (*(int*)ptr++ - 48) * exp(base, i);
         }
         /* the digit is between an uppercase A and a F */
-        else if (*ptr >= 65 && *ptr <= 70)
+        else if (*(int*)ptr >= 65 && *(int*)ptr <= 70)
         {
-            if((*ptr - 55) >= base)
+            if((*(int*)ptr - 55) >= base)
                 /* an error has occured, we've encountered an unsupported character */
                 return 0;
-            return_value = (*ptr++ - 55) * exp(base, i);
+            return_value = (*(int*)ptr++ - 55) * exp(base, i);
         }
         /* the digit is between a lowercase a and a f */
-        else if (*ptr >= 97 && *ptr <= 102)
+        else if (*(int*)ptr >= 97 && *(int*)ptr <= 102)
         {
-            if((*ptr - 87) >= base)
+            if((*(int*)ptr - 87) >= base)
                 /* an error has occured, we've encountered an unsupported character */
                 return 0;
-            return_value = (*ptr++ - 87) * exp(base, i);
+            return_value = (*(int*)ptr++ - 87) * exp(base, i);
         }
         else
         {
-            /* an error has occured, we've encountered an unsupported character */
+            /* an error has occurred, we've encountered an unsupported character */
             return 0;
         }
     }

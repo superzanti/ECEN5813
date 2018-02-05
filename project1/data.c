@@ -8,7 +8,6 @@
  */
 #include "data.h"
 #include "memory.h"
-#include <stdint.h>
 
 #if defined (__GNUC__)
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
@@ -101,18 +100,19 @@ void print_pointer_sizes()
     PRINTF("void**:         %d\n",temp);
     return;
 }
-int32_t swap_data_endianness(uint8_t * data, size_t type_length)
+uint32_t swap_data_endianness(uint8_t * data, size_t type_length)
 {//TODO make this funcction nondestructive on failure if possible
+    /* TODO possible bad return type because of function being unsigned */
     if(!data) return SWAP_ERROR;/*if null, return error*/
     uint8_t test[type_length];/*block out a region on the stack*/
-    my_memmove(data,test,type_lenth)/*create a copy of 'data' on the stack*/
+    my_memmove(data,test,type_lenth);/*create a copy of 'data' on the stack*/
     my_reverse(data , type_length);/*reverse data*/
     uint32_t i;
     for(i=0;i<(type_length/2);i++)
     {
         if(*(test+i)!=*(data+type_length-1-i))
         {
-            return SWAP_ERROR
+            return SWAP_ERROR; /* TODO possible bad return type because of function being unsigned */
         }
     }
     return SWAP_NO_ERROR;
