@@ -1,3 +1,11 @@
+/*
+ * @file conversion.h
+ * @brief this file contains implementations of integer<>character conversion
+ *
+ * @author Jake Cazden and Seth Miers
+ * @date February 4, 2018
+ *
+ * */
 #ifndef __CONVERSION_H__
 #define __CONVERSION_H__
 
@@ -20,7 +28,7 @@
  * @param base is the base we want to convert to, bases 2-16 are supported
  * @return uint8_t the length of the string (including the minus sign)
  */
-uint8_t my_itoa(int32_t data, void * ptr, uint32_t base);
+uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base);
 
 /**
  * @brief function to convert an ascii string into an integer
