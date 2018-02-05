@@ -29,4 +29,4 @@ PRINTF("sizeof(float) = %d", temp);
 temp = sizeof(void);
 PRINTF("sizeof(void) = %d", temp);
 
-#endif /* __PLATFORM_H__
+#endif /* __PLATFORM_H__*/
