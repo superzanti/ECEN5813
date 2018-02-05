@@ -81,12 +81,13 @@ uint8_t * my_reverse(uint8_t * src, size_t length)
 
 void * reserve_words(size_t length)
 {
-    void* start_of_heap = (void*)&__HeapBase;
-    void* end_of_heap = (void*)&__HeapLimit;
-    size_t used_of_heap = (size_t)__HeapBase;
-
+    void* src;
+    /* malloc will return null if it fails */
+    src = malloc(length*sizeof(void*));
+    return src;
 }
 
 uint8_t free_words(void * src)
 {
+    free(src);
 }
