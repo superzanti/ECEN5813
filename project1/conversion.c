@@ -9,27 +9,58 @@
 #include<stdint.h>
 #include"conversion.h"
 
-/**
- * @brief function to convert an integer to ascii equivalant
- * 
- * This function takes in an integer and converts it
- * to an array of bytes that represent the ascii
- * value of that number in a particular base. A null
- * terminator '\0' is placed at the end of the string.
- * A negative sign is included at the begining of the
- * string if needed.
- *
- * The entire function is done using only
- * pointer arithmetic.
- *
- * @param data the 32 bit signed integer that we wish to convert
- * @param ptr is a pointer to an array of bytes that will be written to
- *              this poitner must be at least 32 bytes long
- * @param base is the base we want to convert to, bases 2-16 are supported
- * @return uint8_t the length of the string (including the minus sign)
- */
+int32_t exp(int32_t base,int32_t power)
+{
+    if(power<0) return 0;
+    uint32_t i=0;
+    int32_t retval=1;
+    for(i=1;i<=power;i++)
+    {
+        retval*=base;
+    }
+    return retval;
+}
+
 uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
 {
+    uint8_t length=0;
+    if(base<2||base>16)
+    {
+        return 0;
+    }
+    if(data<0)
+    {
+        *ptr++='-';
+        length++;
+        data=0-data;/*make the number positive*/
+    }
+    uint32_t i;
+    uint32_t remainder=0;
+    for(i=0;i<32;i++)/*figure out the magnitude of the number*/
+    {
+        if(data==data%exp(base,i))
+        {
+            break;
+        }
+    }
+    uint32_t j=i-1;
+    uint8_t num;
+    for(j;j>=0;j--)
+    {
+        num=(data-data%exp(base,j))/exp(base,j);/*calculate the MSB*/
+        data-=num*exp(base,j);/*subtract off the MSB*/
+    }
+    if(num>9)
+    {
+        *ptr++=num+55;
+        length++;
+    }
+    else
+    {
+        *ptr++=num+48;
+        length++;
+    }
+    return length;
 }
 
 
