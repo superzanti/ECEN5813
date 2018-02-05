@@ -55,4 +55,48 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
  */
 int32_t my_atoi(void * ptr, uint8_t digits, uint32_t base)
 {
+    uint8_t i = 0;
+    uint8_t negative = 0;
+    int32_t return_value;
+    /* check to see if the integer is negative*/
+    if(*ptr=='-')
+    {
+        negative = 1;
+    }
+    /* loop through each digit and add it to the return_value*/
+    for(i=negative;i<digits;i++)
+    {
+        /* the digit is between a 0 and a 9 */
+        if (*ptr >= 48 && *ptr <= 57)
+        {
+            if((*ptr - 48) >= base)
+                /* an error has occured, we've encountered an unsupported character */
+                return 0;
+            return_value = (*ptr++ - 48) * exp(base, i);
+        }
+        /* the digit is between an uppercase A and a F */
+        else if (*ptr >= 65 && *ptr <= 70)
+        {
+            if((*ptr - 55) >= base)
+                /* an error has occured, we've encountered an unsupported character */
+                return 0;
+            return_value = (*ptr++ - 55) * exp(base, i);
+        }
+        /* the digit is between a lowercase a and a f */
+        else if (*ptr >= 97 && *ptr <= 102)
+        {
+            if((*ptr - 87) >= base)
+                /* an error has occured, we've encountered an unsupported character */
+                return 0;
+            return_value = (*ptr++ - 87) * exp(base, i);
+        }
+        else
+        {
+            /* an error has occured, we've encountered an unsupported character */
+            return 0;
+        }
+    }
+    if(negative)
+        return return_value*-1;
+    return return_value;
 }
