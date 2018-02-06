@@ -9,6 +9,10 @@
 #define NULL (0)
 #endif
 
+/*TODO remove this if not allowed to use malloc and free */
+#include <stdlib.h>
+#include "platform.h"
+
 uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length)
 {
     /* create a new array to copy into to prevent corruption */
@@ -89,9 +93,12 @@ uint8_t * my_reverse(uint8_t * src, size_t length)
 
 void * reserve_words(size_t length)
 {
+    PRINTF("GOTHERE\n");
     void* src;
     /* malloc will return null if it fails */
+    PRINTF("GOTHERE\n");
     src = (void*)malloc(length*sizeof(void*));
+    PRINTF("GOTHERE\n");
     return src;
 }
 

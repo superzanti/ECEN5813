@@ -9,27 +9,8 @@
 /* TODO we might not be allowed to use stddef but it's needed for size_t */
 #include <stddef.h>
 
-/*
-size_t temp = sizeof(char);
-PRINTF("sizeof(char) = %d", temp);
-
-temp = sizeof(short);
-PRINTF("sizeof(short) = %d", temp);
-
-temp = sizeof(int);
-PRINTF("sizeof(int) = %d", temp);
-
-temp = sizeof(long);
-PRINTF("sizeof(long) = %d", temp);
-
-temp = sizeof(double);
-PRINTF("sizeof(double) = %d", temp);
-
-temp = sizeof(float);
-PRINTF("sizeof(float) = %d", temp);
-
-temp = sizeof(void);
-PRINTF("sizeof(void) = %d", temp);
-*/
+#include <stdio.h>
+#define PRINTF(str, ...) printf(str, ##__VA_ARGS__)
+#define print_array(x, y) ;
 
 #endif /* __PLATFORM_H__*/

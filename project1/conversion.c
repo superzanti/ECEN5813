@@ -9,6 +9,9 @@
 #include<stdint.h>
 #include"conversion.h"
 
+/*TODO remove this*/
+#include "platform.h"
+
 int32_t exponent(int32_t base,int32_t power)
 {
     if(power<0) return 0;
@@ -24,7 +27,7 @@ int32_t exponent(int32_t base,int32_t power)
 uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
 {
     uint8_t length=0;
-    if(base<2||base>16)
+    if(base<BASE_2||base>BASE_16)
     {
         return 0;
     }
@@ -43,9 +46,10 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
             break;
         }
     }
-    uint32_t j=i-1;
+    int32_t j=i-1;
     uint8_t num;
-    for(j;j>=0;j--) /* TODO unsigned integer will always be greater than or equal to 0 (j is unsigned) */
+    PRINTF("\n current value of data is: %d\n", data);
+    for(j;j>=0;j--)
     {
         num=(data-data%exponent(base,j))/exponent(base,j);/*calculate the MSB*/
         data-=num*exponent(base,j);/*subtract off the MSB*/

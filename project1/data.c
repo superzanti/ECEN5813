@@ -8,6 +8,7 @@
  */
 #include "data.h"
 #include "memory.h"
+#include "platform.h"
 
 #if defined (__GNUC__)
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
