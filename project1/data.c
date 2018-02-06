@@ -101,11 +101,11 @@ void print_pointer_sizes()
     return;
 }
 uint32_t swap_data_endianness(uint8_t * data, size_t type_length)
-{//TODO make this funcction nondestructive on failure if possible
+{/*TODO make this funcction nondestructive on failure if possible*/
     /* TODO possible bad return type because of function being unsigned */
     if(!data) return SWAP_ERROR;/*if null, return error*/
     uint8_t test[type_length];/*block out a region on the stack*/
-    my_memmove(data,test,type_lenth);/*create a copy of 'data' on the stack*/
+    my_memmove(data,test,type_length);/*create a copy of 'data' on the stack*/
     my_reverse(data , type_length);/*reverse data*/
     uint32_t i;
     for(i=0;i<(type_length/2);i++)
@@ -119,7 +119,7 @@ uint32_t swap_data_endianness(uint8_t * data, size_t type_length)
 }
 uint32_t determine_endianness()
 {
-    uint32_t test = 0x00BADA55;//standard test word
+    uint32_t test = 0x00BADA55;/*standard test word*/
     uint8_t* ptr = (uint8_t*)&test;
     if(*(ptr)==5)
     {

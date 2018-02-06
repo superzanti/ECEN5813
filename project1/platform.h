@@ -6,9 +6,11 @@
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
-size_t temp;
+/* TODO we might not be allowed to use stddef but it's needed for size_t */
+#include <stddef.h>
 
-temp = sizeof(char);
+/*
+size_t temp = sizeof(char);
 PRINTF("sizeof(char) = %d", temp);
 
 temp = sizeof(short);
@@ -28,5 +30,6 @@ PRINTF("sizeof(float) = %d", temp);
 
 temp = sizeof(void);
 PRINTF("sizeof(void) = %d", temp);
+*/
 
 #endif /* __PLATFORM_H__*/

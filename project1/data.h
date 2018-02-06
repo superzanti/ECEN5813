@@ -11,6 +11,8 @@
 
 /* Type definitions needed for function prototypes */
 #include <stdint.h>
+/* TODO we may not be allowed to use stddef but it's needed for size_t */
+#include <stddef.h>
 
 #define LITTLE_ENDIAN 0
 #define BIG_ENDIAN 1
@@ -93,4 +95,4 @@ uint32_t swap_data_endianness(uint8_t * data, size_t type_length);
  * @return uint32_t returns BIG_ENDIAN=1 or LITTLE_ENDIAN=0
  */
 uint32_t determine_endianness();
-#endif /* __DATA_H__
+#endif /* __DATA_H__*/

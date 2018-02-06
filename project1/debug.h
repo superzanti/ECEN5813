@@ -1,6 +1,9 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
+/* needed for function prototypes */
+#include <stdint.h>
+
 /*
  * @brief function to print the bytes in memory starting at an address
  * 

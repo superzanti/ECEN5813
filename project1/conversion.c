@@ -9,7 +9,7 @@
 #include<stdint.h>
 #include"conversion.h"
 
-int32_t exp(int32_t base,int32_t power)
+int32_t exponent(int32_t base,int32_t power)
 {
     if(power<0) return 0;
     uint32_t i=0;
@@ -38,7 +38,7 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
     uint32_t remainder=0; /* TODO remainder never referenced? */
     for(i=0;i<32;i++)/*figure out the magnitude of the number*/
     {
-        if(data==data%exp(base,i))
+        if(data==data%exponent(base,i))
         {
             break;
         }
@@ -47,8 +47,8 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
     uint8_t num;
     for(j;j>=0;j--) /* TODO unsigned integer will always be greater than or equal to 0 (j is unsigned) */
     {
-        num=(data-data%exp(base,j))/exp(base,j);/*calculate the MSB*/
-        data-=num*exp(base,j);/*subtract off the MSB*/
+        num=(data-data%exponent(base,j))/exponent(base,j);/*calculate the MSB*/
+        data-=num*exponent(base,j);/*subtract off the MSB*/
     }
     if(num>9)
     {
@@ -84,13 +84,13 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
  * @param base is the base we want to convert from, bases 2-16 are supported
  * @return int8_t the converted number
  */
-int32_t my_atoi(void * ptr, uint8_t digits, uint32_t base)
+int32_t my_atoi(uint8_t * ptr, uint8_t digits, uint32_t base)
 {
     uint8_t i = 0;
     uint8_t negative = 0;
     int32_t return_value;
     /* check to see if the integer is negative*/
-    if(*(int*)ptr=='-')/* using int is okay here */
+    if(*ptr=='-')/* using int is okay here */
     {
         negative = 1;
     }
@@ -98,28 +98,28 @@ int32_t my_atoi(void * ptr, uint8_t digits, uint32_t base)
     for(i=negative;i<digits;i++)
     {
         /* the digit is between a 0 and a 9 */
-        if (*(int*)ptr >= 48 && *(int*)ptr <= 57)
+        if (*ptr >= 48 && *ptr <= 57)
         {
-            if((*(int*)ptr - 48) >= base)
+            if((*ptr - 48) >= base)
                 /* an error has occured, we've encountered an unsupported character */
                 return 0;
-            return_value = (*(int*)ptr++ - 48) * exp(base, i);
+            return_value = (*ptr++ - 48) * exponent(base, i);
         }
         /* the digit is between an uppercase A and a F */
-        else if (*(int*)ptr >= 65 && *(int*)ptr <= 70)
+        else if (*ptr >= 65 && *ptr <= 70)
         {
-            if((*(int*)ptr - 55) >= base)
+            if((*ptr - 55) >= base)
                 /* an error has occured, we've encountered an unsupported character */
                 return 0;
-            return_value = (*(int*)ptr++ - 55) * exp(base, i);
+            return_value = (*ptr++ - 55) * exponent(base, i);
         }
         /* the digit is between a lowercase a and a f */
-        else if (*(int*)ptr >= 97 && *(int*)ptr <= 102)
+        else if (*ptr >= 97 && *ptr <= 102)
         {
-            if((*(int*)ptr - 87) >= base)
+            if((*ptr - 87) >= base)
                 /* an error has occured, we've encountered an unsupported character */
                 return 0;
-            return_value = (*(int*)ptr++ - 87) * exp(base, i);
+            return_value = (*ptr++ - 87) * exponent(base, i);
         }
         else
         {

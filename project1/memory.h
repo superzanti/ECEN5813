@@ -3,6 +3,8 @@
 
 /* Type definitions needed for function prototypes */
 #include <stdint.h>
+/* TODO we may not be allowed to use stddef */
+#include <stddef.h>
 
 /**
  * @brief function to copy one byte array to another (overlap)
@@ -58,7 +60,7 @@ uint8_t * my_memcpy(uint8_t * src, uint8_t * dst, size_t length);
  * @param value the value to write to every byte in the array
  * @return uint8_t a pointer to the source (simply returns src)
  */
-uint8_t * my_memset(void * src, size_t length, uint8_t value);
+uint8_t * my_memset(uint8_t * src, size_t length, uint8_t value);
 
 /**
  * @brief function to write 0 to an array of bytes
