@@ -81,9 +81,9 @@ void print_pointer_sizes();
  *
  * @param data is a pointer to the first byte of the data input
  * @param type_length holds the length of the data as with sizeof(data)
- * @return uint32_t a macro return code signifying swap success or failure;
+ * @return int32_t a macro return code signifying swap success or failure;
  */
-uint32_t swap_data_endianness(uint8_t * data, size_t type_length);
+int32_t swap_data_endianness(uint8_t * data, size_t type_length);
 
 /**
  * @brief this function determines the endianness of the system

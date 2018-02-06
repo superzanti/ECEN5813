@@ -38,7 +38,6 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
         data=0-data;/*make the number positive*/
     }
     uint32_t i;
-    uint32_t remainder=0; /* TODO remainder never referenced? */
     for(i=0;i<32;i++)/*figure out the magnitude of the number*/
     {
         if(data==data%exponent(base,i))
