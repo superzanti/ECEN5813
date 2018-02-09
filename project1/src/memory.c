@@ -93,12 +93,9 @@ uint8_t * my_reverse(uint8_t * src, size_t length)
 
 void * reserve_words(size_t length)
 {
-    PRINTF("GOTHERE\n");
     void* src;
     /* malloc will return null if it fails */
-    PRINTF("GOTHERE\n");
     src = (void*)malloc(length*sizeof(void*));
-    PRINTF("GOTHERE\n");
     return src;
 }
 

@@ -10,95 +10,99 @@
 #include "memory.h"
 #include "platform.h"
 
+#include <stddef.h>
+
+/*
 #if defined (__GNUC__)
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
+*/
 void print_cstd_type_sizes()
 {/*this function is pretty straightforward, it prints a list of types and
    their sizes*/
     size_t temp=sizeof(char);
-    PRINTF("char:           %d\n",temp);
+    PRINTF("char:           %zd\n",temp);
     temp=sizeof(short);
-    PRINTF("short:          %d\n",temp);
+    PRINTF("short:          %zd\n",temp);
     temp=sizeof(int);
-    PRINTF("int:            %d\n",temp);
+    PRINTF("int:            %zd\n",temp);
     temp=sizeof(long);
-    PRINTF("long:           %d\n",temp);
+    PRINTF("long:           %zd\n",temp);
     temp=sizeof(double);
-    PRINTF("double:         %d\n",temp);
+    PRINTF("double:         %zd\n",temp);
     temp=sizeof(float);
-    PRINTF("float:          %d\n",temp);
+    PRINTF("float:          %zd\n",temp);
     temp=sizeof(unsigned char);
-    PRINTF("unsigned char:  %d\n",temp);
+    PRINTF("unsigned char:  %zd\n",temp);
     temp=sizeof(unsigned int);
-    PRINTF("unsigned int:   %d\n",temp);
+    PRINTF("unsigned int:   %zd\n",temp);
     temp=sizeof(unsigned long);
-    PRINTF("unsigned long:  %d\n",temp);
+    PRINTF("unsigned long:  %zd\n",temp);
     temp=sizeof(signed char);
-    PRINTF("signed char:    %d\n",temp);
+    PRINTF("signed char:    %zd\n",temp);
     temp=sizeof(signed int);
-    PRINTF("signed int:     %d\n",temp);
+    PRINTF("signed int:     %zd\n",temp);
     temp=sizeof(signed long);
-    PRINTF("signed long:    %d\n",temp);
+    PRINTF("signed long:    %zd\n",temp);
     return;
 }
 void print_stdint_type_sizes()
 {/* this function is pretty straightforward, it prints a list of stdint types
     and their sizes*/
     size_t temp=sizeof(int8_t);
-    PRINTF("int8_t:         %d\n",temp);
+    PRINTF("int8_t:         %zd\n",temp);
     temp=sizeof(uint8_t);
-    PRINTF("uint8_t:        %d\n",temp);
+    PRINTF("uint8_t:        %zd\n",temp);
     temp=sizeof(uint16_t);
-    PRINTF("uint16_t:       %d\n",temp);
+    PRINTF("uint16_t:       %zd\n",temp);
     temp=sizeof(int32_t);
-    PRINTF("int32_t:        %d\n",temp);
+    PRINTF("int32_t:        %zd\n",temp);
     temp=sizeof(uint32_t);
-    PRINTF("uint32_t:       %d\n",temp);
+    PRINTF("uint32_t:       %zd\n",temp);
     temp=sizeof(uint_fast8_t);
-    PRINTF("uint_fast8_t:   %d\n",temp);
+    PRINTF("uint_fast8_t:   %zd\n",temp);
     temp=sizeof(uint_fast16_t);
-    PRINTF("uint_fast16_t:  %d\n",temp);
+    PRINTF("uint_fast16_t:  %zd\n",temp);
     temp=sizeof(uint_fast32_t);
-    PRINTF("uint_fast32_t:  %d\n",temp);
+    PRINTF("uint_fast32_t:  %zd\n",temp);
     temp=sizeof(uint_least8_t);
-    PRINTF("uint_least8_t:  %d\n",temp);
+    PRINTF("uint_least8_t:  %zd\n",temp);
     temp=sizeof(uint_least16_t);
-    PRINTF("uint_least16_t: %d\n",temp);
+    PRINTF("uint_least16_t: %zd\n",temp);
     temp=sizeof(uint_least32_t);
-    PRINTF("uint_least32_t: %d\n",temp);
+    PRINTF("uint_least32_t: %zd\n",temp);
     temp=sizeof(size_t);
-    PRINTF("size_t:         %d\n",temp);
+    PRINTF("size_t:         %zd\n",temp);
     temp=sizeof(ptrdiff_t);
-    PRINTF("ptrdiff_t:      %d\n",temp);
+    PRINTF("ptrdiff_t:      %zd\n",temp);
     return;
 }
 void print_pointer_sizes()
 {
     size_t temp=sizeof(char*);
-    PRINTF("char*:          %d\n",temp);
+    PRINTF("char*:          %zd\n",temp);
     temp=sizeof(short*);
-    PRINTF("short*:         %d\n",temp);
+    PRINTF("short*:         %zd\n",temp);
     temp=sizeof(int*);
-    PRINTF("int*:           %d\n",temp);
+    PRINTF("int*:           %zd\n",temp);
     temp=sizeof(double*);
-    PRINTF("double*:        %d\n",temp);
+    PRINTF("double*:        %zd\n",temp);
     temp=sizeof(float*);
-    PRINTF("float*:         %d\n",temp);
+    PRINTF("float*:         %zd\n",temp);
     temp=sizeof(void*);
-    PRINTF("void*:          %d\n",temp);
+    PRINTF("void*:          %zd\n",temp);
     temp=sizeof(int8_t*);
-    PRINTF("int8_t*:        %d\n",temp);
+    PRINTF("int8_t*:        %zd\n",temp);
     temp=sizeof(int16_t*);
-    PRINTF("int16_t*:       %d\n",temp);
+    PRINTF("int16_t*:       %zd\n",temp);
     temp=sizeof(int32_t*);
-    PRINTF("int32_t*:       %d\n",temp);
+    PRINTF("int32_t*:       %zd\n",temp);
     temp=sizeof(char**);
-    PRINTF("char**:         %d\n",temp);
+    PRINTF("char**:         %zd\n",temp);
     temp=sizeof(int**);
-    PRINTF("int**:          %d\n",temp);
+    PRINTF("int**:          %zd\n",temp);
     temp=sizeof(void**);
-    PRINTF("void**:         %d\n",temp);
+    PRINTF("void**:         %zd\n",temp);
     return;
 }
 int32_t swap_data_endianness(uint8_t * data, size_t type_length)

@@ -6,8 +6,9 @@
  * @date February 4, 2018
  *
  * */
-#include<stdint.h>
-#include"conversion.h"
+#include <stdint.h>
+#include "conversion.h"
+#include "memory.h"
 
 /*TODO remove this*/
 #include "platform.h"
@@ -27,6 +28,9 @@ int32_t exponent(int32_t base,int32_t power)
 uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
 {
     uint8_t length=0;
+    uint8_t negative=0;
+    if(data == 0)
+        return 0;
     if(base<BASE_2||base>BASE_16)
     {
         return 0;
@@ -34,103 +38,88 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
     if(data<0)
     {
         *ptr++='-';
-        length++;
-        data=0-data;/*make the number positive*/
+        data=-data; /*make the number positive*/
+        negative=1;
     }
-    uint32_t i;
-    for(i=0;i<32;i++)/*figure out the magnitude of the number*/
+    while(1) /* figure out the magnitude of the number */
     {
-        if(data==data%exponent(base,i))
-        {
+        *(ptr+length) = data%base;
+        data = data/base;
+        length++;
+        if ((data == 0) || (length > 32 ))
             break;
+    }
+    my_reverse(ptr, length);
+    int32_t j=length-1;
+    uint8_t num;
+    for(j=length-1;j>=0;j--)
+    {
+        num = *(ptr+j);
+        if(num>9)
+        {
+            *(ptr+j)=num+55;
+        }
+        else
+        {
+            *(ptr+j)=num+48;
         }
     }
-    int32_t j=i-1;
-    uint8_t num;
-    PRINTF("\n current value of data is: %d\n", data);
-    for(j;j>=0;j--)
-    {
-        num=(data-data%exponent(base,j))/exponent(base,j);/*calculate the MSB*/
-        data-=num*exponent(base,j);/*subtract off the MSB*/
-    }
-    if(num>9)
-    {
-        *ptr++=num+55;
-        length++;
-    }
-    else
-    {
-        *ptr++=num+48;
-        length++;
-    }
+    length = length + negative;
     return length;
 }
 
-
-/**
- * @brief function to convert an ascii string into an integer
- * 
- * This function takes in an array of data (ptr) and
- * convertes it to the 4byte equivalant. It is assumed
- * that the array of ascii formatted bytes (string) that
- * is passed in is null '\0' terminated. However,
- * the number of digits in this string is also passed in.
- * The function can convert anything of base 2 to 16.
- * The first character of the string may be a '-' to
- * indicate that it is a negative number.
- *
- * The entire function is done using only
- * pointer arithmetic.
- *
- * @param ptr a pointer to the array of bytes that store ascii characters
- * @param digits the number of characters in the string
- * @param base is the base we want to convert from, bases 2-16 are supported
- * @return int8_t the converted number
- */
 int32_t my_atoi(uint8_t * ptr, uint8_t digits, uint32_t base)
 {
-    uint8_t i = 0;
+    int8_t i = 0;
     uint8_t negative = 0;
-    int32_t return_value;
+    int32_t return_value = 0;
+    if(digits == 0)
+        return 0;
     /* check to see if the integer is negative*/
     if(*ptr=='-')/* using int is okay here */
     {
         negative = 1;
+        ptr++;
+        digits--;
     }
+    /* base starts at 0 so subtract one more */
+    digits--;
     /* loop through each digit and add it to the return_value*/
-    for(i=negative;i<digits;i++)
+    for(i=digits;i>=0;i--)
     {
         /* the digit is between a 0 and a 9 */
         if (*ptr >= 48 && *ptr <= 57)
         {
-            if((*ptr - 48) >= base)
+            if((*ptr - 48) > base)
                 /* an error has occured, we've encountered an unsupported character */
-                return 0;
-            return_value = (*ptr++ - 48) * exponent(base, i);
+                return 1;
+            return_value += (*ptr++ - 48) * exponent(base, i);
         }
         /* the digit is between an uppercase A and a F */
         else if (*ptr >= 65 && *ptr <= 70)
         {
-            if((*ptr - 55) >= base)
+            if((*ptr - 55) > base)
                 /* an error has occured, we've encountered an unsupported character */
-                return 0;
-            return_value = (*ptr++ - 55) * exponent(base, i);
+                return 2;
+            return_value += (*ptr++ - 55) * exponent(base, i);
         }
         /* the digit is between a lowercase a and a f */
         else if (*ptr >= 97 && *ptr <= 102)
         {
-            if((*ptr - 87) >= base)
+            if((*ptr - 87) > base)
                 /* an error has occured, we've encountered an unsupported character */
-                return 0;
-            return_value = (*ptr++ - 87) * exponent(base, i);
+                return 3;
+            return_value += (*ptr++ - 87) * exponent(base, i);
         }
         else
         {
             /* an error has occurred, we've encountered an unsupported character */
-            return 0;
+            return 4;
         }
     }
     if(negative)
-        return return_value*-1;
+    {
+        return -return_value;
+    }
     return return_value;
 }
