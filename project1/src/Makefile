@@ -3,13 +3,15 @@ LINUXCC = gcc
 #FSCC =
 
 # compile to c89 standard
-# show all warngings
+# show all warnings
+# show all errors
 # stop compilation on first error
 # no optimization
 # define PROJECT1
 # define VERBOSE
 LINUXFLAGS = -std=c89 \
 			-Wall \
+			-Werror
 			-Wfatal-errors \
 			-O0 \
 			-D PROJECT1 \
