@@ -22,6 +22,7 @@
 #include "platform.h"
 #include "project1.h"
 #include "memory.h"
+#include "debug.h"
 #include "conversion.h"
 
 int8_t test_data1() {

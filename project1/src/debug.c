@@ -35,9 +35,9 @@ void print_array(void * start, uint32_t length)
     {
         if((i)%16==0)/*every 16 bytes (zero inclusive), print the address*/
         {
-            PRINTF("%X ",temp);
+            PRINTF("%p ",(void*)temp);
         }
-        PRINTF("%X ",*(temp++));
+        PRINTF("%02X ",*(temp++));
         if((i+1)%16==0)/*after every 16 bytes, print a newline.*/
         {
             PRINTF("\n");/*eg, addr 0-15 \n addr 16-31*/
