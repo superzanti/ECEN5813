@@ -2,8 +2,11 @@
  * @file data.h
  * @brief implementation of data.h
  *
- * @author Jake Cazden
- * @date February 4, 2017
+ * impelements functions to print type information, as well as determine
+ * endianness and swap data endianness in a platform independent manner
+ *
+ * @author Seth Miers and Jake Cazden
+ * @date February 11, 2017
  *
  */
 #include "data.h"
@@ -125,7 +128,7 @@ uint32_t determine_endianness()
 {
     uint32_t test = 0x00BADA55;/*standard test word*/
     uint8_t* ptr = (uint8_t*)&test;
-    if(*(ptr)==5)
+    if(*(ptr)==5)/*LSB of 00BADA55*/
     {
         return LITTLE_ENDIAN;
     }

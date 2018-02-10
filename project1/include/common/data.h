@@ -2,8 +2,12 @@
  * @file data.h
  * @brief functions to examine platform specific data type behavior
  *
- * @author Jake Cazden
- * @date February 4, 2017
+ * contains functions for printing system specific type sizes, as well as
+ * manually determining endianness, and swapping endianness on a given piece
+ * of data, rendered as a byte array
+ *
+ * @author Seth Miers and Jake Cazden
+ * @date February 11, 2017
  *
  */
 #ifndef __DATA_H__

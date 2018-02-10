@@ -1,9 +1,12 @@
 /*
  * @file conversion.c
- * @brief This file is to be used to project 1.
+ * @brief this file implements conversion.h
  *
- * @author Jake Cazden and Seth Miers
- * @date February 4, 2018
+ * contains the implementation of integer to array and array to integer
+ * conversions as well as an exponentiation function
+ *
+ * @author Seth Miers and Jake Cazden
+ * @date February 11, 2018
  *
  * */
 #include <stdint.h>
@@ -46,22 +49,23 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
         *(ptr+length) = data%base;
         data = data/base;
         length++;
-        if ((data == 0) || (length > 32 ))
+        if ((data == 0) || (length > BASE_2_MAXDIGITS ))
             break;
     }
     my_reverse(ptr, length);
     int32_t j=length-1;
+    /*i-1 becausee the while loop puts you one order of  magnitude high*/
     uint8_t num;
     for(j=length-1;j>=0;j--)
     {
         num = *(ptr+j);
         if(num>9)
         {
-            *(ptr+j)=num+55;
+            *(ptr+j)=num+ASCII_OFFSET_A_ADDITION;
         }
         else
         {
-            *(ptr+j)=num+48;
+            *(ptr+j)=num+ASCII_OFFSET_0;
         }
     }
     length = length + negative;
@@ -88,28 +92,28 @@ int32_t my_atoi(uint8_t * ptr, uint8_t digits, uint32_t base)
     for(i=digits;i>=0;i--)
     {
         /* the digit is between a 0 and a 9 */
-        if (*ptr >= 48 && *ptr <= 57)
+        if (*ptr >= ASCII_OFFSET_0 && *ptr <= ASCII_OFFSET_9)
         {
-            if((*ptr - 48) > base)
+            if((*ptr - ASCII_OFFSET_0) > base)
                 /* an error has occured, we've encountered an unsupported character */
                 return 1;
-            return_value += (*ptr++ - 48) * exponent(base, i);
+            return_value += (*ptr++ - ASCII_OFFSET_0) * exponent(base, i);
         }
         /* the digit is between an uppercase A and a F */
-        else if (*ptr >= 65 && *ptr <= 70)
+        else if (*ptr >= ASCII_OFFSET_A && *ptr <= ASCII_OFFSET_F)
         {
-            if((*ptr - 55) > base)
+            if((*ptr - ASCII_OFFSET_A_ADDITION) > base)
                 /* an error has occured, we've encountered an unsupported character */
                 return 2;
-            return_value += (*ptr++ - 55) * exponent(base, i);
+            return_value += (*ptr++ - ASCII_OFFSET_A_ADDITION) * exponent(base, i);
         }
         /* the digit is between a lowercase a and a f */
-        else if (*ptr >= 97 && *ptr <= 102)
+        else if (*ptr >= ASCII_OFFSET_LA && *ptr <= ASCII_OFFSET_LF)
         {
-            if((*ptr - 87) > base)
+            if((*ptr - ASCII_OFFSET_LA_ADDITION) > base)
                 /* an error has occured, we've encountered an unsupported character */
                 return 3;
-            return_value += (*ptr++ - 87) * exponent(base, i);
+            return_value += (*ptr++ - ASCII_OFFSET_LA_ADDITION) * exponent(base, i);
         }
         else
         {

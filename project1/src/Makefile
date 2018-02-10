@@ -1,3 +1,13 @@
+#
+# @file memory.h
+# @brief contains functions for allocating, freeing, and copying memory
+#
+# this makefile implements build instructions for three systems
+#
+# @author Seth Miers and Jake Cazden
+# @date February 11, 2017
+#
+#
 LINUXCC = gcc
 #BBBCC =
 #FSCC =

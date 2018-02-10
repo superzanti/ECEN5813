@@ -1,3 +1,13 @@
+/**
+ * @file debug.h
+ * @brief contains functions for debug printing of memory
+ *
+ * contains a function to print hex from memory for a specified length
+ *
+ * @author Seth Miers and Jake Cazden
+ * @date February 11, 2017
+ *
+ */
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 

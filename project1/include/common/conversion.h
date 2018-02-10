@@ -1,9 +1,13 @@
 /*
  * @file conversion.h
- * @brief this file contains implementations of integer<>character conversion
+ * @brief this file contains implementations of integer to character conversion
  *
- * @author Jake Cazden and Seth Miers
- * @date February 4, 2018
+ * This contins functions for integer to character array conversion in mulitple
+ * bases, as well as an exponentiation function (not optimized), primarily
+ * for use with these functions. it also defines offsets into the ASCII table
+ *
+ * @author Seth Miers and Jake Cazden
+ * @date February 11, 2018
  *
  * */
 #ifndef __CONVERSION_H__
@@ -27,6 +31,15 @@
 #define BASE_14  (14)
 #define BASE_15  (15)
 #define BASE_16  (16)
+#define BASE_2_MAXDIGITS (32)
+#define ASCII_OFFSET_0  (48)
+#define ASCII_OFFSET_9  (57)
+#define ASCII_OFFSET_A  (65)
+#define ASCII_OFFSET_A_ADDITION  (55)/*10+55= 'A'*/
+#define ASCII_OFFSET_F  (70)
+#define ASCII_OFFSET_LA  (97)
+#define ASCII_OFFSET_LA_ADDITION  (87)/*10+87= 'a'*/
+#define ASCII_OFFSET_LF  (102)
 
 /**
  * @brief take the exponent of a number

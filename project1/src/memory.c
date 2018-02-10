@@ -1,3 +1,14 @@
+/**
+ * @file memory.c
+ * @brief implements memory.h
+ *
+ * implements software defined functions for copying, allocating, and freeing
+ * memory, without relying on hardware specifically.
+ *
+ * @author Seth Miers and Jake Cazden
+ * @date February 11, 2017
+ *
+ */
 #include "memory.h"
 
 /* Only need the following if we cant use

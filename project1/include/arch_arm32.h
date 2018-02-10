@@ -1,3 +1,14 @@
+/**
+ * @file arch_arm32.h
+ * @brief defines important arm macros and provides hardware interface functions
+ *
+ * this file contains an endianness lookup function for ARM, as well
+ * as relevent memory locations in ARM to allow this
+ *
+ * @author Seth Miers and Jake Cazden
+ * @date February 11, 2017
+ *
+ */
 #ifndef __ARCH_ARM32_H__
 #define __ARCH_ARM32_H__
 

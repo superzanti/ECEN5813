@@ -1,3 +1,14 @@
+/**
+ * @file memory.h
+ * @brief contains functions for allocating, freeing, and copying memory
+ *
+ * this contains numerous functions for the allocation, movement, and freeing
+ * of memory, utilizing software, not hardware specific functionality.
+ *
+ * @author Seth Miers and Jake Cazden
+ * @date February 11, 2017
+ *
+ */
 #ifndef __MEMORY_H__
 #define __MEMORY_H__
 

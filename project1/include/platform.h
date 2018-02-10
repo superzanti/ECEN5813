@@ -1,3 +1,14 @@
+/**
+ * @file platform.h
+ * @brief contains platform necessary includes and macros
+ *
+ * This contains the defines for the PRINTF macro and other functionality,
+ * as well as ensuring the PRINTF macro doesn't cause errors
+ *
+ * @author Seth Miers and Jake Cazden
+ * @date February 11, 2017
+ *
+ */
 #ifndef __PLATFORM_H__
 #define __PLATFORM_H__
 
