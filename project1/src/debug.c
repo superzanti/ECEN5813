@@ -28,6 +28,7 @@
  */
 void print_array(void * start, uint32_t length)
 {
+    #ifdef VERBOSE
     uint32_t i=0;
     uint8_t* temp=(uint8_t*)start;
     for(i=0;i<length;i++)
@@ -42,5 +43,6 @@ void print_array(void * start, uint32_t length)
             PRINTF("\n");/*eg, addr 0-15 \n addr 16-31*/
         }
     }
+    #endif
     return;
 }
