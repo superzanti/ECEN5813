@@ -1,65 +1,109 @@
 #
-# @file memory.h
-# @brief contains functions for allocating, freeing, and copying memory
-#
-# this makefile implements build instructions for three systems
+# @file Makefile
+# @brief contains build rules for HOST, BBB, and KL25Z
 #
 # @author Seth Miers and Jake Cazden
 # @date February 11, 2017
 #
-#
-LINUXCC = gcc
-#BBBCC =
-#FSCC =
+
+# include source files
+include sources.mk
 
 INC_DIR = ../include/
 INC_COMMON = ../include/common
 INC_CMSIS = ../include/CMSIS
 INC_KL25Z = ../include/kl25z
-INC = $(INC_DIR) $(INC_COMMON) $(INC_CMSIS) $(INC_KL25Z)
-INC_PARAMS=$(foreach d, $(INC), -I$d)
+#INC = $(INC_DIR) $(INC_COMMON) $(INC_CMSIS) $(INC_KL25Z)
+#INC_PARAMS=$(foreach d, $(INC), -I$d)
+STD = -std=c99
 
-# compile to c89 standard
-# show all warnings
-# show all errors
-# stop compilation on first error
-# no optimization
-# define PROJECT1
-# compile with debugger support
-# include directory
-LINUXFLAGS = -std=c89 -I../include/ -I../include/common/ -Wall -Werror -Wfatal-errors -O0 -D PROJECT1 -D VERBOSE
-#			-g \
-#			-I$(INC_DIR)
+FILES = $(SRCS)
+OBJS = $(SRCS:.c=.o)
+IFILES = $(SRCS:.c=.i)
+ASMS = $(SRCS:.c=.asm)
 
-#BBBFLAGS = -std=c89
-#FSFLAGS = -std=c89
-
-# include source files
-include sources.mk
-
-LINUXFILES = $(SRCS)
-#BBBFILES
-#FSFILES =
-
-#ifeq ($(PLATFORM), KL25Z)
+ifeq ($(PLATFORM), HOST)
+#	echo Building for platform: HOST
+CC=gcc
+CFILES=$(FILES)
+CFLAGS =$(STD)\
+		-I$(INC_DIR)\
+		-I$(INC_COMMON)\
+		-Wall\
+		-Werror\
+		-Wfatal-errors\
+		-O0\
+		-D PROJECT1\
+		-D VERBOSE\
+		-Wl,-Map=project1.map
+OUTPUT=project1.elf
+endif
+ifeq ($(PLATFORM), BBB)
+#	echo Building for platform: BBB
+CC=
+CFILES=$(FILES)
+CFLAGS = $(STD)\
+		 -I$(INC_DIR)\
+		 -I$(INC_COMMON)\
+		 -Wall\
+		 -Werror\
+		 -Wfatal-errors\
+		 -O0\
+		 -D PROJECT1\
+		 -D VERBOSE\
+		 -Wl,-Map=project1.map
+OUTPUT=project1.elf
+endif
+ifeq ($(PLATFORM), KL25Z)
 #	echo Building for platform: KL25Z
-#endif
+CC=
+CFILES=$(FILES)
+CFLAGS = $(STD)\
+		 -I$(INC_DIR)\
+		 -I$(INC_COMMON)\
+		 -Wall\
+		 -Werror\
+		 -Wfatal-errors\
+		 -O0\
+		 -D PROJECT1\
+		 -D VERBOSE\
+		 -Wl,-Map=project1.map
+OUTPUT=project1.elf
+endif
 
-LINUXOUTPUT = main.out
-#BBBOUTPUT =
-#FSOUTPUT =
 
+.PHONY: native
+native: $(FILES)
+	$(CC) $(CFLAGS) $(FILES) -o $(OUTPUT)
 
-linux: $(LINUXFILES)
-	$(LINUXCC) $(LINUXFLAGS) $(LINUXFILES) -o $(LINUXOUTPUT)
-#bbb: $(BBBFILES)
-#	$(BBBCC) $(BBBFLAGS) $(SRC) $(BBBFILES) -o $(BBBOUTPUT)
-#fs: $(FILES)
-#	$(FSCC) $(FSFLAGS) $(SRC) $(FSFILES) -o $(FSOUTPUT)
+%.i: %.c
+	$(CC) $(CFLAGS) -E -o $@ $^
 
-#all: $(FILES)
-#	$(CC) $(CFLAGS) $(FILES) -o $(OUTPUT)
+%.asm: %.i
+	$(CC) $(CFLAGS) -S -o $@ $^
 
-#target: prereq1 prereq2 prereq3
-#	command 1
-#	command 2
+%.o: %.asm
+	$(CC) $(CFLAGS) -c -o $@ $^
+
+.PHONY: compile-all
+compile-all: $(FILES)
+	$(CC) $(CFLAGS) $(FILES) -o $(OUTPUT)
+
+.PHONY: build
+build: $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(OUTPUT)
+
+.PHONY: clean
+clean:
+	rm -r *.map *.out *.o *.i *.asm *.elf
+#
+# compile to c89 standard				-std=c89
+# include 'include' directory			-I$(INC_DIR)
+# include 'include/common' directory 	-I$(INC_COMMON)
+# show all warnings 					-Wall
+# show all errors 						-Werror
+# stop compilation on first error 		-Wfatal-errors
+# no optimization 						-O0
+# define PROJECT1 						-D PROJECT1
+# define VERBOSE 						-D VERBOSE
+# compile with debugger support 		-g
