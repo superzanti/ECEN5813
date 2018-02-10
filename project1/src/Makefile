@@ -22,62 +22,54 @@ OBJS = $(SRCS:.c=.o)
 IFILES = $(SRCS:.c=.i)
 ASMS = $(SRCS:.c=.asm)
 
+ifndef PLATFORM
+PLATFORM=HOST
+endif
+
 ifeq ($(PLATFORM), HOST)
 #	echo Building for platform: HOST
 CC=gcc
+LL = ld
 CFILES=$(FILES)
 CFLAGS =$(STD)\
-		-I$(INC_DIR)\
-		-I$(INC_COMMON)\
 		-Wall\
 		-Werror\
 		-Wfatal-errors\
-		-O0\
-		-D PROJECT1\
-		-D VERBOSE\
-		-Wl,-Map=project1.map
+		-O0
+CPPFLAGS =  -I$(INC_DIR)\
+			-I$(INC_COMMON)\
+			-D PROJECT1\
+			-D VERBOSE
+LDFLAGS = -Map=project1.map
 OUTPUT=project1.elf
 endif
 ifeq ($(PLATFORM), BBB)
 #	echo Building for platform: BBB
-CC=
-CFILES=$(FILES)
-CFLAGS = $(STD)\
-		 -I$(INC_DIR)\
-		 -I$(INC_COMMON)\
-		 -Wall\
-		 -Werror\
-		 -Wfatal-errors\
-		 -O0\
-		 -D PROJECT1\
-		 -D VERBOSE\
-		 -Wl,-Map=project1.map
+CC=arm-none-eabi-gcc
+LL = ld
 OUTPUT=project1.elf
 endif
 ifeq ($(PLATFORM), KL25Z)
 #	echo Building for platform: KL25Z
-CC=
+CC=arm-linux-gnueabi-gcc
+LL = ld
 CFILES=$(FILES)
-CFLAGS = $(STD)\
-		 -I$(INC_DIR)\
-		 -I$(INC_COMMON)\
-		 -Wall\
-		 -Werror\
-		 -Wfatal-errors\
-		 -O0\
-		 -D PROJECT1\
-		 -D VERBOSE\
-		 -Wl,-Map=project1.map
+CFLAGS =$(STD)\
+		-Wall\
+		-Werror\
+		-Wfatal-errors\
+		-O0
+CPPFLAGS =  -I$(INC_DIR)\
+			-I$(INC_COMMON)\
+			-D PROJECT1\
+			-D VERBOSE
+LDFLAGS = -Map=project1.map
 OUTPUT=project1.elf
 endif
 
 
-.PHONY: native
-native: $(FILES)
-	$(CC) $(CFLAGS) $(FILES) -o $(OUTPUT)
-
 %.i: %.c
-	$(CC) $(CFLAGS) -E -o $@ $^
+	$(CC) $(CPPFLAGS) -E -o $@ $^
 
 %.asm: %.i
 	$(CC) $(CFLAGS) -S -o $@ $^
@@ -86,12 +78,11 @@ native: $(FILES)
 	$(CC) $(CFLAGS) -c -o $@ $^
 
 .PHONY: compile-all
-compile-all: $(FILES)
-	$(CC) $(CFLAGS) $(FILES) -o $(OUTPUT)
+compile-all: $(OBJS)
 
 .PHONY: build
-build: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(OUTPUT)
+build: compile-all
+	$(LL) $(LDFLAGS) $(OBJS) -o $(OUTPUT)
 
 .PHONY: clean
 clean:
