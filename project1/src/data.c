@@ -10,10 +10,12 @@
  *
  */
 #include "data.h"
-#include "memory.h"
-#include "platform.h"
 
-#include <stddef.h>
+/* needed to check endianness */
+#include "memory.h"
+
+/* needed for printf macro */
+#include "platform.h"
 
 /*
 #if defined (__GNUC__)

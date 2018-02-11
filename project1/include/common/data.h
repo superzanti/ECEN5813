@@ -15,13 +15,13 @@
 
 /* Type definitions needed for function prototypes */
 #include <stdint.h>
-/* TODO we may not be allowed to use stddef but it's needed for size_t */
 #include <stddef.h>
 
 #define LITTLE_ENDIAN 0
 #define BIG_ENDIAN 1
 #define SWAP_NO_ERROR 0
 #define SWAP_ERROR -1
+
 /**
  * @brief function prints the size of c standard types
  *

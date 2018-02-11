@@ -14,7 +14,6 @@
 
 /* Type definitions needed for function prototypes */
 #include <stdint.h>
-/* TODO we may not be allowed to use stddef */
 #include <stddef.h>
 
 /**

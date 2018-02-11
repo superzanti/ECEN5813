@@ -31,7 +31,9 @@
 #define BASE_14  (14)
 #define BASE_15  (15)
 #define BASE_16  (16)
+
 #define BASE_2_MAXDIGITS (32)
+
 #define ASCII_OFFSET_0  (48)
 #define ASCII_OFFSET_9  (57)
 #define ASCII_OFFSET_A  (65)

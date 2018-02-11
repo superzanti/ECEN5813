@@ -9,12 +9,10 @@
  * @date February 11, 2018
  *
  * */
-#include <stdint.h>
 #include "conversion.h"
-#include "memory.h"
 
-/*TODO remove this*/
-#include "platform.h"
+/* used for the my_reverse function */
+#include "memory.h"
 
 int32_t exponent(int32_t base,int32_t power)
 {
@@ -52,9 +50,10 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
         if ((data == 0) || (length > BASE_2_MAXDIGITS ))
             break;
     }
+    /* we want to go from smallest to biggest not visaversa */
     my_reverse(ptr, length);
     int32_t j=length-1;
-    /*i-1 becausee the while loop puts you one order of  magnitude high*/
+    /* length-1 becausee the while loop puts you one order of  magnitude high */
     uint8_t num;
     for(j=length-1;j>=0;j--)
     {
@@ -96,7 +95,7 @@ int32_t my_atoi(uint8_t * ptr, uint8_t digits, uint32_t base)
         {
             if((*ptr - ASCII_OFFSET_0) > base)
                 /* an error has occured, we've encountered an unsupported character */
-                return 1;
+                return 0;
             return_value += (*ptr++ - ASCII_OFFSET_0) * exponent(base, i);
         }
         /* the digit is between an uppercase A and a F */
@@ -104,7 +103,7 @@ int32_t my_atoi(uint8_t * ptr, uint8_t digits, uint32_t base)
         {
             if((*ptr - ASCII_OFFSET_A_ADDITION) > base)
                 /* an error has occured, we've encountered an unsupported character */
-                return 2;
+                return 0;
             return_value += (*ptr++ - ASCII_OFFSET_A_ADDITION) * exponent(base, i);
         }
         /* the digit is between a lowercase a and a f */
@@ -112,13 +111,13 @@ int32_t my_atoi(uint8_t * ptr, uint8_t digits, uint32_t base)
         {
             if((*ptr - ASCII_OFFSET_LA_ADDITION) > base)
                 /* an error has occured, we've encountered an unsupported character */
-                return 3;
+                return 0;
             return_value += (*ptr++ - ASCII_OFFSET_LA_ADDITION) * exponent(base, i);
         }
         else
         {
             /* an error has occurred, we've encountered an unsupported character */
-            return 4;
+            return 0;
         }
     }
     if(negative)

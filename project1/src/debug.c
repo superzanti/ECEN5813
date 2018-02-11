@@ -9,11 +9,11 @@
  * @date February 11, 2017
  *
  */
-#include<stdint.h>
 
 #include"debug.h"
-#include"memory.h"
-#include"platform.h"/*included due to usue of PRINTF macro*/
+
+/*included due to usue of PRINTF macro*/
+#include"platform.h"
 
 /*
  * @brief function to print the bytes in memory starting at an address

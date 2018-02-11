@@ -16,13 +16,16 @@
  * extern void __HeapBase, __HeapLimit;
  */
 
-#ifndef NULL
-#define NULL (0)
-#endif
+/* Needed to return null pointers
+ * This is defined in stddef so it's commented out
+ *
+ *  #ifndef NULL
+ *  #define NULL ((void*)0)
+ *  #endif
+ */
 
-/*TODO remove this if not allowed to use malloc and free */
+/* TODO remove this if not allowed to use malloc and free */
 #include <stdlib.h>
-#include "platform.h"
 
 uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length)
 {
