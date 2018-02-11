@@ -17,8 +17,11 @@
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
+#ifdef KL25Z
+#define PRINTF(str, ...) (0)
+#else
 #include <stdio.h>
-/*#define PRINTF(str, ...) printf(str, ##__VA_ARGS__)*/
-#define PRINTF printf
+#define PRINTF(str, ...) printf(str, ##__VA_ARGS__)
+#endif
 
 #endif /* __PLATFORM_H__*/

@@ -41,6 +41,7 @@ CFLAGS =$(STD)\
 		-g
 CPPFLAGS =  $(INC_PARAMS)\
 			-D PROJECT1\
+			-D $(PLATFORM)\
 			-D VERBOSE
 LDFLAGS = -Map=project1.map
 OUTPUT=project1.elf
@@ -63,6 +64,7 @@ CFLAGS =$(STD)\
 		--specs=nosys.specs
 CPPFLAGS =  $(INC_PARAMS)\
 			-D PROJECT1\
+			-D $(PLATFORM)\
 			-D VERBOSE
 LDFLAGS = -Map=project1.map
 OUTPUT=project1.elf
@@ -84,7 +86,8 @@ CFLAGS =$(STD)\
 		-mfpu=fpv4-sp-d16\
 		--specs=nosys.specs
 CPPFLAGS =  $(INC_PARAMS)\
-			-D PROJECT1
+			-D PROJECT1\
+			-D $(PLATFORM)
 #			-D VERBOSE
 LDFLAGS = -Map=project1.map,\
 		  -T $(KL25ZLD)
