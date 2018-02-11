@@ -48,7 +48,7 @@ OUTPUT=project1.elf
 endif
 ifeq ($(PLATFORM), BBB)
 #	echo Building for platform: BBB
-CC=arm-none-eabi-gcc
+CC=arm-linux-gnueabihf-gcc
 CFILES=$(FILES)
 CFLAGS =$(STD)\
 		-Wall\
@@ -71,7 +71,7 @@ OUTPUT=project1.elf
 endif
 ifeq ($(PLATFORM), KL25Z)
 #	echo Building for platform: KL25Z
-CC=arm-linux-gnueabihf-gcc
+CC=arm-none-eabi-gcc
 CFILES=$(FILES)
 CFLAGS =$(STD)\
 		-Wall\

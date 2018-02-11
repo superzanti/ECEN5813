@@ -18,7 +18,7 @@
 #endif
 
 #ifdef KL25Z
-#define PRINTF(str, ...) (0)
+#define PRINTF(...)
 #else
 #include <stdio.h>
 #define PRINTF(str, ...) printf(str, ##__VA_ARGS__)
