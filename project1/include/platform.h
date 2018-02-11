@@ -18,6 +18,7 @@
 #endif
 
 #include <stdio.h>
-#define PRINTF(str, ...) printf(str, ##__VA_ARGS__)
+/*#define PRINTF(str, ...) printf(str, ##__VA_ARGS__)*/
+#define PRINTF printf
 
 #endif /* __PLATFORM_H__*/

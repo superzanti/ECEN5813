@@ -14,14 +14,16 @@ INC_COMMON = ../include/common
 INC_CMSIS = ../include/CMSIS
 INC_KL25Z = ../include/kl25z
 KL25ZLD = ../platform/MKL25Z128xxx4_flash.ld
-#INC = $(INC_DIR) $(INC_COMMON) $(INC_CMSIS) $(INC_KL25Z)
-#INC_PARAMS=$(foreach d, $(INC), -I$d)
+INCLUDES = $(INC_DIR) $(INC_COMMON) $(INC_CMSIS) $(INC_KL25Z)
+INC_PARAMS=$(foreach d, $(INCLUDES), -I$d)
 STD = -std=c99
+DEP= -M
 
-FILES = $(SRCS)
-OBJS = $(SRCS:.c=.o)
-IFILES = $(SRCS:.c=.i)
-ASMS = $(SRCS:.c=.asm)
+FILES = $(SOURCES)
+OBJS = $(SOURCES:.c=.o)
+IFILES = $(SOURCES:.c=.i)
+ASMS = $(SOURCES:.c=.asm)
+DEPS = $(SOURCES:.c=.d)
 
 ifndef PLATFORM
 PLATFORM=HOST
@@ -36,8 +38,7 @@ CFLAGS =$(STD)\
 		-Werror\
 		-Wfatal-errors\
 		-O0
-CPPFLAGS =  -I$(INC_DIR)\
-			-I$(INC_COMMON)\
+CPPFLAGS =  $(INC_PARAMS)\
 			-D PROJECT1\
 			-D VERBOSE
 LDFLAGS = -Map=project1.map
@@ -51,9 +52,14 @@ CFLAGS =$(STD)\
 		-Wall\
 		-Werror\
 		-Wfatal-errors\
-		-O0
-CPPFLAGS =  -I$(INC_DIR)\
-			-I$(INC_COMMON)\
+		-O0\
+		-mcpu=cortex-a8\
+		-mthumb\
+		-march=armv7-a\
+		-mfloat-abi=hard\
+		-mfpu=neon\
+		--specs=nosys.specs
+CPPFLAGS =  $(INC_PARAMS)\
 			-D PROJECT1\
 			-D VERBOSE
 LDFLAGS = -Map=project1.map
@@ -61,17 +67,22 @@ OUTPUT=project1.elf
 endif
 ifeq ($(PLATFORM), KL25Z)
 #	echo Building for platform: KL25Z
-CC=arm-linux-gnueabi-gcc
+CC=arm-linux-gnueabihf-gcc
 CFILES=$(FILES)
 CFLAGS =$(STD)\
 		-Wall\
 		-Werror\
 		-Wfatal-errors\
-		-O0
-CPPFLAGS =  -I$(INC_DIR)\
-			-I$(INC_COMMON)\
-			-D PROJECT1\
-			-D VERBOSE
+		-O0\
+		-mcpu=cortex-m0\
+		-mthumb\
+		-march=armv6-m\
+		-mfloat-abi=soft\
+		-mfpu=fpv4-sp-d16\
+		--specs=nosys.specs
+CPPFLAGS =  $(INC_PARAMS)\
+			-D PROJECT1
+#			-D VERBOSE
 LDFLAGS = -Map=project1.map,\
 		  -T $(KL25ZLD)
 OUTPUT=project1.elf
@@ -89,8 +100,11 @@ all: build
 %.o: %.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $^ -o $@
 
+%.d: %.c
+	$(CC) $(CPPFLAGS) -M $(CFLAGS) -c $^ -o $@
+
 .PHONY: compile-all
-compile-all: $(OBJS)
+compile-all: $(OBJS) $(DEPS)
 
 .PHONY: build
 build: compile-all
@@ -98,7 +112,7 @@ build: compile-all
 
 .PHONY: clean
 clean:
-	rm *.map *.out *.o *.i *.asm *.elf
+	rm *.map *.out *.o *.d *.i *.asm *.elf
 #
 # compile to c89 standard				-std=c89
 # include 'include' directory			-I$(INC_DIR)
