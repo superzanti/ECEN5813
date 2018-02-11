@@ -37,7 +37,8 @@ CFLAGS =$(STD)\
 		-Wall\
 		-Werror\
 		-Wfatal-errors\
-		-O0
+		-O0\
+		-g
 CPPFLAGS =  $(INC_PARAMS)\
 			-D PROJECT1\
 			-D VERBOSE
@@ -53,6 +54,7 @@ CFLAGS =$(STD)\
 		-Werror\
 		-Wfatal-errors\
 		-O0\
+		-g\
 		-mcpu=cortex-a8\
 		-mthumb\
 		-march=armv7-a\
@@ -74,6 +76,7 @@ CFLAGS =$(STD)\
 		-Werror\
 		-Wfatal-errors\
 		-O0\
+		-g\
 		-mcpu=cortex-m0\
 		-mthumb\
 		-march=armv6-m\
