@@ -3,10 +3,10 @@ Projects for ECEN5813 by: Seth Miers and Jake Cazden
 
 To build/compile this project, cd into the src folder and run:
 
-$ make PLATFORM=<platform>
+$ make PLATFORM=&lt;platform>
   
 or
 
-$ make build PLATFORM=<platform>
+$ make build PLATFORM=&lt;platform>
   
-where <platform> is either 'HOST', 'BBB', or 'KL25Z'.
+where &lt;platform> is either 'HOST', 'BBB', or 'KL25Z'.
