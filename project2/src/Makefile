@@ -48,20 +48,20 @@ OUTPUT=project1.elf
 endif
 ifeq ($(PLATFORM), BBB)
 #	echo Building for platform: BBB
-CC=arm-linux-gnueabihf-gcc
+CC=arm-linux-gnueabi-gcc
 CFILES=$(FILES)
 CFLAGS =$(STD)\
 		-Wall\
 		-Werror\
 		-Wfatal-errors\
 		-O0\
-		-g\
-		-mcpu=cortex-a8\
-		-mthumb\
-		-march=armv7-a\
-		-mfloat-abi=hard\
-		-mfpu=neon\
-		--specs=nosys.specs
+		-g
+#		-mcpu=cortex-a8\
+#		-mthumb\
+#		-march=armv7-a\
+#		-mfloat-abi=hard\
+#		-mfpu=neon\
+#		--specs=nosys.specs
 CPPFLAGS =  $(INC_PARAMS)\
 			-D PROJECT1\
 			-D $(PLATFORM)\
@@ -72,6 +72,10 @@ endif
 ifeq ($(PLATFORM), KL25Z)
 #	echo Building for platform: KL25Z
 CC=arm-none-eabi-gcc
+FILES+=startup_MKL25Z4.S\
+	system_MKL25Z4.c
+OBJS+= startup_MKL25Z4.o\
+	system_MKL25Z4.o
 CFILES=$(FILES)
 CFLAGS =$(STD)\
 		-Wall\
@@ -79,18 +83,16 @@ CFLAGS =$(STD)\
 		-Wfatal-errors\
 		-O0\
 		-g\
-		-mcpu=cortex-m0\
+		-mcpu=cortex-m0plus\
 		-mthumb\
 		-march=armv6-m\
 		-mfloat-abi=soft\
-		-mfpu=fpv4-sp-d16\
 		--specs=nosys.specs
 CPPFLAGS =  $(INC_PARAMS)\
 			-D PROJECT1\
-			-D $(PLATFORM)
+			-D $(PLATFORM)\
 #			-D VERBOSE
-LDFLAGS = -Map=project1.map,\
-		  -T $(KL25ZLD)
+LDFLAGS = -Map=project1.map,-T,$(KL25ZLD)
 OUTPUT=project1.elf
 endif
 
@@ -104,6 +106,8 @@ all: build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -S $^ -o $@
 
 %.o: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $^ -o $@
+%.o: %.S
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $^ -o $@
 
 %.d: %.c
