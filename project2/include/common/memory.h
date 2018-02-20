@@ -6,7 +6,7 @@
  * of memory, utilizing software, not hardware specific functionality.
  *
  * @author Seth Miers and Jake Cazden
- * @date February 11, 2017
+ * @date February 11, 2018
  *
  */
 #ifndef __MEMORY_H__

@@ -7,7 +7,7 @@
  * of data, rendered as a byte array
  *
  * @author Seth Miers and Jake Cazden
- * @date February 11, 2017
+ * @date February 11, 2018
  *
  */
 #ifndef __DATA_H__

@@ -5,7 +5,7 @@
  * contains the functional implementation of endianness ARM lookup
  *
  * @author Seth Miers and Jake Cazden
- * @date February 11, 2017
+ * @date February 11, 2018
  *
  */
 #include "arch_arm32.h"

@@ -6,7 +6,7 @@
  * as well as ensuring the PRINTF macro doesn't cause errors
  *
  * @author Seth Miers and Jake Cazden
- * @date February 11, 2017
+ * @date February 11, 2018
  *
  */
 #ifndef __PLATFORM_H__

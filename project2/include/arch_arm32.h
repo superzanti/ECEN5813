@@ -6,7 +6,7 @@
  * as relevent memory locations in ARM to allow this
  *
  * @author Seth Miers and Jake Cazden
- * @date February 11, 2017
+ * @date February 11, 2018
  *
  */
 #ifndef __ARCH_ARM32_H__

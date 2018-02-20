@@ -6,7 +6,7 @@
  * the function should print in a manner similar to a common unix hexdump
  *
  * @author Seth Miers and Jake Cazden
- * @date February 11, 2017
+ * @date February 11, 2018
  *
  */
 

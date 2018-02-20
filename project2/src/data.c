@@ -6,7 +6,7 @@
  * endianness and swap data endianness in a platform independent manner
  *
  * @author Seth Miers and Jake Cazden
- * @date February 11, 2017
+ * @date February 11, 2018
  *
  */
 #include "data.h"

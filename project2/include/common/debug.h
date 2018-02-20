@@ -5,7 +5,7 @@
  * contains a function to print hex from memory for a specified length
  *
  * @author Seth Miers and Jake Cazden
- * @date February 11, 2017
+ * @date February 11, 2018
  *
  */
 #ifndef __DEBUG_H__
