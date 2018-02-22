@@ -97,6 +97,7 @@ CB_e CB_buffer_add_item(CB_t* circbuff, BUFFER_TYPE data)
         /* data is trashed */
         return FULL;
     }
+    END_CRITICAL();
     *circbuff->head = data;
     circbuff->head = circbuff->head + sizeof(BUFFER_TYPE);
     circbuff->num_in++;
@@ -112,8 +113,12 @@ CB_e CB_buffer_add_item(CB_t* circbuff, BUFFER_TYPE data)
         circbuff->buff_full_flag = SET;
         /* this should never happen */
         if (circbuff->num_in != circbuff->buff_size)
+        {
+            START_CRITICAL();
             return CRITICAL_ERROR;
+        }
     }
+    START_CRITICAL();
     return SUCCESS;
 }
 
@@ -135,6 +140,7 @@ CB_e CB_buffer_remove_item(CB_t* circbuff, BUFFER_TYPE* data)
         return NO_BUFFER_IN_MEMORY;
     if ((CB_f)circbuff->buff_empty_flag == SET)
         return EMPTY;
+    END_CRITICAL();
     *data = *circbuff->tail;
     circbuff->tail = circbuff->tail + sizeof(BUFFER_TYPE);
     circbuff->num_in--;
@@ -150,8 +156,10 @@ CB_e CB_buffer_remove_item(CB_t* circbuff, BUFFER_TYPE* data)
         circbuff->buff_empty_flag = SET;
         /* this should never happen */
         if (circbuff->num_in != 0)
+            START_CRITICAL();
             return CRITICAL_ERROR;
     }
+    START_CRITICAL();
     return SUCCESS;
 }
 
