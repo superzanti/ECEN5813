@@ -99,7 +99,7 @@ CB_e CB_buffer_add_item(CB_t* circbuff, BUFFER_TYPE data)
     }
     END_CRITICAL();
     *circbuff->head = data;
-    circbuff->head = circbuff->head + sizeof(BUFFER_TYPE);
+    circbuff->head = circbuff->head + sizeof(BUFFER_TYPE); /* or just circbuff->head++; */
     circbuff->num_in++;
     circbuff->buff_empty_flag = UNSET;
     /* it's a circular buffer, so loop around if we go beyond the max */
@@ -142,7 +142,7 @@ CB_e CB_buffer_remove_item(CB_t* circbuff, BUFFER_TYPE* data)
         return EMPTY;
     END_CRITICAL();
     *data = *circbuff->tail;
-    circbuff->tail = circbuff->tail + sizeof(BUFFER_TYPE);
+    circbuff->tail = circbuff->tail + sizeof(BUFFER_TYPE); /* or just circbuff->tail++; */
     circbuff->num_in--;
     circbuff->buff_full_flag = UNSET;
     /* it's a circular buffer, so loop around if we go beyond the max */

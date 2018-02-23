@@ -12,6 +12,8 @@
  * @author Seth Miers and Jake Cazden
  * @date March 04, 2018
  *
+ * TODO should all size_ts be ints?
+ *
  */
 
 #ifndef __CIRCBUF_H__
