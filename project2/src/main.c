@@ -13,10 +13,16 @@
 #ifdef PROJECT1
     #include "project1.h"
 #endif
+#ifdef PROJECT2
+    #include "project2.h"
+#endif
 int main(void)
 {
     #ifdef PROJECT1
         project1();
+    #endif
+    #ifdef PROJECT1
+        project2();
     #endif
     return 0;
 }
