@@ -15,11 +15,26 @@
 /* Type definitions needed for function prototypes */
 #include <stdint.h>
 
-#define __SCB_ADDRESS (0xE0000000)
-#define __AIRCR_ADDRESS_OFFSET (0xED0C)
+#define __SCB_ADDRESS (0xE000E000)
+
+#define __AIRCR_ADDRESS_OFFSET (0xD0C)
 #define __AIRCR (__SCB_ADDRESS & __AIRCR_ADDRESS_OFFSET)
 #define __AIRCR_ENDIANNESS_OFFSET (15)
-#define __AIRCR_ENDIANNESS_MASK (0x0080)
+#define __AIRCR_ENDIANNESS_MASK (0x8000)
+
+#define __CPUID_ADDRESS_OFFSET (0xD00)
+#define __CPUID (__SCB_ADDRESS & __CPUID_ADDRESS_OFFSET)
+#define __CPUID_PART_NO_OFFSET (4)
+#define __CPUID_PART_NO_MASK (0xFFF0)
+
+#define __CCR_ADDRESS_OFFSET (0xD14)
+#define __CCR (__SCB_ADDRESS & __CCR_ADDRESS_OFFSET)
+#define __CCR_STK_ALIGNMENT_OFFSET (9)
+#define __CCR_STK_ALIGNMENT_MASK (0x200)
+#define __CCR_UNALIGNED_ACCESS_TRAP_OFFSET (3)
+#define __CCR_UNALIGNED_ACCESS_TRAP_MASK (0x8)
+#define __CCR_DIVIDE_BY_ZERO_TRAP_OFFSET (4)
+#define __CCR_DIVIDE_BY_ZERO_TRAP_MASK (0x10)
 
 /*
  * @brief function to get the endianness of a processor
@@ -66,6 +81,7 @@ uint32_t ARM32_CPUID_get_part_number();
  * this function uses direct memory dereferencing of the CCR
  * register to enable the divide by zero trap
  *
+ * @return void
  */
 void ARM32_CCR_enable_divide_by_zero_trap();
 
@@ -76,6 +92,7 @@ void ARM32_CCR_enable_divide_by_zero_trap();
  * this function uses direct memory dereferencing of the CCR
  * register to enable the unaligned access trap
  *
+ * @return void
  */
 void ARM32_CCR_enable_unaligned_access_trap();
 
@@ -84,15 +101,17 @@ void ARM32_CCR_enable_unaligned_access_trap();
  * 
  * this function never returns and uses a usage fault exception.
  *
+ * @return void
  */
 void ARM32_create_unaligned_access_trap();
 
 
 /*
- * @brief create a trap that gets triggerd when a divide by zero is made
+ * @brief performes a divide by zero in order to trap the microcontroller
  * 
  * this function never returns and uses a usage fault exception.
  *
+ * @return void
  */
 void ARM32_create_divide_by_zero_trap();
 

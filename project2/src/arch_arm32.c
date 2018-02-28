@@ -19,41 +19,44 @@ uint32_t ARM32_AIRCR_get_endianness_setting()
 __attribute__((always_inline))
 uint32_t ARM32_CCR_get_stack_alignment()
 {
-    uint32_t stack_alignment;
-    /* TODO implement function */
-    return stack_alignment;
+    volatile uint32_t *CCR = (uint32_t *)__CCR; /* volatile for instant access */
+    return ((*CCR & __STK_ALIGNMENT_MASK) >> __CCR_STK_ALIGNMENT_OFFSET);
 }
 
 __attribute__((always_inline))
 uint32_t ARM32_CPUID_get_part_number()
 {
-    uint32_t cpuid;
-    /* TODO implement function */
-    return cpuid;
+    volatile uint32_t *CPUIDReg = (uint32_t *)__CPUID; /* volatile for instant access */
+    return ((*CPUIDReg & __CPUID_PART_NO_MASK) >> __CPUID_PART_NO_OFFSET);
 }
 
 __attribute__((always_inline))
 void ARM32_CCR_enable_divide_by_zero_trap()
 {
-    /* TODO implement function */
+    volatile uint32_t *CCR = (uint32_t *)__CCR; /* volatile for instant access */
+    *CCR |= (1 << __CCR_DIVIDE_BY_ZERO_TRAP_OFFSET);
     return;
 }
 
 __attribute__((always_inline))
 void ARM32_CCR_enable_unaligned_access_trap()
 {
-    /* TODO implement function */
+    volatile uint32_t *CCR = (uint32_t *)__CCR; /* volatile for instant access */
+    *CCR |= (1 << __CCR_UNALIGNED_ACCESS_TRAP_OFFSET);
     return;
 }
 
 void ARM32_create_unaligned_access_trap(){
-    /* TODO implement function */
+    uint8_t unaligned_ptr;
+    uint32_t *ptr = (uint32_t *)(&unaligned_ptr);
+    /* this should never get here */
     while(1);
 }
 
 void ARM32_create_divide_by_zero_trap();
 {
-    /* TODO implement function */
+    uint8_t trap = (1/0);
+    /* this should never get here */
     while(1);
 }
 
