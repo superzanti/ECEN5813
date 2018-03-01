@@ -16,6 +16,12 @@
 #ifdef PROJECT2
     #include "project2.h"
 #endif
+#ifdef CMOCKA
+    #include "memory.h"
+    #include "conversion.h"
+    #include "data.h"
+    #include "circbuf.h"
+#endif
 int main(void)
 {
     #ifdef PROJECT1
@@ -23,6 +29,17 @@ int main(void)
     #endif
     #ifdef PROJECT1
         project2();
+    #endif
+    #ifdef CMOCKA
+        /* TODO create these functions in the header files  */
+        const UnitTest tests[] = 
+        {
+            unit_test(memory_test),
+            unit_test(conversion_test),
+            unit_test(data_test),
+            unit_test(circbuf_test),
+        };
+        return run_tests(tests);
     #endif
     return 0;
 }

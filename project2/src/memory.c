@@ -24,7 +24,6 @@
  *  #endif
  */
 
-/* TODO remove this if not allowed to use malloc and free */
 #include <stdlib.h>
 
 uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length)
