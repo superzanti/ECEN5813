@@ -15,6 +15,10 @@
 __attribute((always_inline))
 void GPIO_Configure()
 {
+    /* clock gating */
+    SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;
+	SIM_SCGC5 |= SIM_SCGC5_PORTD_MASK;
+
     /* set to use GPIO mode */
     PORTB_PCR18 |= PORT_PCR_MUX(1);
     PORTB_PCR19 |= PORT_PCR_MUX(1);
