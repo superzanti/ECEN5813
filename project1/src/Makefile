@@ -48,7 +48,7 @@ OUTPUT=project1.elf
 endif
 ifeq ($(PLATFORM), BBB)
 #	echo Building for platform: BBB
-CC=arm-linux-gnueabi-gcc
+CC=arm-linux-gnueabihf-gcc
 CFILES=$(FILES)
 CFLAGS =$(STD)\
 		-Wall\
@@ -90,7 +90,7 @@ CFLAGS =$(STD)\
 		--specs=nosys.specs
 CPPFLAGS =  $(INC_PARAMS)\
 			-D PROJECT1\
-			-D $(PLATFORM)\
+			-D $(PLATFORM)
 #			-D VERBOSE
 LDFLAGS = -Map=project1.map,-T,$(KL25ZLD)
 OUTPUT=project1.elf

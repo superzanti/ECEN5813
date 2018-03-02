@@ -1,0 +1,176 @@
+ISF - interrupt status flag
+IRQC - interrupt configuration register
+
+ (make sure to turn off ISF triggering DMA)
+-must register our interrupt service routine (ISR) with the vector table
+__enable_irq
+
+UART0_IRQn = 12
+
+#define HWREGREAD(x) (*((volatile uint16_t*)(x)))
+
+                                define clocks in SIM (system integration module) and MCG (multipurpose clock generator)
+
+                                clock - rate, clock divider (prescalars) clock gates (turn clock on and off), clock domains (not all clocks availale everywhere)
+
+                                SIM_SOPT (system options register) - uart clock select
+                                SIM_SCGC (systems clock gate control) - ungate the clock to the uart0
+                                potentially also gate control to port A
+
+
+NVIC interrupts (slide 14,15)
+GPIO config, 
+NVIC_EnableIRQ(IRQn_Type IRQn)
+
+NVIC_ISER - set enable register
+NVIC_ICER - clear enable register
+NVIC_ISPR - set pending register
+NVIC_ICPR - clear pending register
+NVIC_IPR0-7 - interrupt priority registers
+
+ICSR - interrupt control state register
+
+peripheral bridge/crossbar switch(XBS)
+system integration module (SIM)
+miscellaneous control module (MCM)
+multipurpose clock generator (MCG)
+UART!
+
+Address     vector  IRQ IPRnumber   source
+0x0000_0070 28      12  3           UART0 (IPRnumber = IRQ/4)
+0x0000_0074 28      13  3           UART1
+0x0000_0078 28      14  3           UART2
+
+NVICIPR3
+bitfield base NVICIPR3 = 8 * (IRQ % 4) + 6
+
+ARM core unified bus: crossbar master port number 0
+peripheral bridge 0: crossbar slave port 2
+
+----clock distribution - turn this on first, then enable the UART device--------
+                |   OSC     |   MCG     |   SIM                     |
+multiplexers    |   MCG_Cx  |   MCG_Cx  |   SIM_SOPT1, SIM_SOPT2    |
+Dividers        |           |   MCG_Cx  |   SIM_CLKDIVx             |
+clock gates     |   OSC_CR  |   MCG_C1  |   SIM_SCGCx               |
+
+MCGOUTCLK / OUTDIV1
+    -> clocks core, crossbar&NVIC, bus masters, bus slaves  and peripherals
+    -> core clock, platform clock, system clock, bus clock
+MCGFLLCLK (up to 48MHZ)
+    -> output of FLL, can be used for UART0
+MCGPLLCLK
+    -> output of PLL, can be used for UART0
+
+UART0 clock (up to 48MHz)
+    -> sources:
+        MCGIRCLK - internal reference, dont chose this
+        MCGPLLCLK/2 - enable in mcg clock controls (phase locked loop)
+        MCGFLLCLK - enable in mcg clock controls - this is fastest (probably) (frequency locked loop)
+        OSCERCLK - dont chose this
+    disabled if SIM_SOPT2[UART0SRC]= 00, or clock source is disabled
+
+        select with the following:
+            SIM_SOPT2[PLLFLLSEL] set to FLL
+            SIM_SOPT2[UART0SRC] set to PLL/FLL
+
+----signal multiplexing and signal descriptions------chapter 10-----------------
+    see the port control section
+    the port control module can be gated with SCGC5[PORTx]
+        these are *cleared* after every reset
+
+    UART0 options:
+        PTE20   Alt4 -- tx (default ADC)
+        PTE21   Alt4 -- rx (default ADC)
+
+        PTA1    Alt2 -- rx (default disabled)
+        PTA2    Alt2 -- tx (default disabled)
+
+        PTA14   Alt3 -- tx (default disabled)
+        PTA15   Alt3 -- rx (default disabled)
+
+        PTB16   Alt3 -- rx (defaultt TSIO)
+        PTB17   Alt3 -- tx (defaultt TSIO)
+
+        PTD6    Alt3 -- rx (defaultt ADC)
+        PTD7    Alt3 -- tx (defaultt disabled)
+
+----Port control and interrupts------------------------chapter 11---------------
+
+    PORTA_PCR1
+    see page 183+
+
+----SIM control----------------------------------------chapter 12---------------SUPERVISOR MODE
+    SIM_SOPT2 = 4004_8004 - system options for uart, etc
+    27-26 UART0SRC - 01 for FLL/PLL clk
+    16    PLLFLLSEL - 0 for MCGFLLCLK
+
+    SIM_SOPT5 = 4004_8010 - choose rx and tx sources
+    2   UART0RXSRC - 0 for UART0_RX pin
+    1-0 UART0TXSRC - 00 for UART0_TX pin
+
+    SIM_SCGC4 = 4004_8034 - clock gating to uart, etc
+    10 - UART0 - 1=enabled 0=disabled
+    11 - UART1
+    12 - UART2
+
+    SIM_SCGC5 = 4004_8038 - enable clocks to pin control
+    13 - PORTE - 1=enabled
+    12 - PORTD
+    11 - PORTC
+    10 - PORTB
+    9  - PORTA
+
+----MCG SETUP----------------------------------------------chapter 24-----------SUPERVISOR MODE
+    pray this  is done right in the init function. also, call the init function
+
+----UART0--------------------------------------------------chapter  39----------
+
+    transmitting:
+        UART_D - Tx buffer
+
+
+    UART0_BDH (baud rate high) - 4006_A000 - recieve and transmit both disabled
+        LBKDIE  - 7 - LIN break detect interrupt enable (for LBKDIF) 0=polling, 1=hardware interrupt when UART_S2[LBKDIF] = 1
+        RXEDGIE - 6 - RX input active edge interrupt enable - 0=use polling, 1=hardware interrupt when UART_S2[RXEDGIF] = 1
+        SBNS    - 5 - stop bit select - 0=1 stop bit, 1=2 stop bit
+        SBR     - 4-0 - baud rate modulo divisor top bits
+
+    UART0_BDL (baud rate low) - recieve and transmit both disabled
+        SBR     - 7-0 - baud rate modulo divisor - baud rate = baud clock/((osr+1)*br)
+
+    UART0_C1 - (control 1) - make sure recieve and transmit are disabled when writing
+        LOOPS   7 - 0 rx and tx use separate pins
+        DOZEEN  6 - 0 uart is enabled in wait mode, 1 uart is disabled in wait mode
+        RSRC    5 - no meaning when loops is 0
+        M       4 - 0 use 8 bit, 1 use 9 bit characters
+        WAKE    3 - 0 idle line wakeup, 1 address mark wakeup
+        ILT     2 - 1 idle character bit count starts after stop bit
+        PE      1 - 0 no parity, 1 parity enabled
+        PT      0 - 0 even parity 1 odd parity
+
+    UART0_C2 - (control 2) - read/write whenever
+        TIE     7 - transmit interrupt enable for TDRE - 1 hardware interrupt requested when TDRE flag is 1
+        TCIE    6 - transmit complete interrupt enable for TC - 1 hardware interrupt requested when TC flag is 1
+        RIE     5 - reciever interrupt enable for RDRF - 1 hardware interrupt requested when RDRF=1
+        ILIE    4 - idle line interrupt enable - 1 hardware interrupt when IDLE flag is 1
+        TE      3 - transmit enable -  1 transmitter enabled
+        RE      2 - reciever enable - 1 reciever enabled
+        RWU     1 - reciever wakeup control - 0 for normal operation, 1 for standby operation
+        SBK     0 - send break - 1 then 0 queues a break character in the transmit stream
+
+    UART0_S1 - (status 1) - 
+        TDRE    7 - transmit data register empty flag - 1=empty
+        TC      6 - transmit complete flag - 1 when both TDRE=1 and nothing is *actively* transmitting
+        RDRF    5 - recieve data register full flag 1=buffer full
+        IDLE    4 - idle line detect flag - 1=idle line was detected - write 1 to clear
+        OR      3 - reciever overrun flag - 1=reciever overrun (new uart data lost) - write 1 to clear
+        NF      2 - noise detect flag - write 1 to clear
+        FE      1 - framing error flag - write 1 to clear
+        PF      0 - parity error flag - write 1 to clear
+
+    UART0_S2 - (status 2) - dont use this, we dont need it
+    UART0_C3 - (CONTROL3) - we dont need these either
+
+    UART0_D - data - this goes to 2 separate locations!!! reads read from Rxd
+        writes write to Txd (FULL DUPLEX)
+
