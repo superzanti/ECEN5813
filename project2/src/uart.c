@@ -110,7 +110,7 @@ UART_e UART_configure()
      * SBK = 0, dont send break character
      * */
     UART0_C2 =   UART0_C2_TIE(UART0_C2_TIE_DISABLED)
-                |UART0_C2_TCIE(UART0_C2_TCIE_DISABLED)/*disabled till we need to send*/
+                |UART0_C2_TCIE(UART0_C2_TCIE_DISABLED)
                 |UART0_C2_RIE(UART0_C2_RIE_ENABLED)
                 |UART0_C2_TLIE(UART0_C2_TLIE_DISABLED)
                 |UART0_C2_TE(UART0_C2_TE_DISABLED)
@@ -118,7 +118,8 @@ UART_e UART_configure()
                 |UART0_C2_RWU(UART0_C2_RWU_NOWAKEUP)
                 |UART0_C2_SBK(UART0_C2_SBK_NOBREAK);
 
-    /*register uart0_irqhandler with NVIC*//*TODO, how do we register the code?*/
+    /*register uart0_irqhandler with NVIC*/
+    /*should be done by having the samem symbol name UART0_IRQHandler*/
 
     /*enable specific UART0_IRQ in NVIC
      * NVIC_ISER (interrupt set enable register)
@@ -131,14 +132,251 @@ UART_e UART_configure()
      * cpsie/cpsid lowest bit, i think*/
     __enable_irq();
 
+
+    /* initialize the buffers */
+    CB_e bufferinitreturn1 = CB_init(recieve_buffer, BUFFER_LENGTH);
+    CB_e bufferinitreturn2 = CB_init(transmit_buffer, BUFFER_LENGTH);
+
     /*turn on UART0 transmit and recieve
      * UART0_C2[TE]=1
      * UART0_C2[RE]=1;
      * */
-    UART0_C2 |=  UART0_C2_TE(UART0_C2_TE_DISABLED)/*disabled till we need to send*/
+    UART0_C2 |=  UART0_C2_TE(UART0_C2_TE_ENABLED)
                 |UART0_C2_RE(UART0_C2_RE_ENABLED);
 
-    /* initialize the buffers */
-    CB_init(recieve_buffer, BUFFER_LENGTH);
-    CB_init(transmit_buffer, BUFFER_LENGTH);
+    if(bufferinnitreturn1 != SUCCESS || bufferinitreturn2 !=SUCCESS)
+    {
+        return FAILURE;
+    }
+
+    return SUCCESS;
 }
+
+/* @brief send a single character over the uart
+ *
+ * @param[in] uint8_t a pointer to a single character to send
+ * @return the status of the function defined by the enum UART_e
+ */
+UART_e UART_send(uint8_t *data)
+{
+    if(data==NULL)
+    {
+        return FAILURE;
+    }
+    uint8_t transmitenabledflag;
+    uint8_t transmitinterruptenabledflag;
+    if(UART0_C2_TCIE & UART0_C2_TCIE_MASK)/*check if transmit interrupt is enabled*/
+    {
+        transmitinterruptenabledflag=1;/*save initial state*/
+        UART0_C2 &= ~UART0_C2_TCIE(UART0_C2_TCIE_ENABLED);/*disable if not off*/
+    }
+    else
+    {
+        transmitinterruptenabledflag=0;/*save initial state*/
+    }
+    if(UART0_C2_TE & UART0_C2_TE_MASK)/*check if transmit is enabled*/
+    {
+        transmitenabledflag=1;/*save initial state*/
+    }
+    else
+    {
+        transmitenabledflag=0;/*save initial state*/
+        UART0_C2 |= UART0_C2_TE(UART0_C2_TE_ENABLED);/*enable if off*/
+    }
+
+    *(uint8_t*)UART0_D = *data;/*push data into UART0_D register*/ 
+    while(((UART0_S1 & UART0_S1_TC_MASK)>>UART0_S1_TC_SHIFT)==UART0_S1_TC_TRANSMITTING);/*block on transmit*/
+
+    if(!transmitenabledflag)
+    { /*restore transmit state*/
+        UART0_C2 &= ~UART0_C2_TE(UART0_C2_TE_ENABLED);
+    }
+    if(transmitinterruptenabledflag)
+    { /*restore transmit interrupt state*/
+        UART0_C2 |= UART0_C2_TCIE(UART0_C2_TCIE_ENABLED);
+    }
+    return SUCCESS;
+}
+
+/* @brief send n characters over the uart
+ *
+ * @param[in] uint8_t a poitner to an array of characters to send
+ * @param[in] size_t the number of bytes to send (treated as int)
+ * @return the status of the function defined by the enum UART_e
+ */
+UART_e UART_send_n(uint8_t *data, size_t num_bytes)
+{
+    if(data==NULL)
+    {
+        return FAILURE;
+    }
+    if(num_bytes==0)
+    {
+        return SUCCESS;
+    }
+    uint8_t transmitenabledflag;
+    uint8_t transmitinterruptenabledflag;
+    if(UART0_C2_TCIE & UART0_C2_TCIE_MASK)/*check if transmit interrupt is enabled*/
+    {
+        transmitinterruptenabledflag=1;/*save initial state*/
+        UART0_C2 &= ~UART0_C2_TCIE(UART0_C2_TCIE_ENABLED);/*disable if not off*/
+    }
+    else
+    {
+        transmitinterruptenabledflag=0;/*save initial state*/
+    }
+    if(UART0_C2_TE & UART0_C2_TE_MASK)/*check if transmit is enabled*/
+    {
+        transmitenabledflag=1;/*save initial state*/
+    }
+    else
+    {
+        transmitenabledflag=0;/*save initial state*/
+        UART0_C2 |= UART0_C2_TE(UART0_C2_TE_ENABLED);/*enable if off*/
+    }
+
+    size_t i = 0;
+    for(i=0;i<num_bytes;i++)
+    {/*block here and transmit all the data using UART_send*/
+        *(uint8_t*)UART0_D = *(data+i);/*push data into UART0_D register*/ 
+        while(((UART0_S1 & UART0_S1_TC_MASK)>>UART0_S1_TC_SHIFT)==UART0_S1_TC_TRANSMITTING);/*block on transmit*/
+    }
+
+    if(!transmitenabledflag)
+    { /*restore transmit state*/
+        UART0_C2 &= ~UART0_C2_TE(UART0_C2_TE_ENABLED);
+    }
+    if(transmitinterruptenabledflag)
+    { /*restore transmit interrupt state*/
+        UART0_C2 |= UART0_C2_TCIE(UART0_C2_TCIE_ENABLED);
+    }
+    return SUCCESS;
+}
+
+/* @brief recieve a character from the uart
+ *
+ * @param[out] uint8_t a poitner to the location where the character should be stored
+ * @return the status of the function defined by the enum UART_e
+ */
+UART_e UART_recieve(uint8_t *data)
+{
+    if(data==NULL)
+    {
+        return FAILURE;
+    }
+    uint8_t recieveenabledflag;
+    uint8_t recieveinterruptenabledflag;
+    if(UART0_C2_RIE & UART0_C2_RIE_MASK)/*check if reciever  interrupt is enabled*/
+    {
+        recieveinterruptenabledflag=1;/*save initial state*/
+        UART0_C2 &= ~UART0_C2_RIE(UART0_C2_RIE_ENABLED);/*disable if not off*/
+    }
+    else
+    {
+        recieveinterruptenabledflag=0;/*save initial state*/
+    }
+    if(UART0_C2_RE & UART0_C2_RE_MASK)/*check if recieve is enabled*/
+    {
+        transmitenabledflag=1;/*save initial state*/
+    }
+    else
+    {
+        transmitenabledflag=0;/*save initial state*/
+        UART0_C2 |= UART0_C2_RE(UART0_C2_RE_ENABLED);/*enable if off*/
+    }
+
+    while(((UART0_S1 & UART0_S1_RDRF_MASK)>>UART0_S1_RDRF_SHIFT)==UART0_S1_RDRF_EMPTY);/*block on recieve*/
+    *data = *(uint8_t*)UART0_D;/*read from UART0_D into data*/
+
+    if(!recieveenabledflag)
+    { /*restore recieve state to disabled if necessary*/
+        UART0_C2 &= ~UART0_C2_RE(UART0_C2_RE_ENABLED);
+    }
+    if(recieveinterruptenabledflag)
+    { /*restore recieve interrupt state to enabled if necessary*/
+        UART0_C2 |= UART0_C2_RIE(UART0_C2_RIE_ENABLED);
+    }
+    return SUCCESS;
+}
+
+/* @brief recieve n characters from the uart
+ *
+ * @param[out] uint8_t a poitner to the start of wehre characters shoudl be stored
+ * @return the status of the function defined by the enum UART_e
+ */
+UART_e UART_recieve_n(uint8_t *data, size_t num_bytes)
+{
+    if(data==NULL)
+    {
+        return FAILURE;
+    }
+    if(num_bytes==0)
+    {
+        return SUCCESS;
+    }
+    uint8_t recieveenabledflag;
+    uint8_t recieveinterruptenabledflag;
+    if(UART0_C2_RIE & UART0_C2_RIE_MASK)/*check if reciever  interrupt is enabled*/
+    {
+        recieveinterruptenabledflag=1;/*save initial state*/
+        UART0_C2 &= ~UART0_C2_RIE(UART0_C2_RIE_ENABLED);/*disable if not off*/
+    }
+    else
+    {
+        recieveinterruptenabledflag=0;/*save initial state*/
+    }
+    if(UART0_C2_RE & UART0_C2_RE_MASK)/*check if recieve is enabled*/
+    {
+        transmitenabledflag=1;/*save initial state*/
+    }
+    else
+    {
+        transmitenabledflag=0;/*save initial state*/
+        UART0_C2 |= UART0_C2_RE(UART0_C2_RE_ENABLED);/*enable if off*/
+    }
+
+    size_t i = 0;
+    for(i=0;i<num_bytes;i++);
+    {
+        while(((UART0_S1 & UART0_S1_RDRF_MASK)>>UART0_S1_RDRF_SHIFT)==UART0_S1_RDRF_EMPTY);/*block on recieve*/
+        *(data+i) = *(uint8_t*)UART0_D;/*read from UART0_D into data*/
+    }
+
+    if(!recieveenabledflag)
+    { /*restore recieve state to disabled if necessary*/
+        UART0_C2 &= ~UART0_C2_RE(UART0_C2_RE_ENABLED);
+    }
+    if(recieveinterruptenabledflag)
+    { /*restore recieve interrupt state to enabled if necessary*/
+        UART0_C2 |= UART0_C2_RIE(UART0_C2_RIE_ENABLED);
+    }
+    return SUCCESS;
+}
+
+/* @brief the itnerrupt request handler for the UART
+ */ /*TODO does this need an extern or static keyword?*/
+void UART0_IRQHandler()
+{
+    if(((UART0_S1 & UART0_S1_RDRF_MASK)>>UART0_S1_RDRF_SHIFT)==UART0_S1_RDRF_FULL)
+    {
+        volatile uint8_t sink = *(uint8_t*) UART0_D;
+        if(recieve_buffer!=NULL)
+        {/*discard the data to clear the flag*/
+            CB_buffer_add_item(recieve_buffer,sink);
+        }
+        sink=0;
+    }
+    if(((UART0_S1 & UART0_S1_TDRE_MASK)>>UART0_S1_TDRE_SHIFT)==UART0_S1_TDRE_EMPTY)
+    {
+        if(transmit_buffer!=NULL)
+        {
+            CB_e ret = CB_buffer_remove_item(transmit_buffer, (uint8_t*) UART0_D);
+        }
+        if(ret==EMPTY)
+        {
+            UART0_C2 &= ~(UART0_C2_TIE(UART0_C2_TIE_ENABLED));/*turn off transmit interrupt*/
+        }
+    }
+    NVIC_ClearPendingIRQ(UART0_IRQn);
+}
+

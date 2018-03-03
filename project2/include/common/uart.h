@@ -58,6 +58,7 @@
 #define UART0_C1_PT_DEFAULTPARTIY       (0)
 
 #define UART0_C2_TIE_DISABLED           (0)
+#define UART0_C2_TIE_ENABLED            (1)
 #define UART0_C2_TCIE_DISABLED          (0)
 #define UART0_C2_TCIE_ENABLED           (1)
 #define UART0_C2_RIE_ENABLED            (1)
@@ -69,7 +70,13 @@
 #define UART0_C2_RWU_NOWAKEUP           (0)
 #define UART0_C2_SBK_NOBREAK            (0)
 
+#define UART0_S1_TDRE_FULL              (0)
+#define UART0_S1_TC_EMPTY               (1)
+#define UART0_S1_RDRF_EMPTY             (0)
+#define UART0_S1_RDRF_FULL              (1)
+
 typedef enum {
+    FAILURE
     SUCCESS
 } UART_e;
 
