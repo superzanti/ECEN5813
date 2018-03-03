@@ -23,7 +23,7 @@
 #endif
 */
 /* what the circular buffer should initialize to */
-#define BUFFER_LENGTH                   (128)
+#define BUFFER_LENGTH                   (256)
 
 #define CALCULATED_BAUD_RATE/*TODO*/
 
@@ -119,4 +119,10 @@ UART_e UART_recieve_n(uint8_t *data, size_t num_bytes);
  */ /*TODO does this need an extern or static keyword?*/
 void UART0_IRQHandler();
 
+/* @brief enable transmit and interrupt for buffered interupt based transmission
+ *
+ * @param none
+ * @return the status of the function defined by the enum UART_e
+ */
+UART_e UART_start_buffered_transmission();
 #endif /*__UART_H__*/

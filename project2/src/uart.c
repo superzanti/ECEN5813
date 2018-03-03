@@ -141,7 +141,7 @@ UART_e UART_configure()
      * UART0_C2[TE]=1
      * UART0_C2[RE]=1;
      * */
-    UART0_C2 |=  UART0_C2_TE(UART0_C2_TE_ENABLED)
+    UART0_C2 |=  UART0_C2_TE(UART0_C2_TE_DISABLED)/*this will be turned on as needed*/
                 |UART0_C2_RE(UART0_C2_RE_ENABLED);
 
     if(bufferinnitreturn1 != SUCCESS || bufferinitreturn2 !=SUCCESS)
@@ -152,11 +152,6 @@ UART_e UART_configure()
     return SUCCESS;
 }
 
-/* @brief send a single character over the uart
- *
- * @param[in] uint8_t a pointer to a single character to send
- * @return the status of the function defined by the enum UART_e
- */
 UART_e UART_send(uint8_t *data)
 {
     if(data==NULL)
@@ -198,12 +193,6 @@ UART_e UART_send(uint8_t *data)
     return SUCCESS;
 }
 
-/* @brief send n characters over the uart
- *
- * @param[in] uint8_t a poitner to an array of characters to send
- * @param[in] size_t the number of bytes to send (treated as int)
- * @return the status of the function defined by the enum UART_e
- */
 UART_e UART_send_n(uint8_t *data, size_t num_bytes)
 {
     if(data==NULL)
@@ -253,11 +242,6 @@ UART_e UART_send_n(uint8_t *data, size_t num_bytes)
     return SUCCESS;
 }
 
-/* @brief recieve a character from the uart
- *
- * @param[out] uint8_t a poitner to the location where the character should be stored
- * @return the status of the function defined by the enum UART_e
- */
 UART_e UART_recieve(uint8_t *data)
 {
     if(data==NULL)
@@ -299,11 +283,6 @@ UART_e UART_recieve(uint8_t *data)
     return SUCCESS;
 }
 
-/* @brief recieve n characters from the uart
- *
- * @param[out] uint8_t a poitner to the start of wehre characters shoudl be stored
- * @return the status of the function defined by the enum UART_e
- */
 UART_e UART_recieve_n(uint8_t *data, size_t num_bytes)
 {
     if(data==NULL)
@@ -353,8 +332,6 @@ UART_e UART_recieve_n(uint8_t *data, size_t num_bytes)
     return SUCCESS;
 }
 
-/* @brief the itnerrupt request handler for the UART
- */ /*TODO does this need an extern or static keyword?*/
 void UART0_IRQHandler()
 {
     if(((UART0_S1 & UART0_S1_RDRF_MASK)>>UART0_S1_RDRF_SHIFT)==UART0_S1_RDRF_FULL)
@@ -380,3 +357,9 @@ void UART0_IRQHandler()
     NVIC_ClearPendingIRQ(UART0_IRQn);
 }
 
+UART_e UART_start_buffered_transmission()
+{
+    UART0_C2 |= UART0_C2_TE(UART0_C2_TE_ENABLED)/*begin transmission*/
+    UART0_C2 |= UART0_C2_TIE(UART0_C2_TIE_ENABLED) /*enable transmission interrupt*/
+    return SUCCESS
+}

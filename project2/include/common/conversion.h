@@ -34,14 +34,19 @@
 
 #define BASE_2_MAXDIGITS (32)
 
+#ifndef __ASCII_OFFSETS__
+#define __ASCII_OFFSETS__
 #define ASCII_OFFSET_0  (48)
 #define ASCII_OFFSET_9  (57)
 #define ASCII_OFFSET_A  (65)
-#define ASCII_OFFSET_A_ADDITION  (55)/*10+55= 'A'*/
+#define ASCII_OFFSET_Z  (90)
+#define ASCII_OFFSET_A_ADDITION  (55)/*10+55= 'A' for hex interpreting*/
 #define ASCII_OFFSET_F  (70)
 #define ASCII_OFFSET_LA  (97)
-#define ASCII_OFFSET_LA_ADDITION  (87)/*10+87= 'a'*/
+#define ASCII_OFFSET_LZ  (122)
+#define ASCII_OFFSET_LA_ADDITION  (87)/*10+87= 'a' for hex interpreting*/
 #define ASCII_OFFSET_LF  (102)
+#endif
 
 /**
  * @brief take the exponent of a number
