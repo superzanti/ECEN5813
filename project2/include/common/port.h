@@ -13,7 +13,7 @@
 #ifndef __PORT_H__
 #define __PORT_H__
 
-void print_cstd_type_sizes();
+#include <stdint.h>
 
 /* which gpio pin is the LED on? */
 /* These values are for the KL25Z */
@@ -43,7 +43,7 @@ void print_cstd_type_sizes();
  * @param none
  * @return void returns nothing
  */
-void GPIO_Configure();
+void inline GPIO_Configure();
 
 /**
  * @brief toggles the red LED state
@@ -54,7 +54,7 @@ void GPIO_Configure();
  * @param none
  * @return void returns nothing
  */
-void Toggle_Red_LED();
+void inline Toggle_Red_LED();
 
 /**
  * @brief sets an output to 1 (active high)
@@ -94,7 +94,7 @@ void PORTD_Clear(uint8_t bit_num);
  * @param the bit number to toggle on portB
  * @return void returns nothing
  */
-void PORTB_Toggle(uint8_t bit_num);
+void inline PORTB_Toggle(uint8_t bit_num);
 
 /**
  * @brief toggles the output of the pin
@@ -102,7 +102,7 @@ void PORTB_Toggle(uint8_t bit_num);
  * @param the bit number to toggle on portD
  * @return void returns nothing
  */
-void PORTD_Toggle(uint8_t bit_num);
+void inline PORTD_Toggle(uint8_t bit_num);
 
 
 #endif /*__PORT_H__*/

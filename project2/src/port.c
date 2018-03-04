@@ -13,7 +13,7 @@
 #include "MKL25Z4.h"
 
 __attribute((always_inline))
-void GPIO_Configure()
+void inline GPIO_Configure()
 {
     /* clock gating */
     SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;
@@ -35,13 +35,13 @@ void GPIO_Configure()
 }
 
 __attribute((always_inline))
-void Toggle_Red_LED()
+void inline Toggle_Red_LED()
 {
     GPIOB_PTOR |= (1 << RGB_RED_PIN);
 }
 
 __attribute((always_inline))
-void PORTB_Set(uint8_t bit_num)
+void inline PORTB_Set(uint8_t bit_num)
 {
     GPIOB_PSOR |= (1 << bit_num);
 }
@@ -53,25 +53,25 @@ void PORTD_Set(uint8_t bit_num)
 }
 
 __attribute((always_inline))
-void PORTB_Clear(uint8_t bit_num)
+void inline PORTB_Clear(uint8_t bit_num)
 {
     GPIOB_PCOR |= (1 << bit_num);
 }
 
 __attribute((always_inline))
-void PORTD_Clear(uint8_t bit_num)
+void inline PORTD_Clear(uint8_t bit_num)
 {
     GPIOD_PCOR |= (1 << bit_num);
 }
 
 __attribute((always_inline))
-void PORTB_Toggle(uint8_t bit_num)
+void inline PORTB_Toggle(uint8_t bit_num)
 {
     GPIOB_PTOR |= (1 << bit_num);
 }
 
 __attribute((always_inline))
-void PORTD_Toggle(uint8_t bit_num)
+void inline PORTD_Toggle(uint8_t bit_num)
 {
     GPIOD_PTOR |= (1 << bit_num);
 }

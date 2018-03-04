@@ -49,7 +49,7 @@
  *          0 for little endian
  *          1 for big endian
  */
-uint32_t ARM32_AIRCR_get_endianness_setting();
+uint32_t inline ARM32_AIRCR_get_endianness_setting();
 
 /*
  * @brief function to return the current stack alignment
@@ -63,7 +63,7 @@ uint32_t ARM32_AIRCR_get_endianness_setting();
  *              0 for 4-byte aligned
  *              1 for 8 byte aligned
  */
-uint32_t ARM32_CCR_get_stack_alignment();
+uint32_t inline ARM32_CCR_get_stack_alignment();
 
 /*
  * @brief function to return the CPUID (part number)
@@ -73,7 +73,7 @@ uint32_t ARM32_CCR_get_stack_alignment();
  *
  * @return uint32_t the cpuid
  */
-uint32_t ARM32_CPUID_get_part_number();
+uint32_t inline ARM32_CPUID_get_part_number();
 
 /*
  * @brief function to write to enable to devide by zero trap
@@ -83,7 +83,7 @@ uint32_t ARM32_CPUID_get_part_number();
  *
  * @return void
  */
-void ARM32_CCR_enable_divide_by_zero_trap();
+void inline ARM32_CCR_enable_divide_by_zero_trap();
 
 
 /*
@@ -94,7 +94,7 @@ void ARM32_CCR_enable_divide_by_zero_trap();
  *
  * @return void
  */
-void ARM32_CCR_enable_unaligned_access_trap();
+void inline ARM32_CCR_enable_unaligned_access_trap();
 
 /*
  * @brief create a trap that gets triggerd when an unaligned address is accessed
@@ -103,7 +103,7 @@ void ARM32_CCR_enable_unaligned_access_trap();
  *
  * @return void
  */
-void ARM32_create_unaligned_access_trap();
+void inline ARM32_create_unaligned_access_trap();
 
 
 /*
@@ -113,6 +113,6 @@ void ARM32_create_unaligned_access_trap();
  *
  * @return void
  */
-void ARM32_create_divide_by_zero_trap();
+void inline ARM32_create_divide_by_zero_trap();
 
 #endif /* __ARCH_ARM32_H__*/
