@@ -21,7 +21,7 @@ typedef struct{
     uint32_t miscellaneous;
 }charcounts;
 volatile charcounts statistics;
-#define CIRCBUF_HOST_LENGTH (5)
+#define CIRCBUF_HOST_LENGTH (256)
 
 #ifndef __ASCII_OFFSETS__
 #define __ASCII_OFFSETS__

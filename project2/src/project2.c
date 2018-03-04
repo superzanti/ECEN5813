@@ -34,34 +34,23 @@ void project2()
     uint8_t data=0;
     CB_e retval=SUCCESS;
 #ifdef HOST
-        uint8_t char_holder;
+    uint8_t char_holder=data;
+    printf("Type a string to be processed, return to submit\n");
 #endif
-    while( data!=ASCII_OFFSET_EOF || data!=EOF || data!=0xff || data!='.')
+    while( data!=ASCII_OFFSET_EOF && data!=EOF && data!=0xff && data!='.')
     {
 #ifdef HOST
-	printf("Type a string to be processed, return to submit\n");
 	do
 	{
+		if(data==ASCII_OFFSET_EOF||data==EOF||data==0xff||data=='.')break;
+		if(char_holder==ASCII_OFFSET_EOF||char_holder==EOF||char_holder==0xff|| char_holder=='.'||data!=char_holder)break;
         	char_holder = (uint8_t)getchar();
-        	if(CB_buffer_add_item(recieve_buffer,char_holder)!=SUCCESS)
-		{
-			printf("additem_failure\n");
-			return;
-		}
-		else printf("additem_success\n");
-		putchar(char_holder);
-	}while(char_holder!='\n'||char_holder!='\r'||char_holder!=ASCII_OFFSET_EOF||char_holder!=EOF||data!=0xff);
-#endif
-#ifdef DEBUG
-	printf("exiting_do_while_test\n");
+        	CB_buffer_add_item(recieve_buffer,char_holder);
+	}while(char_holder!='\n'&&char_holder!='\r'&&char_holder!=ASCII_OFFSET_EOF&&char_holder!=EOF&&char_holder!=0xff&& char_holder!='.');
 #endif
         retval=CB_buffer_remove_item(recieve_buffer, &data);
         if(retval==SUCCESS)
         {
-#ifdef HOST
-	printf("removeitem_success, Data = %c\n",data);
-#endif
-	
             if(data>=ASCII_OFFSET_0 && data<=ASCII_OFFSET_9)
             {
                 statistics.numeric++;
@@ -85,12 +74,6 @@ void project2()
                 statistics.miscellaneous++;
             }
         }
-#ifdef HOST
-	else
-	{
-		printf("removeitem_failure\n");
-	}
-#endif
     }
     dump_statistics();
 }
@@ -157,7 +140,7 @@ void dump_statistics()
     uint8_t string5[] = "\tMiscellaneous Characters: ";/*27 characters*/
     uint8_t string_miscellaneous[32] = {};
     length = my_itoa(statistics.miscellaneous,string_miscellaneous,10);
-    for(i=0;i<25;i++)
+    for(i=0;i<27;i++)
     {
         CB_buffer_add_item(transmit_buffer,*(string5+i));
     }
