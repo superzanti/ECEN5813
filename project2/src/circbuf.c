@@ -99,13 +99,13 @@ CB_e CB_buffer_add_item(CB_t* circbuff, BUFFER_TYPE data)
     }
     END_CRITICAL();
     *circbuff->head = data;
-    circbuff->head = circbuff->head + sizeof(BUFFER_TYPE); /* or just circbuff->head++; */
+    circbuff->head = circbuff->head + 1; /* or just circbuff->head++; */
     circbuff->num_in++;
     circbuff->buff_empty_flag = UNSET;
     /* it's a circular buffer, so loop around if we go beyond the max */
-    if (circbuff->head > (circbuff->base + (circbuff->buff_size - sizeof(BUFFER_TYPE))))
+    if (circbuff->head > (circbuff->base + (circbuff->buff_size - 1)))
     {
-        circbuff->head = circbuff->head - circbuff->buff_size + sizeof(BUFFER_TYPE);
+        circbuff->head = circbuff->base;
     }
     /* the buffer must be full since we added something and the following is true*/
     if (circbuff->head == circbuff->tail)
@@ -142,13 +142,13 @@ CB_e CB_buffer_remove_item(CB_t* circbuff, BUFFER_TYPE* data)
         return EMPTY;
     END_CRITICAL();
     *data = *circbuff->tail;
-    circbuff->tail = circbuff->tail + sizeof(BUFFER_TYPE); /* or just circbuff->tail++; */
+    circbuff->tail = circbuff->tail + 1; /* or just circbuff->tail++; */
     circbuff->num_in--;
     circbuff->buff_full_flag = UNSET;
     /* it's a circular buffer, so loop around if we go beyond the max */
-    if (circbuff->tail > (circbuff->base + (circbuff->buff_size - sizeof(BUFFER_TYPE))))
+    if (circbuff->tail > (circbuff->base + (circbuff->buff_size - 1)))
     {
-        circbuff->tail = circbuff->tail - circbuff->buff_size + sizeof(BUFFER_TYPE);
+        circbuff->tail = circbuff->base;
     }
     /* the buffer must be empty since we removed something and the following is true */
     if (circbuff->head == circbuff->tail)
@@ -223,7 +223,7 @@ CB_e CB_peek(CB_t* circbuff, size_t position, BUFFER_TYPE* data)
     /* it's a circular buffer, so loop around if we go beyond the max */
     if (peekdata < circbuff->base)
     {
-        peekdata = sizeof(BUFFER_TYPE)*(size_t)(circbuff->buff_size-1) + peekdata;
+        peekdata = 1*(size_t)(circbuff->buff_size-1) + peekdata;
     }
     *data = *(BUFFER_TYPE*)peekdata;
     return SUCCESS;

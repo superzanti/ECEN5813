@@ -10,7 +10,7 @@
  * @date March 04, 2018
  *
  */
-//#include <cmocka.h>
+#include "cmocka.h"
 #include "memory.h"
 #include "conversion.h"
 #include "data.h"
@@ -139,14 +139,14 @@ static void circbuf_test(void **state)
 int unittest(void)
 {
     /* TODO create these functions in the header files  */
-    const UnitTest tests[] = 
+    const struct CMUnitTest tests[] =
     {
-        unit_test(memory_test),
-        unit_test(conversion_test),
-        unit_test(data_test),
-        unit_test(circbuf_test),
+		cmocka_unit_test(memory_test),
+		cmocka_unit_test(conversion_test),
+		cmocka_unit_test(data_test),
+		cmocka_unit_test(circbuf_test),
     };
-    return run_tests(tests);
+    return cmocka_run_group_tests(tests, NULL, NULL);
 }
 
 
