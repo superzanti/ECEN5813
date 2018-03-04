@@ -70,12 +70,15 @@
 #define UART0_C2_SBK_NOBREAK            (0)
 
 #define UART0_S1_TDRE_FULL              (0)
-#define UART0_S1_TC_EMPTY               (1)
+#define UART0_S1_TDRE_EMPTY             (1)
 #define UART0_S1_RDRF_EMPTY             (0)
 #define UART0_S1_RDRF_FULL              (1)
 
+#define UART0_S1_TC_ACTIVE              (0)
+#define UART0_S1_TC_IDLE                (1)
+
 typedef enum {
-    UART_FAILURE
+    UART_FAILURE,
     UART_SUCCESS
 } UART_e;
 

@@ -17,6 +17,8 @@
 #include "MKL25Z4.h"
 #endif
 
+extern CB_t *const recieve_buffer;
+extern CB_t *const transmit_buffer;
 
 UART_e UART_configure()
 {
@@ -70,12 +72,12 @@ UART_e UART_configure()
      * SBR = (5 highest bits of baud rate)*/
     UART0_BDH = UART0_BDH_LBKDIE(UART0_BDH_LBKDIE_DISABLE)
                 |UART0_BDH_RXEDGIE(UART0_BDH_RXEDGIE_DISABLE)
-                |UART0_BDH_SBNS(UART0_BDH_SBNS_SINGLESTOPBIT)
-                |UART0_BDH_SBR((CALCULATED_BAUD_RATE&SBR_HIGHMASK)>>UART0_BDL_WIDTH);
+                |UART0_BDH_SBNS(UART0_BDH_SBNS_SINGLESTOPBIT);
+                /*|UART0_BDH_SBR((CALCULATED_BAUD_RATE & SBR_HIGHMASK)>>UART0_BDL_SBR_WIDTH);*/
 
     /*set uart0 baud rate low register
      * SBR = (8 lower bits of baud rate)*/
-    UART0_LDH = UART0_LDH_SBR(CALCULATED_BAUD_RATE&SBR_LOWMASK);
+    /*UART0_BDL = UART0_LDH_SBR(CALCULATED_BAUD_RATE&SBR_LOWMASK);*/
 
     /*set uart0 control 1 register
      * LOOPS = 0 - no looback
@@ -109,7 +111,7 @@ UART_e UART_configure()
     UART0_C2 =   UART0_C2_TIE(UART0_C2_TIE_DISABLED)
                 |UART0_C2_TCIE(UART0_C2_TCIE_DISABLED)
                 |UART0_C2_RIE(UART0_C2_RIE_ENABLED)
-                |UART0_C2_TLIE(UART0_C2_TLIE_DISABLED)
+                |UART0_C2_ILIE(UART0_C2_TLIE_DISABLED)
                 |UART0_C2_TE(UART0_C2_TE_DISABLED)
                 |UART0_C2_RE(UART0_C2_RE_DISABLED)
                 |UART0_C2_RWU(UART0_C2_RWU_NOWAKEUP)
@@ -121,7 +123,7 @@ UART_e UART_configure()
     /*enable specific UART0_IRQ in NVIC
      * NVIC_ISER (interrupt set enable register)
      * or NVIC_EnableIRQ(IRQn_Type IRQn)*/
-    NVIC_ClearPending(UART0_IRQn);
+    NVIC_ClearPendingIRQ(UART0_IRQn);
     NVIC_EnableIRQ(UART0_IRQn);
 
     /*enable general NVIC interrupts
@@ -141,7 +143,7 @@ UART_e UART_configure()
     UART0_C2 |=  UART0_C2_TE(UART0_C2_TE_DISABLED)/*this will be turned on as needed*/
                 |UART0_C2_RE(UART0_C2_RE_ENABLED);
 
-    if(bufferinnitreturn1 != SUCCESS || bufferinitreturn2 !=SUCCESS)
+    if(bufferinitreturn1 != SUCCESS || bufferinitreturn2 !=SUCCESS)
     {
         return UART_FAILURE;
     }
@@ -157,7 +159,7 @@ UART_e UART_send(uint8_t *data)
     }
     uint8_t transmitenabledflag;
     uint8_t transmitinterruptenabledflag;
-    if(UART0_C2_TCIE & UART0_C2_TCIE_MASK)/*check if transmit interrupt is enabled*/
+    if(UART0_C2 & UART0_C2_TCIE_MASK)/*check if transmit interrupt is enabled*/
     {
         transmitinterruptenabledflag=1;/*save initial state*/
         UART0_C2 &= ~UART0_C2_TCIE(UART0_C2_TCIE_ENABLED);/*disable if not off*/
@@ -166,7 +168,7 @@ UART_e UART_send(uint8_t *data)
     {
         transmitinterruptenabledflag=0;/*save initial state*/
     }
-    if(UART0_C2_TE & UART0_C2_TE_MASK)/*check if transmit is enabled*/
+    if(UART0_C2 & UART0_C2_TE_MASK)/*check if transmit is enabled*/
     {
         transmitenabledflag=1;/*save initial state*/
     }
@@ -176,8 +178,8 @@ UART_e UART_send(uint8_t *data)
         UART0_C2 |= UART0_C2_TE(UART0_C2_TE_ENABLED);/*enable if off*/
     }
 
-    *(uint8_t*)UART0_D = *data;/*push data into UART0_D register*/ 
-    while(((UART0_S1 & UART0_S1_TC_MASK)>>UART0_S1_TC_SHIFT)==UART0_S1_TC_TRANSMITTING);/*block on transmit*/
+    UART0_D = *data;/*push data into UART0_D register*/
+    while(((UART0_S1 & UART0_S1_TC_MASK)>>UART0_S1_TC_SHIFT)==UART0_S1_TC_ACTIVE);/*block on transmit*/
 
     if(!transmitenabledflag)
     { /*restore transmit state*/
@@ -202,7 +204,7 @@ UART_e UART_send_n(uint8_t *data, size_t num_bytes)
     }
     uint8_t transmitenabledflag;
     uint8_t transmitinterruptenabledflag;
-    if(UART0_C2_TCIE & UART0_C2_TCIE_MASK)/*check if transmit interrupt is enabled*/
+    if(UART0_C2 & UART0_C2_TCIE_MASK)/*check if transmit interrupt is enabled*/
     {
         transmitinterruptenabledflag=1;/*save initial state*/
         UART0_C2 &= ~UART0_C2_TCIE(UART0_C2_TCIE_ENABLED);/*disable if not off*/
@@ -211,7 +213,7 @@ UART_e UART_send_n(uint8_t *data, size_t num_bytes)
     {
         transmitinterruptenabledflag=0;/*save initial state*/
     }
-    if(UART0_C2_TE & UART0_C2_TE_MASK)/*check if transmit is enabled*/
+    if(UART0_C2 & UART0_C2_TE_MASK)/*check if transmit is enabled*/
     {
         transmitenabledflag=1;/*save initial state*/
     }
@@ -224,8 +226,8 @@ UART_e UART_send_n(uint8_t *data, size_t num_bytes)
     size_t i = 0;
     for(i=0;i<num_bytes;i++)
     {/*block here and transmit all the data using UART_send*/
-        *(uint8_t*)UART0_D = *(data+i);/*push data into UART0_D register*/ 
-        while(((UART0_S1 & UART0_S1_TC_MASK)>>UART0_S1_TC_SHIFT)==UART0_S1_TC_TRANSMITTING);/*block on transmit*/
+        UART0_D = *(data+i);/*push data into UART0_D register*/
+        while(((UART0_S1 & UART0_S1_TC_MASK)>>UART0_S1_TC_SHIFT)==UART0_S1_TC_ACTIVE);/*block on transmit*/
     }
 
     if(!transmitenabledflag)
@@ -247,7 +249,7 @@ UART_e UART_recieve(uint8_t *data)
     }
     uint8_t recieveenabledflag;
     uint8_t recieveinterruptenabledflag;
-    if(UART0_C2_RIE & UART0_C2_RIE_MASK)/*check if reciever  interrupt is enabled*/
+    if(UART0_C2 & UART0_C2_RIE_MASK)/*check if reciever  interrupt is enabled*/
     {
         recieveinterruptenabledflag=1;/*save initial state*/
         UART0_C2 &= ~UART0_C2_RIE(UART0_C2_RIE_ENABLED);/*disable if not off*/
@@ -256,18 +258,18 @@ UART_e UART_recieve(uint8_t *data)
     {
         recieveinterruptenabledflag=0;/*save initial state*/
     }
-    if(UART0_C2_RE & UART0_C2_RE_MASK)/*check if recieve is enabled*/
+    if(UART0_C2 & UART0_C2_RE_MASK)/*check if recieve is enabled*/
     {
-        transmitenabledflag=1;/*save initial state*/
+    	recieveenabledflag=1;/*save initial state*/
     }
     else
     {
-        transmitenabledflag=0;/*save initial state*/
+    	recieveenabledflag=0;/*save initial state*/
         UART0_C2 |= UART0_C2_RE(UART0_C2_RE_ENABLED);/*enable if off*/
     }
 
     while(((UART0_S1 & UART0_S1_RDRF_MASK)>>UART0_S1_RDRF_SHIFT)==UART0_S1_RDRF_EMPTY);/*block on recieve*/
-    *data = *(uint8_t*)UART0_D;/*read from UART0_D into data*/
+    *data = UART0_D;/*read from UART0_D into data*/
 
     if(!recieveenabledflag)
     { /*restore recieve state to disabled if necessary*/
@@ -292,7 +294,7 @@ UART_e UART_recieve_n(uint8_t *data, size_t num_bytes)
     }
     uint8_t recieveenabledflag;
     uint8_t recieveinterruptenabledflag;
-    if(UART0_C2_RIE & UART0_C2_RIE_MASK)/*check if reciever  interrupt is enabled*/
+    if(UART0_C2 & UART0_C2_RIE_MASK)/*check if reciever  interrupt is enabled*/
     {
         recieveinterruptenabledflag=1;/*save initial state*/
         UART0_C2 &= ~UART0_C2_RIE(UART0_C2_RIE_ENABLED);/*disable if not off*/
@@ -301,13 +303,13 @@ UART_e UART_recieve_n(uint8_t *data, size_t num_bytes)
     {
         recieveinterruptenabledflag=0;/*save initial state*/
     }
-    if(UART0_C2_RE & UART0_C2_RE_MASK)/*check if recieve is enabled*/
+    if(UART0_C2 & UART0_C2_RE_MASK)/*check if recieve is enabled*/
     {
-        transmitenabledflag=1;/*save initial state*/
+        recieveenabledflag=1;/*save initial state*/
     }
     else
     {
-        transmitenabledflag=0;/*save initial state*/
+        recieveenabledflag=0;/*save initial state*/
         UART0_C2 |= UART0_C2_RE(UART0_C2_RE_ENABLED);/*enable if off*/
     }
 
@@ -315,7 +317,7 @@ UART_e UART_recieve_n(uint8_t *data, size_t num_bytes)
     for(i=0;i<num_bytes;i++);
     {
         while(((UART0_S1 & UART0_S1_RDRF_MASK)>>UART0_S1_RDRF_SHIFT)==UART0_S1_RDRF_EMPTY);/*block on recieve*/
-        *(data+i) = *(uint8_t*)UART0_D;/*read from UART0_D into data*/
+        *(data+i) = UART0_D;/*read from UART0_D into data*/
     }
 
     if(!recieveenabledflag)
@@ -333,7 +335,7 @@ void UART0_IRQHandler()
 {
     if(((UART0_S1 & UART0_S1_RDRF_MASK)>>UART0_S1_RDRF_SHIFT)==UART0_S1_RDRF_FULL)
     {
-        volatile uint8_t sink = *(uint8_t*) UART0_D;
+        volatile uint8_t sink = UART0_D;
         if(recieve_buffer!=NULL)
         {/*discard the data to clear the flag*/
             CB_buffer_add_item(recieve_buffer,sink);
@@ -342,9 +344,12 @@ void UART0_IRQHandler()
     }
     if(((UART0_S1 & UART0_S1_TDRE_MASK)>>UART0_S1_TDRE_SHIFT)==UART0_S1_TDRE_EMPTY)
     {
+    	CB_e ret = EMPTY;
+    	uint8_t temp;
         if(transmit_buffer!=NULL)
         {
-            CB_e ret = CB_buffer_remove_item(transmit_buffer, (uint8_t*) UART0_D);
+            ret = CB_buffer_remove_item(transmit_buffer, &temp);
+            UART0_D = temp;
         }
         if(ret==EMPTY)
         {
@@ -356,7 +361,7 @@ void UART0_IRQHandler()
 
 UART_e UART_start_buffered_transmission()
 {
-    UART0_C2 |= UART0_C2_TE(UART0_C2_TE_ENABLED)/*begin transmission*/
-    UART0_C2 |= UART0_C2_TIE(UART0_C2_TIE_ENABLED) /*enable transmission interrupt*/
-    return UART_SUCCESS
+    UART0_C2 |= UART0_C2_TE(UART0_C2_TE_ENABLED);/*begin transmission*/
+    UART0_C2 |= UART0_C2_TIE(UART0_C2_TIE_ENABLED); /*enable transmission interrupt*/
+    return UART_SUCCESS;
 }
