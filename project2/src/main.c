@@ -36,12 +36,12 @@ CB_t* transmit_buffer;
 #endif
 int main(void)
 {
-	recieve_buffer  = (CB_t*) malloc(sizeof(CB_t));
-	transmit_buffer  = (CB_t*) malloc(sizeof(CB_t));
     #ifdef PROJECT1
         project1();
     #endif
     #ifdef PROJECT2
+	recieve_buffer  = (CB_t*) malloc(sizeof(CB_t));
+	transmit_buffer  = (CB_t*) malloc(sizeof(CB_t));
         project2();
     #endif
     #ifdef CMOCKA

@@ -48,10 +48,14 @@ endif
 ifeq ($(PROJECT),PROJECT1)
 OUTPUT=project1.elf
 LDFLAGS += -Map=project1.map
+FILES += project1.c
+OBJS += project1.o
 endif
 ifeq ($(PROJECT),PROJECT2)
 OUTPUT=project2.elf
 LDFLAGS += -Map=project1.map
+FILES += project2.c
+OBJS += project2.o
 endif
 
 ifeq ($(PLATFORM), HOST)
