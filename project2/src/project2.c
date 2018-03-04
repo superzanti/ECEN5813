@@ -9,18 +9,42 @@
  * @date March 04, 2018
  *
  */
-#include"projec2.h"
+#include<stdint.h>
+#include"project2.h"
+#include"circbuf.h"
+#ifdef HOST
+#include<stdio.h>
+#endif
+#ifdef KL25Z
+#include"uart.h"
+#endif
+#
 
+extern CB_t *const recieve_buffer;
+extern CB_t *const transmit_buffer;
 void project2()
 {
+#ifdef KL25Z
     UART_configure();/*TODO put in better UART setup control*/
+#endif
+#ifdef HOST
+    CB_init(recieve_buffer, CIRCBUF_HOST_LENGTH);
+    CB_init(transmit_buffer, CIRCBUF_HOST_LENGTH);
+#endif
     if(recieve_buffer==NULL)return;
     if(transmit_buffer==NULL)return;
     uint8_t data=0;
     CB_e retval=SUCCESS;
-    while( data!=(uint8_t)EOF)
+#ifdef HOST
+        uint8_t char_holder;
+#endif
+    while( data!=ASCII_OFFSET_EOF)
     {
-        retval=CB_buffer_remove_item(recieve_buffer, BUFFER_TYPE* data)
+#ifdef HOST
+        char_holder = (uint8_t)getchar();
+        CB_buffer_add_item(recieve_buffer,char_holder);
+#endif
+        retval=CB_buffer_remove_item(recieve_buffer, &data);
         if(retval==SUCCESS)
         {
             if(data>=ASCII_OFFSET_0 && data<=ASCII_OFFSET_9)
@@ -32,12 +56,12 @@ void project2()
             {
                 statistics.alphabetic++;
             }
-            else if( data==(uint8_t)'\''|data==(uint8_t)'[' |data==(uint8_t)']'
-                    |data==(uint8_t)'{' |data==(uint8_t)'}' |data==(uint8_t)'('
-                    |data==(uint8_t)')' |data==(uint8_t)'<' |data==(uint8_t)'>'
-                    |data==(uint8_t)':' |data==(uint8_t)',' |data==(uint8_t)'.'
-                    |data==(uint8_t)'!' |data==(uint8_t)'-' |data==(uint8_t)'?'
-                    |data==(uint8_t)'"' |data==(uint8_t)';' |data==(uint8_t)'/')
+            else if( (data==(uint8_t)'\'')|(data==(uint8_t)'[' )|(data==(uint8_t)']')
+                    |(data==(uint8_t)'{' )|(data==(uint8_t)'}' )|(data==(uint8_t)'(')
+                    |(data==(uint8_t)')' )|(data==(uint8_t)'<' )|(data==(uint8_t)'>')
+                    |(data==(uint8_t)':' )|(data==(uint8_t)',' )|(data==(uint8_t)'.')
+                    |(data==(uint8_t)'!' )|(data==(uint8_t)'-' )|(data==(uint8_t)'?')
+                    |(data==(uint8_t)'"' )|(data==(uint8_t)';' )|(data==(uint8_t)'/'))
             {
                 statistics.punctuation++;
             }
@@ -57,73 +81,83 @@ void dump_statistics()
     uint8_t string1[] = "Statistics:\n";/*12 characters*/
     for(i=0;i<12;i++)
     {
-        CB_buffer_add_item(transmit_buffer,string1+i);
+        CB_buffer_add_item(transmit_buffer,*(string1+i));
     }
 
-    uint8_t string2[] = "\tAlphabetic Characters: "/*24 characters*/
+    uint8_t string2[] = "\tAlphabetic Characters: ";/*24 characters*/
     uint8_t string_alphabetic[32] = {};
     uint32_t length = my_itoa(statistics.alphabetic,string_alphabetic,10);
     uint8_t stringnewline[] = " \n";
     for(i=0;i<24;i++)
     {
-        CB_buffer_add_item(transmit_buffer,string2+i);
+        CB_buffer_add_item(transmit_buffer,*(string2+i));
     }
     for(i=0;i<length;i++)
     {
-        CB_buffer_add_item(transmit_buffer,string_alphabetic+i);
+        CB_buffer_add_item(transmit_buffer,*(string_alphabetic+i));
     }
     for(i=0;i<2;i++)
     {
-        CB_buffer_add_item(transmit_buffer,stringnewline+i);
+        CB_buffer_add_item(transmit_buffer,*(stringnewline+i));
     }
 
-    uint8_t string3[] = "\tNumeric Characters: "/*21 characters*/
+    uint8_t string3[] = "\tNumeric Characters: ";/*21 characters*/
     uint8_t string_numeric[32] = {};
     length = my_itoa(statistics.numeric,string_numeric,10);
     for(i=0;i<24;i++)
     {
-        CB_buffer_add_item(transmit_buffer,string3+i);
+        CB_buffer_add_item(transmit_buffer,*(string3+i));
     }
     for(i=0;i<length;i++)
     {
-        CB_buffer_add_item(transmit_buffer,string_numeric+i);
+        CB_buffer_add_item(transmit_buffer,*(string_numeric+i));
     }
     for(i=0;i<2;i++)
     {
-        CB_buffer_add_item(transmit_buffer,stringnewline+i);
+        CB_buffer_add_item(transmit_buffer,*(stringnewline+i));
     }
 
-    uint8_t string4[] = "\tPunctuation Characters: "/*25 characters*/
+    uint8_t string4[] = "\tPunctuation Characters: ";/*25 characters*/
     uint8_t string_punctuation[32] = {};
     length = my_itoa(statistics.punctuation,string_punctuation,10);
     for(i=0;i<25;i++)
     {
-        CB_buffer_add_item(transmit_buffer,string4+i);
+        CB_buffer_add_item(transmit_buffer,*(string4+i));
     }
     for(i=0;i<length;i++)
     {
-        CB_buffer_add_item(transmit_buffer,string_punctuation+i);
+        CB_buffer_add_item(transmit_buffer,*(string_punctuation+i));
     }
     for(i=0;i<2;i++)
     {
-        CB_buffer_add_item(transmit_buffer,stringnewline+i);
+        CB_buffer_add_item(transmit_buffer,*(stringnewline+i));
     }
 
-    uint8_t string5[] = "\tMiscellaneous Characters: "/*27 characters*/
+    uint8_t string5[] = "\tMiscellaneous Characters: ";/*27 characters*/
     uint8_t string_miscellaneous[32] = {};
     length = my_itoa(statistics.miscellaneous,string_miscellaneous,10);
     for(i=0;i<25;i++)
     {
-        CB_buffer_add_item(transmit_buffer,string5+i);
+        CB_buffer_add_item(transmit_buffer,*(string5+i));
     }
     for(i=0;i<length;i++)
     {
-        CB_buffer_add_item(transmit_buffer,string_miscellaneous+i);
+        CB_buffer_add_item(transmit_buffer,*(string_miscellaneous+i));
     }
     for(i=0;i<2;i++)
     {
-        CB_buffer_add_item(transmit_buffer,stringnewline+i);
+        CB_buffer_add_item(transmit_buffer,*(stringnewline+i));
     }
 
+#ifdef KL25Z
     UART_start_buffered_transmission();
+#endif
+#ifdef HOST
+    uint8_t char_to_print=0;
+    while(CB_is_empty(transmit_buffer)!=EMPTY)
+    {
+        CB_buffer_remove_item(transmit_buffer, &char_to_print);
+        printf("%c",char_to_print);
+    }
+#endif
 }

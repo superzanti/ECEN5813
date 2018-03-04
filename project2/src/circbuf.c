@@ -156,8 +156,10 @@ CB_e CB_buffer_remove_item(CB_t* circbuff, BUFFER_TYPE* data)
         circbuff->buff_empty_flag = SET;
         /* this should never happen */
         if (circbuff->num_in != 0)
+        {
             START_CRITICAL();
             return CRITICAL_ERROR;
+        }
     }
     START_CRITICAL();
     return SUCCESS;

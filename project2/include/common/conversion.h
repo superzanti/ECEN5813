@@ -46,6 +46,7 @@
 #define ASCII_OFFSET_LZ  (122)
 #define ASCII_OFFSET_LA_ADDITION  (87)/*10+87= 'a' for hex interpreting*/
 #define ASCII_OFFSET_LF  (102)
+#define ASCII_OFFSET_EOF  (4)
 #endif
 
 /**

@@ -17,9 +17,6 @@
 #include "MKL25Z4.h"
 #endif
 
-/* static to retain in any scope, const so that the compiler will complain if we touch this from this file */
-static CB_t *const recieve_buffer;
-static CB_t *const transmit_buffer;
 
 UART_e UART_configure()
 {
@@ -146,17 +143,17 @@ UART_e UART_configure()
 
     if(bufferinnitreturn1 != SUCCESS || bufferinitreturn2 !=SUCCESS)
     {
-        return FAILURE;
+        return UART_FAILURE;
     }
 
-    return SUCCESS;
+    return UART_SUCCESS;
 }
 
 UART_e UART_send(uint8_t *data)
 {
     if(data==NULL)
     {
-        return FAILURE;
+        return UART_FAILURE;
     }
     uint8_t transmitenabledflag;
     uint8_t transmitinterruptenabledflag;
@@ -190,18 +187,18 @@ UART_e UART_send(uint8_t *data)
     { /*restore transmit interrupt state*/
         UART0_C2 |= UART0_C2_TCIE(UART0_C2_TCIE_ENABLED);
     }
-    return SUCCESS;
+    return UART_SUCCESS;
 }
 
 UART_e UART_send_n(uint8_t *data, size_t num_bytes)
 {
     if(data==NULL)
     {
-        return FAILURE;
+        return UART_FAILURE;
     }
     if(num_bytes==0)
     {
-        return SUCCESS;
+        return UART_SUCCESS;
     }
     uint8_t transmitenabledflag;
     uint8_t transmitinterruptenabledflag;
@@ -239,14 +236,14 @@ UART_e UART_send_n(uint8_t *data, size_t num_bytes)
     { /*restore transmit interrupt state*/
         UART0_C2 |= UART0_C2_TCIE(UART0_C2_TCIE_ENABLED);
     }
-    return SUCCESS;
+    return UART_SUCCESS;
 }
 
 UART_e UART_recieve(uint8_t *data)
 {
     if(data==NULL)
     {
-        return FAILURE;
+        return UART_FAILURE;
     }
     uint8_t recieveenabledflag;
     uint8_t recieveinterruptenabledflag;
@@ -280,18 +277,18 @@ UART_e UART_recieve(uint8_t *data)
     { /*restore recieve interrupt state to enabled if necessary*/
         UART0_C2 |= UART0_C2_RIE(UART0_C2_RIE_ENABLED);
     }
-    return SUCCESS;
+    return UART_SUCCESS;
 }
 
 UART_e UART_recieve_n(uint8_t *data, size_t num_bytes)
 {
     if(data==NULL)
     {
-        return FAILURE;
+        return UART_FAILURE;
     }
     if(num_bytes==0)
     {
-        return SUCCESS;
+        return UART_SUCCESS;
     }
     uint8_t recieveenabledflag;
     uint8_t recieveinterruptenabledflag;
@@ -329,7 +326,7 @@ UART_e UART_recieve_n(uint8_t *data, size_t num_bytes)
     { /*restore recieve interrupt state to enabled if necessary*/
         UART0_C2 |= UART0_C2_RIE(UART0_C2_RIE_ENABLED);
     }
-    return SUCCESS;
+    return UART_SUCCESS;
 }
 
 void UART0_IRQHandler()
@@ -361,5 +358,5 @@ UART_e UART_start_buffered_transmission()
 {
     UART0_C2 |= UART0_C2_TE(UART0_C2_TE_ENABLED)/*begin transmission*/
     UART0_C2 |= UART0_C2_TIE(UART0_C2_TIE_ENABLED) /*enable transmission interrupt*/
-    return SUCCESS
+    return UART_SUCCESS
 }

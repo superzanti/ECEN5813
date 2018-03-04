@@ -12,9 +12,11 @@
  */
 #ifdef PROJECT1
     #include "project1.h"
+    #include "circbuf.h"
 #endif
 #ifdef PROJECT2
     #include "project2.h"
+    #include "circbuf.h"
 #endif
 #ifdef CMOCKA
     #include "memory.h"
@@ -22,12 +24,19 @@
     #include "data.h"
     #include "circbuf.h"
 #endif
+
+#ifdef PROJECT2
+/* static to retain in any scope, const so that the compiler will complain if we touch this from this file */
+static CB_t *const recieve_buffer;
+static CB_t *const transmit_buffer;
+#endif
+
 int main(void)
 {
     #ifdef PROJECT1
         project1();
     #endif
-    #ifdef PROJECT1
+    #ifdef PROJECT2
         project2();
     #endif
     #ifdef CMOCKA

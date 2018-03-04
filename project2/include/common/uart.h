@@ -16,13 +16,12 @@
 
 #include <stdint.h> /* for uint8_t */
 
-/* TODO should all size_t's be ints? */
 #include <stddef.h> /* for size_t */
 /*#ifdef KL25Z
 #include"startup_MKL25Z4.S"
 #endif
 */
-/* what the circular buffer should initialize to */
+/* what the circular buffer should initialize to *//*doubled this to fit tx message -JC*/
 #define BUFFER_LENGTH                   (256)
 
 #define CALCULATED_BAUD_RATE/*TODO*/
@@ -76,8 +75,8 @@
 #define UART0_S1_RDRF_FULL              (1)
 
 typedef enum {
-    FAILURE
-    SUCCESS
+    UART_FAILURE
+    UART_SUCCESS
 } UART_e;
 
 /* @brief configures the specified uart with specified settings
