@@ -29,43 +29,46 @@ ifndef PLATFORM
 PLATFORM=HOST
 endif
 
+ifdef VERBOSE
+CFLAGS+=-DVERBOSE
+endif
+
+ifndef PROJECT
+PROJECT=PROJECT1
+endif
+
 ifeq ($(PLATFORM), HOST)
 #	echo Building for platform: HOST
 CC=gcc
+FILES+=unittest.c
+OBJS+=unittest.c
 CFILES=$(FILES)
+		
 CFLAGS =$(STD)\
 		-Wall\
 		-Werror\
 		-Wfatal-errors\
 		-O0\
 		-g
-CPPFLAGS =  $(INC_PARAMS)\
-			-D PROJECT1\
+CPPFLAGS +=  $(INC_PARAMS)\
 			-D $(PLATFORM)\
-			-D VERBOSE
+			-D $(PROJECT)
 LDFLAGS = -Map=project1.map
 OUTPUT=project1.elf
 endif
 ifeq ($(PLATFORM), BBB)
 #	echo Building for platform: BBB
-CC=arm-linux-gnueabi-gcc
-CFILES=$(FILES)
-CFLAGS =$(STD)\
+CC=arm-linux-gnueabihf-gcc
+CFILES+=$(FILES)
+CFLAGS+=$(STD)\
 		-Wall\
 		-Werror\
 		-Wfatal-errors\
 		-O0\
 		-g
-#		-mcpu=cortex-a8\
-#		-mthumb\
-#		-march=armv7-a\
-#		-mfloat-abi=hard\
-#		-mfpu=neon\
-#		--specs=nosys.specs
-CPPFLAGS =  $(INC_PARAMS)\
-			-D PROJECT1\
+CPPFLAGS +=  $(INC_PARAMS)\
 			-D $(PLATFORM)\
-			-D VERBOSE
+			-D $(PROJECT)
 LDFLAGS = -Map=project1.map
 OUTPUT=project1.elf
 endif
@@ -74,8 +77,14 @@ ifeq ($(PLATFORM), KL25Z)
 CC=arm-none-eabi-gcc
 FILES+=startup_MKL25Z4.S\
 	system_MKL25Z4.c
+	port.c
+	arch_arm32.c
+	uart.c
 OBJS+= startup_MKL25Z4.o\
 	system_MKL25Z4.o
+	port.o
+	arch_arm32.o
+	uart.o
 CFILES=$(FILES)
 CFLAGS =$(STD)\
 		-Wall\
@@ -89,9 +98,8 @@ CFLAGS =$(STD)\
 		-mfloat-abi=soft\
 		--specs=nosys.specs
 CPPFLAGS =  $(INC_PARAMS)\
-			-D PROJECT1\
 			-D $(PLATFORM)\
-#			-D VERBOSE
+			-D $(PROJECT)
 LDFLAGS = -Map=project1.map,-T,$(KL25ZLD)
 OUTPUT=project1.elf
 endif
