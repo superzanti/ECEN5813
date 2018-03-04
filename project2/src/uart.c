@@ -17,8 +17,8 @@
 #include "MKL25Z4.h"
 #endif
 
-extern CB_t *const recieve_buffer;
-extern CB_t *const transmit_buffer;
+extern CB_t* recieve_buffer;
+extern CB_t* transmit_buffer;
 
 UART_e UART_configure()
 {

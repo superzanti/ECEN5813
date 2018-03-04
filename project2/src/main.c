@@ -10,6 +10,7 @@
  * @date February 11, 2017
  *
  */
+#include<stdlib.h>
 #ifdef PROJECT1
     #include "project1.h"
     #include "circbuf.h"
@@ -24,14 +25,19 @@
     #include "data.h"
     #include "circbuf.h"
 #endif
+#ifdef DEBUG
+#include<stdio.h>
+#endif
 
 #ifdef PROJECT2
 /* static to retain in any scope, const so that the compiler will complain if we touch this from this file */
-CB_t *const recieve_buffer;
-CB_t *const transmit_buffer;
+CB_t* recieve_buffer;
+CB_t* transmit_buffer;
 #endif
 int main(void)
 {
+	recieve_buffer  = (CB_t*) malloc(sizeof(CB_t));
+	transmit_buffer  = (CB_t*) malloc(sizeof(CB_t));
     #ifdef PROJECT1
         project1();
     #endif

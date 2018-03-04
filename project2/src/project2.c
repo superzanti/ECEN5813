@@ -12,15 +12,13 @@
 #include<stdint.h>
 #include"project2.h"
 #include"circbuf.h"
-#ifdef HOST
 #include<stdio.h>
-#endif
 #ifdef KL25Z
 #include"uart.h"
 #endif
 
-extern CB_t *const recieve_buffer;
-extern CB_t *const transmit_buffer;
+extern CB_t* recieve_buffer;
+extern CB_t* transmit_buffer;
 
 void project2()
 {
@@ -28,7 +26,7 @@ void project2()
     UART_configure();/*TODO put in better UART setup control*/
 #endif
 #ifdef HOST
-    CB_init(recieve_buffer, CIRCBUF_HOST_LENGTH);
+    if(CB_init(recieve_buffer, CIRCBUF_HOST_LENGTH)!=SUCCESS);
     CB_init(transmit_buffer, CIRCBUF_HOST_LENGTH);
 #endif
     if(recieve_buffer==NULL)return;
@@ -38,15 +36,32 @@ void project2()
 #ifdef HOST
         uint8_t char_holder;
 #endif
-    while( data!=ASCII_OFFSET_EOF)
+    while( data!=ASCII_OFFSET_EOF || data!=EOF || data!=0xff || data!='.')
     {
 #ifdef HOST
-        char_holder = (uint8_t)getchar();
-        CB_buffer_add_item(recieve_buffer,char_holder);
+	printf("Type a string to be processed, return to submit\n");
+	do
+	{
+        	char_holder = (uint8_t)getchar();
+        	if(CB_buffer_add_item(recieve_buffer,char_holder)!=SUCCESS)
+		{
+			printf("additem_failure\n");
+			return;
+		}
+		else printf("additem_success\n");
+		putchar(char_holder);
+	}while(char_holder!='\n'||char_holder!='\r'||char_holder!=ASCII_OFFSET_EOF||char_holder!=EOF||data!=0xff);
+#endif
+#ifdef DEBUG
+	printf("exiting_do_while_test\n");
 #endif
         retval=CB_buffer_remove_item(recieve_buffer, &data);
         if(retval==SUCCESS)
         {
+#ifdef HOST
+	printf("removeitem_success, Data = %c\n",data);
+#endif
+	
             if(data>=ASCII_OFFSET_0 && data<=ASCII_OFFSET_9)
             {
                 statistics.numeric++;
@@ -70,6 +85,12 @@ void project2()
                 statistics.miscellaneous++;
             }
         }
+#ifdef HOST
+	else
+	{
+		printf("removeitem_failure\n");
+	}
+#endif
     }
     dump_statistics();
 }

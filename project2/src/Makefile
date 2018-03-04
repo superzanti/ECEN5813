@@ -30,11 +30,28 @@ PLATFORM=HOST
 endif
 
 ifdef VERBOSE
-CFLAGS+=-DVERBOSE
+CFLAGS += -DVERBOSE
+endif
+
+ifdef DEBUG
+CFLAGS += -DDEBUG
+endif
+
+ifdef CMOCKA
+CFLAGS += -DCMOCKA
 endif
 
 ifndef PROJECT
 PROJECT=PROJECT2
+endif
+
+ifeq ($(PROJECT),PROJECT1)
+OUTPUT=project1.elf
+LDFLAGS += -Map=project1.map
+endif
+ifeq ($(PROJECT),PROJECT2)
+OUTPUT=project2.elf
+LDFLAGS += -Map=project1.map
 endif
 
 ifeq ($(PLATFORM), HOST)
@@ -42,7 +59,7 @@ ifeq ($(PLATFORM), HOST)
 CC=gcc
 CFILES=$(FILES)
 		
-CFLAGS =$(STD)\
+CFLAGS +=$(STD)\
 		-Wall\
 		-Werror\
 		-Wfatal-errors\
@@ -51,14 +68,12 @@ CFLAGS =$(STD)\
 CPPFLAGS +=  $(INC_PARAMS)\
 			-D $(PLATFORM)\
 			-D $(PROJECT)
-LDFLAGS = -Map=project1.map
-OUTPUT=project1.elf
 endif
 ifeq ($(PLATFORM), BBB)
 #	echo Building for platform: BBB
 CC=arm-linux-gnueabihf-gcc
-CFILES+=$(FILES)
-CFLAGS+=$(STD)\
+CFILES +=$(FILES)
+CFLAGS +=$(STD)\
 		-Wall\
 		-Werror\
 		-Wfatal-errors\
@@ -67,24 +82,22 @@ CFLAGS+=$(STD)\
 CPPFLAGS +=  $(INC_PARAMS)\
 			-D $(PLATFORM)\
 			-D $(PROJECT)
-LDFLAGS = -Map=project1.map
-OUTPUT=project1.elf
 endif
 ifeq ($(PLATFORM), KL25Z)
 #	echo Building for platform: KL25Z
 CC=arm-none-eabi-gcc
-FILES+=startup_MKL25Z4.S\
-	system_MKL25Z4.c
-	port.c
-	arch_arm32.c
+FILES +=startup_MKL25Z4.S\
+	system_MKL25Z4.c\
+	port.c\
+	arch_arm32.c\
 	uart.c
-OBJS+= startup_MKL25Z4.o\
-	system_MKL25Z4.o
-	port.o
-	arch_arm32.o
+OBJS += startup_MKL25Z4.o\
+	system_MKL25Z4.o\
+	port.o\
+	arch_arm32.o\
 	uart.o
-CFILES=$(FILES)
-CFLAGS =$(STD)\
+CFILES +=$(FILES)
+CFLAGS +=$(STD)\
 		-Wall\
 		-Werror\
 		-Wfatal-errors\
@@ -95,12 +108,12 @@ CFLAGS =$(STD)\
 		-march=armv6-m\
 		-mfloat-abi=soft\
 		--specs=nosys.specs
-CPPFLAGS =  $(INC_PARAMS)\
+CPPFLAGS +=  $(INC_PARAMS)\
 			-D $(PLATFORM)\
 			-D $(PROJECT)
-LDFLAGS = -Map=project1.map,-T,$(KL25ZLD)
-OUTPUT=project1.elf
+LDFLAGS += ,-T,$(KL25ZLD)
 endif
+
 
 .PHONY: all
 all: build
@@ -129,14 +142,3 @@ build: compile-all
 .PHONY: clean
 clean:
 	rm *.map *.out *.o *.d *.i *.asm *.elf
-#
-# compile to c89 standard				-std=c89
-# include 'include' directory			-I$(INC_DIR)
-# include 'include/common' directory 	-I$(INC_COMMON)
-# show all warnings 					-Wall
-# show all errors 						-Werror
-# stop compilation on first error 		-Wfatal-errors
-# no optimization 						-O0
-# define PROJECT1 						-D PROJECT1
-# define VERBOSE 						-D VERBOSE
-# compile with debugger support 		-g
