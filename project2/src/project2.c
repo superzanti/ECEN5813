@@ -21,6 +21,7 @@
 
 extern CB_t *const recieve_buffer;
 extern CB_t *const transmit_buffer;
+
 void project2()
 {
 #ifdef KL25Z

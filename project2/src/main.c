@@ -27,10 +27,9 @@
 
 #ifdef PROJECT2
 /* static to retain in any scope, const so that the compiler will complain if we touch this from this file */
-static CB_t *const recieve_buffer;
-static CB_t *const transmit_buffer;
+CB_t *const recieve_buffer;
+CB_t *const transmit_buffer;
 #endif
-
 int main(void)
 {
     #ifdef PROJECT1

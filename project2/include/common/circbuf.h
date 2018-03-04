@@ -22,6 +22,10 @@
 #include <stdint.h> /* for std ints: uint8_t, uint32_t */
 #include <stddef.h> /* for size_t */
 
+#ifdef KL25Z
+#include "MKL25Z4.h"
+#endif
+
 /*
  * quickly change what the type of the buffer is
  */
