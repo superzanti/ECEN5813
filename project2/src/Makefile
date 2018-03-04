@@ -34,14 +34,12 @@ CFLAGS+=-DVERBOSE
 endif
 
 ifndef PROJECT
-PROJECT=PROJECT1
+PROJECT=PROJECT2
 endif
 
 ifeq ($(PLATFORM), HOST)
 #	echo Building for platform: HOST
 CC=gcc
-FILES+=unittest.c
-OBJS+=unittest.c
 CFILES=$(FILES)
 		
 CFLAGS =$(STD)\
