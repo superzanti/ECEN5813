@@ -142,7 +142,7 @@ UART_e UART_configure()
      * UART0_C2[TE]=1
      * UART0_C2[RE]=1;
      * */
-    UART0_C2 |=  UART0_C2_TE(UART0_C2_TE_DISABLED)/*this will be turned on as needed*/
+    UART0_C2 |=  UART0_C2_TE(UART0_C2_TE_ENABLED)/*this will be turned on as needed*/
                 |UART0_C2_RE(UART0_C2_RE_ENABLED);
 
     if(bufferinitreturn1 != SUCCESS || bufferinitreturn2 !=SUCCESS)
@@ -338,6 +338,15 @@ void UART0_IRQHandler()
     if(((UART0_S1 & UART0_S1_RDRF_MASK)>>UART0_S1_RDRF_SHIFT)==UART0_S1_RDRF_FULL)
     {
         volatile uint8_t sink = UART0_D;
+        if(((UART0_S1 & UART0_S1_TDRE_MASK)>>UART0_S1_TDRE_SHIFT)==UART0_S1_TDRE_EMPTY)
+	{
+		UART0_D = sink;
+	}
+	else if(transmit_buffer!=NULL)
+	{
+		CB_buffer_add_item(transmit_buffer,sink);
+            	UART0_C2 |= (UART0_C2_TIE(UART0_C2_TIE_ENABLED));
+	}
         if(recieve_buffer!=NULL)
         {/*discard the data to clear the flag*/
             CB_buffer_add_item(recieve_buffer,sink);
@@ -355,7 +364,7 @@ void UART0_IRQHandler()
         }
         if(ret==EMPTY)
         {
-            UART0_C2 &= ~(UART0_C2_TIE(UART0_C2_TIE_ENABLED));/*turn off transmit interrupt*/
+            UART0_C2 &= ~(UART0_C2_TIE(UART0_C2_TIE_ENABLED));
         }
     }
     NVIC_ClearPendingIRQ(UART0_IRQn);
