@@ -100,6 +100,6 @@ void circbuf_test(void **state);
  * @param[in] a double void pointer to the state of the tests
  * @return void
  */
-int unittest(void);
+int unittest();
 
 #endif

@@ -28,6 +28,15 @@
 
 uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length)
 {
+    /* check for null pointers */
+    if(!dst)
+    {
+        return NULL;
+    }
+    if(!src)
+    {
+        return NULL;
+    }
     /* create a new array to copy into to prevent corruption */
     uint8_t my_array[length];
     /* copy our current array into the new array */
@@ -39,7 +48,11 @@ uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length)
 uint8_t * my_memcpy(uint8_t * src, uint8_t * dst, size_t length)
 {
     /* check for null pointers */
-    if(!src || !dst)
+    if(!dst)
+    {
+        return NULL;
+    }
+    if(!src)
     {
         return NULL;
     }

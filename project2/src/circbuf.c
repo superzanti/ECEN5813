@@ -34,7 +34,7 @@ CB_e CB_init(CB_t* circbuff, size_t buffer_size)
     if ((void*)circbuff == NULL)
         return BAD_POINTER;
     circbuff->buff_size = buffer_size;
-    circbuff->base = (BUFFER_TYPE*)malloc(((int)buffer_size)*sizeof(BUFFER_TYPE*));
+    circbuff->base = (BUFFER_TYPE*)malloc(((int)buffer_size)*sizeof(BUFFER_TYPE));
     circbuff->head = circbuff->base;
     circbuff->tail = circbuff->base;
     circbuff->num_in = 0;
@@ -155,11 +155,13 @@ CB_e CB_buffer_remove_item(CB_t* circbuff, BUFFER_TYPE* data)
     {
         circbuff->buff_empty_flag = SET;
         /* this should never happen */
+
         if (circbuff->num_in != 0)
         {
             START_CRITICAL();
             return CRITICAL_ERROR;
         }
+
     }
     START_CRITICAL();
     return SUCCESS;

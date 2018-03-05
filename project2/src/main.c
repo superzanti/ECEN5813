@@ -36,6 +36,9 @@ CB_t* transmit_buffer;
 #endif
 int main(void)
 {
+    #ifdef CMOCKA
+	return unittest();
+    #endif
     #ifdef PROJECT1
         project1();
     #endif
@@ -43,9 +46,6 @@ int main(void)
 	recieve_buffer  = (CB_t*) malloc(sizeof(CB_t));
 	transmit_buffer  = (CB_t*) malloc(sizeof(CB_t));
         project2();
-    #endif
-    #ifdef CMOCKA
-        unittest();
     #endif
     return 0;
 }

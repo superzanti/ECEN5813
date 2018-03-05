@@ -38,6 +38,8 @@ CFLAGS += -DDEBUG
 endif
 
 ifdef CMOCKA
+INCLUDES += ../cmocka/include ../cmocka/lib ../cmocka
+LIBS += -L../cmocka/lib -lcmocka
 CFLAGS += -DCMOCKA
 endif
 
@@ -131,22 +133,22 @@ all: build
 	$(CC) $(CPPFLAGS) -E $^ -o $@
 
 %.asm: %.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -S $^ -o $@
+	$(CC) $(CPPFLAGS) $(LIBS) $(CFLAGS) -S $^ -o $@
 
 %.o: %.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $^ -o $@
+	$(CC) $(CPPFLAGS) $(LIBS) $(CFLAGS) -c $^ -o $@
 %.o: %.S
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $^ -o $@
+	$(CC) $(CPPFLAGS) $(LIBS) $(CFLAGS) -c $^ -o $@
 
 %.d: %.c
-	$(CC) $(CPPFLAGS) -M $(CFLAGS) -c $^ -o $@
+	$(CC) $(CPPFLAGS) $(LIBS) -M $(CFLAGS) -c $^ -o $@
 
 .PHONY: compile-all
 compile-all: $(OBJS) $(DEPS)
 
 .PHONY: build
 build: compile-all
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Wl$(LDFLAGS) $(OBJS) -o $(OUTPUT)
+	$(CC) $(CPPFLAGS) $(LIBS) $(CFLAGS) -Wl$(LDFLAGS) $(OBJS) -o $(OUTPUT)
 
 .PHONY: clean
 clean:

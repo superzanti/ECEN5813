@@ -79,7 +79,7 @@ int32_t my_atoi(uint8_t * ptr, uint8_t digits, uint32_t base)
 {
 	if(!ptr)
 	{
-		return (uint32_t)NULL;
+		return (uint32_t)0;
 	}
     int8_t i = 0;
     uint8_t negative = 0;
