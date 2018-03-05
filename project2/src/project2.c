@@ -45,11 +45,11 @@ void project2()
 #ifdef HOST
 	do
 	{
-		if(data==ASCII_OFFSET_EOF||data==EOF)break;
+		if(data==ASCII_OFFSET_EOF||data==EOF||data==0xff)break;
 		if(char_holder==ASCII_OFFSET_EOF||char_holder==EOF||char_holder==0xff||data!=char_holder)break;
         	char_holder = (uint8_t)getchar();
         	CB_buffer_add_item(recieve_buffer,char_holder);
-	}while(char_holder!='\n'&&char_holder!='\r'&&char_holder!=ASCII_OFFSET_EOF&&char_holder!=EOF);
+	}while(char_holder!='\n'&&char_holder!='\r'&&char_holder!=ASCII_OFFSET_EOF&&char_holder!=EOF&&char_holder!=0xff);
 #endif
         retval=CB_buffer_remove_item(recieve_buffer, &data);
         if(retval==SUCCESS)
