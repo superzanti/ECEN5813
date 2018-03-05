@@ -47,11 +47,15 @@ endif
 
 ifeq ($(PROJECT),PROJECT1)
 OUTPUT=project1.elf
-LDFLAGS += -Map=project1.map
+LDFLAGS += ,-Map=project1.map
+FILES += project1.c
+OBJS += project1.o
 endif
 ifeq ($(PROJECT),PROJECT2)
 OUTPUT=project2.elf
-LDFLAGS += -Map=project1.map
+LDFLAGS += ,-Map=project2.map
+FILES += project2.c
+OBJS += project2.o
 endif
 
 ifeq ($(PLATFORM), HOST)
@@ -111,7 +115,12 @@ CFLAGS +=$(STD)\
 CPPFLAGS +=  $(INC_PARAMS)\
 			-D $(PLATFORM)\
 			-D $(PROJECT)
-LDFLAGS += ,-T,$(KL25ZLD)
+ifeq ($(PROJECT),PROJECT1)
+LDFLAGS = ,-Map=project1.map,-T,$(KL25ZLD)
+endif
+ifeq ($(PROJECT),PROJECT2)
+LDFLAGS = ,-Map=project2.map,-T,$(KL25ZLD)
+endif
 endif
 
 
@@ -137,7 +146,7 @@ compile-all: $(OBJS) $(DEPS)
 
 .PHONY: build
 build: compile-all
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Wl,$(LDFLAGS) $(OBJS) -o $(OUTPUT)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Wl$(LDFLAGS) $(OBJS) -o $(OUTPUT)
 
 .PHONY: clean
 clean:

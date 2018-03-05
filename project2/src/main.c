@@ -28,6 +28,9 @@
 #ifdef DEBUG
 #include<stdio.h>
 #endif
+#ifdef KL25Z
+#define CLOCK_SETUP (0)
+#endif
 
 #ifdef PROJECT2
 /* static to retain in any scope, const so that the compiler will complain if we touch this from this file */
@@ -36,12 +39,12 @@ CB_t* transmit_buffer;
 #endif
 int main(void)
 {
-	recieve_buffer  = (CB_t*) malloc(sizeof(CB_t));
-	transmit_buffer  = (CB_t*) malloc(sizeof(CB_t));
     #ifdef PROJECT1
         project1();
     #endif
     #ifdef PROJECT2
+	recieve_buffer  = (CB_t*) malloc(sizeof(CB_t));
+	transmit_buffer  = (CB_t*) malloc(sizeof(CB_t));
         project2();
     #endif
     #ifdef CMOCKA

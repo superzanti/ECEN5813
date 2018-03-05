@@ -24,8 +24,12 @@
 /* what the circular buffer should initialize to *//*doubled this to fit tx message -JC*/
 #define BUFFER_LENGTH                   (256)
 
-#define CALCULATED_BAUD_RATE/*TODO*/
-
+#define UART0_C4_OSR_SAMPLERATE		(0x09)
+/*#define BAUD_CLOCK			(DEFAULT_SYSTEM_CLOCK)*/
+#define BAUD_CLOCK			(48000000)
+#define BAUD_CALCULATION(x)             (BAUD_CLOCK/((UART0_C4_OSR_SAMPLERATE+1)*(x)))
+#define BAUD_RATE			(115200)
+#define CALCULATED_BAUD_MASK            (BAUD_CALCULATION(BAUD_RATE))
 #define CLEAR_PCR_ISF                   (1)
 #define DISABLE_PCR_IRQC                (0x00)
 #define PCR_MUX_ALT2                    (2)
@@ -63,9 +67,9 @@
 #define UART0_C2_RIE_ENABLED            (1)
 #define UART0_C2_TLIE_DISABLED          (0)
 #define UART0_C2_TE_DISABLED            (0)
-#define UART0_C2_TE_ENABLED             (0)
+#define UART0_C2_TE_ENABLED             (1)
 #define UART0_C2_RE_DISABLED            (0)
-#define UART0_C2_RE_ENABLED             (0)
+#define UART0_C2_RE_ENABLED             (1)
 #define UART0_C2_RWU_NOWAKEUP           (0)
 #define UART0_C2_SBK_NOBREAK            (0)
 

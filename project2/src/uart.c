@@ -65,6 +65,8 @@ UART_e UART_configure()
      * pin 10 (UART0) =1 to activate clock gate*/
     SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;/*set UART0 to recieve clocking*/
 
+    UART0_C4 |= UART0_C4_OSR(UART0_C4_OSR_SAMPLERATE);
+
     /*set uart0 baud rate high register
      * LBKDIE = 0, we arent using this interrupt
      * RXEDGIE = 0, we arent using this interrupt
@@ -72,12 +74,12 @@ UART_e UART_configure()
      * SBR = (5 highest bits of baud rate)*/
     UART0_BDH = UART0_BDH_LBKDIE(UART0_BDH_LBKDIE_DISABLE)
                 |UART0_BDH_RXEDGIE(UART0_BDH_RXEDGIE_DISABLE)
-                |UART0_BDH_SBNS(UART0_BDH_SBNS_SINGLESTOPBIT);
-                /*|UART0_BDH_SBR((CALCULATED_BAUD_RATE & SBR_HIGHMASK)>>UART0_BDL_SBR_WIDTH);*/
+                |UART0_BDH_SBNS(UART0_BDH_SBNS_SINGLESTOPBIT)
+                |UART0_BDH_SBR((CALCULATED_BAUD_MASK & SBR_HIGHMASK)>>UART0_BDL_SBR_WIDTH);
 
     /*set uart0 baud rate low register
      * SBR = (8 lower bits of baud rate)*/
-    /*UART0_BDL = UART0_LDH_SBR(CALCULATED_BAUD_RATE&SBR_LOWMASK);*/
+    UART0_BDL = UART0_BDL_SBR(CALCULATED_BAUD_MASK&SBR_LOWMASK);
 
     /*set uart0 control 1 register
      * LOOPS = 0 - no looback
@@ -140,7 +142,7 @@ UART_e UART_configure()
      * UART0_C2[TE]=1
      * UART0_C2[RE]=1;
      * */
-    UART0_C2 |=  UART0_C2_TE(UART0_C2_TE_DISABLED)/*this will be turned on as needed*/
+    UART0_C2 |=  UART0_C2_TE(UART0_C2_TE_ENABLED)/*this will be turned on as needed*/
                 |UART0_C2_RE(UART0_C2_RE_ENABLED);
 
     if(bufferinitreturn1 != SUCCESS || bufferinitreturn2 !=SUCCESS)
@@ -336,6 +338,15 @@ void UART0_IRQHandler()
     if(((UART0_S1 & UART0_S1_RDRF_MASK)>>UART0_S1_RDRF_SHIFT)==UART0_S1_RDRF_FULL)
     {
         volatile uint8_t sink = UART0_D;
+        if(((UART0_S1 & UART0_S1_TDRE_MASK)>>UART0_S1_TDRE_SHIFT)==UART0_S1_TDRE_EMPTY)
+	{
+		UART0_D = sink;
+	}
+	else if(transmit_buffer!=NULL)
+	{
+		CB_buffer_add_item(transmit_buffer,sink);
+            	UART0_C2 |= (UART0_C2_TIE(UART0_C2_TIE_ENABLED));
+	}
         if(recieve_buffer!=NULL)
         {/*discard the data to clear the flag*/
             CB_buffer_add_item(recieve_buffer,sink);
@@ -353,7 +364,7 @@ void UART0_IRQHandler()
         }
         if(ret==EMPTY)
         {
-            UART0_C2 &= ~(UART0_C2_TIE(UART0_C2_TIE_ENABLED));/*turn off transmit interrupt*/
+            UART0_C2 &= ~(UART0_C2_TIE(UART0_C2_TIE_ENABLED));
         }
     }
     NVIC_ClearPendingIRQ(UART0_IRQn);
