@@ -25,7 +25,9 @@
 #define BUFFER_LENGTH                   (256)
 
 #define UART0_C4_OSR_SAMPLERATE		(0x09)
-#define BAUD_CALCULATION(x)             (DEFAULT_SYSTEM_CLOCK/((UART0_C4_OSR_SAMPLERATE+1)*(x)))
+/*#define BAUD_CLOCK			(DEFAULT_SYSTEM_CLOCK)*/
+#define BAUD_CLOCK			(48000000)
+#define BAUD_CALCULATION(x)             (BAUD_CLOCK/((UART0_C4_OSR_SAMPLERATE+1)*(x)))
 #define BAUD_RATE			(115200)
 #define CALCULATED_BAUD_MASK            (BAUD_CALCULATION(BAUD_RATE))
 #define CLEAR_PCR_ISF                   (1)
