@@ -20,10 +20,7 @@
     #include "circbuf.h"
 #endif
 #ifdef CMOCKA
-    #include "memory.h"
-    #include "conversion.h"
-    #include "data.h"
-    #include "circbuf.h"
+    #include "unittest.h"
 #endif
 #ifdef DEBUG
 #include<stdio.h>
@@ -48,15 +45,7 @@ int main(void)
         project2();
     #endif
     #ifdef CMOCKA
-        /* TODO create these functions in the header files  */
-        const UnitTest tests[] = 
-        {
-            unit_test(memory_test),
-            unit_test(conversion_test),
-            unit_test(data_test),
-            unit_test(circbuf_test),
-        };
-        return run_tests(tests);
+        unittest();
     #endif
     return 0;
 }

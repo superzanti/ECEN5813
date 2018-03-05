@@ -18,7 +18,7 @@
 
 #define TEST_LENGTH (256)
 
-static void memory_test(void **state)
+void memory_test(void **state)
 {
     size_t length = TEST_LENGTH;
     uint8_t * src = (uint8_t *)reserve_words(length);
@@ -153,12 +153,12 @@ static void memory_test(void **state)
     }
 }
 
-static void conversion_test(void **state)
+void conversion_test(void **state)
 {
-	uint8_t * ptr_max = '4294967295';
-	uint8_t * ptr_min = '0000000000';
+	uint8_t ptr_max[10] = "4294967295";
+	uint8_t ptr_min[10] = "0000000000";
 	uint32_t statusi = 0;
-	uint8_t *statusa = '0000000000';
+	uint8_t statusa[10] = "0000000000";
 	uint8_t statusl = 0;
     /* send null pointer to atoi and assert that
      * a null pointer is returned */
@@ -178,7 +178,7 @@ static void conversion_test(void **state)
     /* send null pointer to itoi and assert that
      * a null pointer is returned */
 	statusl = my_itoa(4294967295, (void*)NULL, 10);
-    assert_null(statusl);
+    assert_int_equal(statusl, 0);
 
     /* test sending max sized integer to itoa
      * and assert that the returned value is correct */
@@ -199,7 +199,7 @@ static void conversion_test(void **state)
     }
 }
 
-static void data_test(void **state)
+void data_test(void **state)
 {
 	uint32_t status = 0;
 	uint8_t data_orig[4] = {1, 2, 4, 8};
@@ -216,7 +216,7 @@ static void data_test(void **state)
 	assert_int_equal(status,SWAP_NO_ERROR);
 	for(int i = 0; i<type_length; i++)
 	{
-		assert_int_equal(*(data+i), *(data_orig+(length-1)-i));
+		assert_int_equal(*(data+i), *(data_orig+(type_length-1)-i));
 	}
 
     /* test that a little endian to big endian
@@ -225,13 +225,13 @@ static void data_test(void **state)
 	assert_int_equal(status,SWAP_NO_ERROR);
 	for(int i = 0; i<type_length; i++)
 	{
-		assert_int_equal(*(data+i), *(data_orig+(length-1)-i));
+		assert_int_equal(*(data+i), *(data_orig+(type_length-1)-i));
 	}
 }
 
-static void circbuf_test(void **state)
+void circbuf_test(void **state)
 {
-	CB_t *my_cbuf = malloc(sizoef(CB_e));
+	CB_t *my_cbuf = malloc(sizeof(CB_e));
     size_t length = TEST_LENGTH;
     uint8_t data = '0';
     CB_e status = SUCCESS;

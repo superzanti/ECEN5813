@@ -30,7 +30,7 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
 {
 	if(!ptr)
 	{
-		return NULL;
+		return (uint8_t)0;
 	}
     uint8_t length=0;
     uint8_t negative=0;
@@ -79,7 +79,7 @@ int32_t my_atoi(uint8_t * ptr, uint8_t digits, uint32_t base)
 {
 	if(!ptr)
 	{
-		return NULL;
+		return (uint32_t)NULL;
 	}
     int8_t i = 0;
     uint8_t negative = 0;
