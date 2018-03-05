@@ -65,9 +65,9 @@
 #define UART0_C2_RIE_ENABLED            (1)
 #define UART0_C2_TLIE_DISABLED          (0)
 #define UART0_C2_TE_DISABLED            (0)
-#define UART0_C2_TE_ENABLED             (0)
+#define UART0_C2_TE_ENABLED             (1)
 #define UART0_C2_RE_DISABLED            (0)
-#define UART0_C2_RE_ENABLED             (0)
+#define UART0_C2_RE_ENABLED             (1)
 #define UART0_C2_RWU_NOWAKEUP           (0)
 #define UART0_C2_SBK_NOBREAK            (0)
 
