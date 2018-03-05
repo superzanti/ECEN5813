@@ -40,7 +40,7 @@ void project2()
     while(1)
     {
     data=0;
-    while( data!=ASCII_OFFSET_EOF && data!=EOF)
+    while( data!=ASCII_OFFSET_EOF && data!=EOF && data!=0xff)
     {
 #ifdef HOST
 	do

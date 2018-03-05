@@ -17,8 +17,6 @@
 #include "data.h"
 #include "circbuf.h"
 
-#include <stdio.h>
-
 #define TEST_LENGTH (256)
 
 void memory_test(void **state)
@@ -160,6 +158,7 @@ void conversion_test(void **state)
 {
 	uint8_t ptr_max[10] = "2147483647";
 	uint8_t ptr_min[11] = "-2147483647";
+	uint8_t ptr_min2[11] = "-2147483647";
 	uint32_t statusi = 0;
 	uint8_t statusa[10] = "0000000000";
 	uint8_t statusl = 0;
@@ -198,7 +197,7 @@ void conversion_test(void **state)
     assert_int_equal(statusl, 11);
     for(uint16_t i = 0; i<1; i++)
     {
-    	assert_int_equal(*(statusa+i), *(ptr_min+i));
+    	assert_int_equal(*(statusa+i), *(ptr_min2+i));
     }
 }
 
@@ -250,7 +249,6 @@ void circbuf_test(void **state)
      * assert that a buffer has been created */
 	status = CB_init(my_cbuf, length);
 	assert_int_equal(status, SUCCESS);
-	printf("start = %d\r\n", (int)my_cbuf->num_in);
 
     /* add then immediately remvoe and
      * assert that the same item was returned */

@@ -38,9 +38,12 @@ CFLAGS += -DDEBUG
 endif
 
 ifdef CMOCKA
+FILES += unittest.c
+OBJS += unittest.o
 INCLUDES += ../cmocka/include ../cmocka/lib ../cmocka
-LIBS += -L../cmocka/lib -lcmocka
+LIBS += -L../cmocka/lib
 CFLAGS += -DCMOCKA
+POSTFLAGS = -lcmocka
 endif
 
 ifndef PROJECT
@@ -148,7 +151,7 @@ compile-all: $(OBJS) $(DEPS)
 
 .PHONY: build
 build: compile-all
-	$(CC) $(CPPFLAGS) $(LIBS) $(CFLAGS) -Wl$(LDFLAGS) $(OBJS) -o $(OUTPUT)
+	$(CC) $(CPPFLAGS) $(LIBS) $(CFLAGS) -Wl$(LDFLAGS) $(OBJS) -o $(OUTPUT) $(POSTFLAGS)
 
 .PHONY: clean
 clean:

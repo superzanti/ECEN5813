@@ -3,5 +3,4 @@ SOURCES = main.c \
 		  memory.c \
 		  data.c \
 		  debug.c\
-		  unittest.c\
 		  circbuf.c
