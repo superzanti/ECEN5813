@@ -28,6 +28,9 @@
 #ifdef DEBUG
 #include<stdio.h>
 #endif
+#ifdef KL25Z
+#define CLOCK_SETUP (0)
+#endif
 
 #ifdef PROJECT2
 /* static to retain in any scope, const so that the compiler will complain if we touch this from this file */

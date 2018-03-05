@@ -65,6 +65,8 @@ UART_e UART_configure()
      * pin 10 (UART0) =1 to activate clock gate*/
     SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;/*set UART0 to recieve clocking*/
 
+    UART0_C4 |= UART0_C4_OSR(UART0_C4_OSR_SAMPLERATE);
+
     /*set uart0 baud rate high register
      * LBKDIE = 0, we arent using this interrupt
      * RXEDGIE = 0, we arent using this interrupt
@@ -72,12 +74,12 @@ UART_e UART_configure()
      * SBR = (5 highest bits of baud rate)*/
     UART0_BDH = UART0_BDH_LBKDIE(UART0_BDH_LBKDIE_DISABLE)
                 |UART0_BDH_RXEDGIE(UART0_BDH_RXEDGIE_DISABLE)
-                |UART0_BDH_SBNS(UART0_BDH_SBNS_SINGLESTOPBIT);
-                /*|UART0_BDH_SBR((CALCULATED_BAUD_RATE & SBR_HIGHMASK)>>UART0_BDL_SBR_WIDTH);*/
+                |UART0_BDH_SBNS(UART0_BDH_SBNS_SINGLESTOPBIT)
+                |UART0_BDH_SBR((CALCULATED_BAUD_MASK & SBR_HIGHMASK)>>UART0_BDL_SBR_WIDTH);
 
     /*set uart0 baud rate low register
      * SBR = (8 lower bits of baud rate)*/
-    /*UART0_BDL = UART0_LDH_SBR(CALCULATED_BAUD_RATE&SBR_LOWMASK);*/
+    UART0_BDL = UART0_BDL_SBR(CALCULATED_BAUD_MASK&SBR_LOWMASK);
 
     /*set uart0 control 1 register
      * LOOPS = 0 - no looback

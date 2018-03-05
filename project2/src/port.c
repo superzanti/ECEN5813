@@ -47,7 +47,7 @@ void inline PORTB_Set(uint8_t bit_num)
 }
 
 __attribute((always_inline))
-void PORTD_Set(uint8_t bit_num)
+void inline PORTD_Set(uint8_t bit_num)
 {
     GPIOD_PSOR |= (1 << bit_num);
 }
