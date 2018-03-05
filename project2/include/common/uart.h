@@ -24,11 +24,10 @@
 /* what the circular buffer should initialize to *//*doubled this to fit tx message -JC*/
 #define BUFFER_LENGTH                   (256)
 
-#define UART0_C4_OSR_SAMPLERATE		(0x09)
-/*#define BAUD_CLOCK			(DEFAULT_SYSTEM_CLOCK)*/
-#define BAUD_CLOCK			(48000000)
+#define UART0_C4_OSR_SAMPLERATE			(0x0f)
+#define BAUD_CLOCK						(CPU_INT_FAST_CLK_HZ)
 #define BAUD_CALCULATION(x)             (BAUD_CLOCK/((UART0_C4_OSR_SAMPLERATE+1)*(x)))
-#define BAUD_RATE			(115200)
+#define BAUD_RATE						(19200)
 #define CALCULATED_BAUD_MASK            (BAUD_CALCULATION(BAUD_RATE))
 #define CLEAR_PCR_ISF                   (1)
 #define DISABLE_PCR_IRQC                (0x00)
@@ -39,6 +38,11 @@
 #define SIM_SOPT2_UART0SRC_MCGIRCLK     (3)
 #define SIM_SOPT2_PLLFLLSEL_CLEAR       (1)
 #define SIM_SOPT2_PLLFLLSEL_FLLSRC      (0)
+
+#define MCG_C1_IRCLKEN_ENABLED			(1)
+#define MCG_C2_IRCS_FAST				(1)
+#define MCG_C2_FCRDIV_CLEAR				(7)
+#define MCG_C2_FCRDIV_NODIVISION		(0)
 
 #define SIM_SOPT5_UART0RXSRC_CLEAR      (1)
 #define SIM_SOPT5_UART0RXSRC_RXPIN      (0)
