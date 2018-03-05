@@ -28,6 +28,10 @@ int32_t exponent(int32_t base,int32_t power)
 
 uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
 {
+	if(!ptr)
+	{
+		return NULL;
+	}
     uint8_t length=0;
     uint8_t negative=0;
     if(data == 0)
@@ -73,6 +77,10 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
 
 int32_t my_atoi(uint8_t * ptr, uint8_t digits, uint32_t base)
 {
+	if(!ptr)
+	{
+		return NULL;
+	}
     int8_t i = 0;
     uint8_t negative = 0;
     int32_t return_value = 0;
