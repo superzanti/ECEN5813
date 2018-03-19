@@ -1,0 +1,16 @@
+# exclude everything except for certain files
+/*
+!/.gitignore
+!/code_as_pdf.pdf
+!/Architecture Diagram.xml
+!/Architecture_diagram_jakeCazden_SethMiers_V2.0.PNG
+!/Project2-character_test-ascii.txt
+!/README.md
+!/cmocka
+!/cmocka/.gitignore
+!/include
+!/include/.gitignore
+!/platform
+!/platform/.gitignore
+!/src
+!/src/.gitignore

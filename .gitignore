@@ -1,0 +1,11 @@
+# exclude everything except for certain files
+/*
+!/.gitignore
+!/README.md
+!/UART_ENABLE_NOTES.txt
+!/project1
+!/project1/.gitignore
+!/project2
+!/project2/.gitignore
+!/project3
+!/project3/.gitignore

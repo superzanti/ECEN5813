@@ -1,0 +1,10 @@
+# exclude everything except for certain files
+/*
+!/.gitignore
+!/code_as_pdf.pdf
+!/include
+!/include/.gitignore
+!/platform
+!/platform/.gitignore
+!/src
+!/src/.gitignore
