@@ -26,6 +26,26 @@
 
 #include <stdlib.h>
 
+uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value)
+{
+	/* TODO implement function */
+	#ifdef KL25Z
+	return src;
+	#else
+	return my_memmove(src, length, value);
+	#endif
+}
+
+uint8_t * memmove_dma(uint8_t * src, uint8_t * dst, size_t length)\
+{
+	/* TODO implement function */
+	#ifdef KL25Z
+	return dst;
+	#else
+	return my_memmove(src, dst, length);
+	#endif
+}
+
 uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length)
 {
     /* check for null pointers */

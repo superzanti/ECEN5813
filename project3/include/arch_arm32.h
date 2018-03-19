@@ -36,6 +36,23 @@
 #define __CCR_DIVIDE_BY_ZERO_TRAP_OFFSET (4)
 #define __CCR_DIVIDE_BY_ZERO_TRAP_MASK (0x10)
 
+#define __SYSTICK_ADDRESS_OFFSET (0x10)
+#define __SYSTICK_ENABLE_MASK (0x1)
+#define __SYSTICK_CLKSOURCE_MASK (0x4)
+#define __SYSTICK_TICKINT_MASK (0x2)
+#define __SYSTICK (__SCB_ADDRESS & __SYSTICK_ADDRESS_OFFSET)
+#define __CORE_CLOCK (48000000)   /* running at 48MHz */
+
+/*
+ * A struct to access the SysTick registers
+ */
+typedef struct {
+  volatile uint32_t CSR;          /* SysTick Control and Status Register: 0x0 */
+  volatile uint32_t RVR;          /* SysTick Reload Value Register: 0x4 */
+  volatile uint32_t CVR;          /* SysTick Current Value Register: 0x8 */
+  const uint32_t CALIB;           /* SysTick Calibration Value Register: 0xC */
+} volatile *SysTick_Ptr;
+
 /*
  * @brief function to get the endianness of a processor
  * 

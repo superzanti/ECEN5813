@@ -32,6 +32,26 @@
 #define RGB_BLUE_OFF() (PORTB_Clear( RGB_BLUE_PIN ))
 #define RGB_BLUE_TOGGLE() (PORTB_Toggle( RGB_BLUE_PIN ))
 
+/*
+ * @brief function to initialize the SysTick
+ *
+ * This function sets up the systick
+ * to loop over the maximum value it can
+ * and to us the core clock
+ *
+ * @return void
+ */
+void inline InitSysTick();
+
+/*
+ * @brief get the current time from systick
+ *
+ * simply returns the current time of the
+ * systick counter by returning the CVR register
+ *
+ * @return void
+ */
+uint32_t inline gettime();
 
 /**
  * @brief configures the RGB LEDs

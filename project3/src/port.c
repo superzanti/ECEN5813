@@ -11,6 +11,27 @@
 
 #include"port.h"
 #include "MKL25Z4.h"
+#include "arch_arm32.h" /* for use of systick */
+
+#define SysTick_Base_Ptr ((SysTick_Ptr)0xE000E010)
+__attribute((always_inline))
+void inline InitSysTick()
+{
+    SysTick_Base_Ptr->RVR = 0x00FFFFFF; /* maximum value */
+    SysTick_Base_Ptr->CSR = __SYSTICK_CLKSOURCE_MASK | __SYSTICK_ENABLE_MASK;
+}
+
+__attribute((always_inline))
+uint32_t inline gettime()
+{
+	return SysTick_Base_Ptr->CVR;
+}
+
+__attribute((always_inline))
+void inline GPIO_nrf_init()
+{
+	/* TODO implement function */
+}
 
 __attribute((always_inline))
 void inline GPIO_Configure()

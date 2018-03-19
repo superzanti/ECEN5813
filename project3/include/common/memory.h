@@ -17,6 +17,45 @@
 #include <stddef.h>
 
 /**
+ * @brief function to set an array of bytes all to the same value using DMA.
+ *
+ * This function takes in a poitner to an array of bytes
+ * then for a given number of bytes, writes a value to each
+ * of those bytes. This funciton uses DMA requests
+ * to do the writes. This is designed to work on 1, 2, and 4
+ * byte transfer sizes. This will trigger an interrupt when completed.
+ *
+ * This is currently only supported for the KL25Z FRDM Board
+ *
+ * @param src a pointer to the array of bytes that we will write over
+ * @param length the number of bytes to iterate through
+ * @param value the value to write to every byte in the array
+ * @return uint8_t a pointer to the source (simply returns src)
+ */
+uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value);
+
+/**
+ * @brief function to copy one byte array to another (overlap) using DMA.
+ *
+ * This function takes in 2 pointers to byte arrays.
+ * A source and a destination pointer are provided
+ * to the function as well as the length of the source bytes
+ * so the function knows how many to move over.
+ * This function handles overlap so that the data moved
+ * does not become corrupted. this function uses DMA requests
+ * to do the memory moves. This is designed to work on 1, 2, and 4
+ * byte transfer sizes. This will trigger an interrupt when completed.
+ *
+ * This is currently only supported for the KL25Z FRDM Board
+ *
+ * @param src a pointer to the array of bytes that we will move from
+ * @param dst a pointer to the array of bytes that we will move to
+ * @param length the number of bytes to move
+ * @return uint8_t a pointer to the destination
+ */
+uint8_t * memmove_dma(uint8_t * src, uint8_t * dst, size_t length);
+
+/**
  * @brief function to copy one byte array to another (overlap)
  * 
  * This function takes in 2 pointers to byte arrays.
