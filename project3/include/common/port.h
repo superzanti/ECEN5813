@@ -54,6 +54,17 @@ void inline InitSysTick();
 uint32_t inline gettime();
 
 /**
+ * @brief configures the spi/nrf interface
+ *
+ * Configures the gpio pins to have the proper
+ * configuration for spi and nrf
+ *
+ * @param none
+ * @return void returns nothing
+ */
+void inline GPIO_nrf_init();
+
+/**
  * @brief configures the RGB LEDs
  *
  * configures the gpios to be outputs for the
