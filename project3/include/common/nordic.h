@@ -85,7 +85,7 @@ void nrf_write_tx_addr(uint8_t * tx_addr);
  * @param none
  * @return uint8_t the value of the reigster
  */
-void nrf_read_fifo_status();
+uint8_t nrf_read_fifo_status();
 
 /**
  * @brief send the flush tx command
