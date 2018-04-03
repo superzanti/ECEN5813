@@ -2,7 +2,12 @@
  * @file nordic.c
  * @brief
  *
- *
+ * it's assumed that the NRF is connected to the KL25Z in the following manner
+ *       NRF     |     KL25z
+ *---------------|---------------
+ *        CE     ->    PTD0
+ *        GND    ->    GND
+ *        VCC    ->
  *
  *  @author Seth Miers and Jake Cazden
  *  @date March 15, 2018
