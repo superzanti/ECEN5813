@@ -39,7 +39,7 @@ void inline ARM32_CCR_enable_divide_by_zero_trap()
 }
 
 __attribute__((always_inline))
-void inline ARM32_CCR_enable_unaligned_access_trap()
+inline ARM32_CCR_enable_unaligned_access_trap()
 {
     volatile uint32_t *CCR = (uint32_t *)__CCR; /* volatile for instant access */
     *CCR |= (1 << __CCR_UNALIGNED_ACCESS_TRAP_OFFSET);

@@ -19,8 +19,9 @@
     #include "project2.h"
     #include "circbuf.h"
 #endif
-#ifdef PROJECT2
+#ifdef PROJECT3
     #include "project3.h"
+    #include "circbuf.h"
 #endif
 #ifdef CMOCKA
     #include "unittest.h"
@@ -32,7 +33,7 @@
 #define CLOCK_SETUP (0)
 #endif
 
-#ifdef PROJECT2
+#if defined(PROJECT2) || defined(PROJECT3)
 /* static to retain in any scope, const so that the compiler will complain if we touch this from this file */
 CB_t* recieve_buffer;
 CB_t* transmit_buffer;
@@ -54,6 +55,8 @@ int main(void)
     #endif
 
 	#ifdef PROJECT3
+        recieve_buffer  = (CB_t*) malloc(sizeof(CB_t));
+        transmit_buffer  = (CB_t*) malloc(sizeof(CB_t));
         project3();
 	#endif
 

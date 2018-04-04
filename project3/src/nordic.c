@@ -5,40 +5,52 @@
  * it's assumed that the NRF is connected to the KL25Z in the following manner
  *       NRF     |     KL25z
  *---------------|---------------
- *        CE     ->    PTD0
  *        GND    ->    GND
- *        VCC    ->
- *
+ *        VCC    ->    3.3V
+ *        CSN    ->    PTD0
+ *        CE     ->    PTD5
+ *        SCK    ->    PTD1
+ *        MOSI   ->    PTD2
+ *        MISO   ->    PTD3
+ *        IRQ    ->    NC
  *  @author Seth Miers and Jake Cazden
  *  @date March 15, 2018
  */
 
 #include "nordic.h"
+#include "port.h"
+#include "spi.h"
 
 uint8_t nrf_read_register(uint8_t readRegister)
 {
 	uint8_t command = 0x1F & readRegister;
-	SPI_write_byte(command);
 	uint8_t readByte = 0x00;
+	nrf_chip_enable();
+	SPI_write_byte(command);
 	SPI_read_byte(&readByte);
+	nrf_chip_disable();
 	return readByte;
 }
 
 void nrf_write_register(uint8_t writeRegister, uint8_t value)
 {
-	uint8_t command = 0x3F & writeRegister;
-	SPI_write_byte(command);
+	uint8_t command = 0x20 | (0x3F & writeRegister);
 	uint8_t readByte = 0x00;
+	nrf_chip_enable();
+	SPI_write_byte(command);
 	SPI_write_byte(value);
+	nrf_chip_disable();
 }
 
 __attribute((always_inline))
 uint8_t nrf_read_status()
 {
 	uint8_t command = 0xFF;
-	SPI_write_byte(command);
 	uint8_t readByte = 0x00;
+	nrf_chip_enable();
+	SPI_write_byte(command);
 	SPI_read_byte(&readByte);
+	nrf_chip_disable();
 	return readByte;
 }
 
@@ -91,15 +103,13 @@ void nrf_flush_rx_fifo()
 __attribute((always_inline))
 void inline nrf_chip_enable()
 {
-	/* TODO implement function */
-	/* raise the CE gpio to logical 1 */
+	PORTD_Clear(0);
 }
 
 __attribute((always_inline))
 void inline nrf_chip_disable()
 {
-	/* TODO implement function */
-	/* lower the CE gpio to logical 0 */
+	PORTD_Set(0);
 }
 
 __attribute((always_inline))

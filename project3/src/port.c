@@ -14,6 +14,7 @@
 #include "arch_arm32.h" /* for use of systick */
 
 #define SysTick_Base_Ptr ((SysTick_Ptr)0xE000E010)
+
 __attribute((always_inline))
 void inline InitSysTick()
 {
@@ -43,6 +44,7 @@ void inline GPIO_Configure()
     /* set to use GPIO mode */
     PORTB_PCR18 |= PORT_PCR_MUX(1);
     PORTB_PCR19 |= PORT_PCR_MUX(1);
+    PORTD_PCR1 |= PORT_PCR_MUX(1);
     PORTD_PCR1 |= PORT_PCR_MUX(1);
 
     /* set to outputs */

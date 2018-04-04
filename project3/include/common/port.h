@@ -74,7 +74,7 @@ void inline GPIO_nrf_init();
  * @param none
  * @return void returns nothing
  */
-void inline GPIO_Configure();
+extern void inline GPIO_Configure();
 
 /**
  * @brief toggles the red LED state

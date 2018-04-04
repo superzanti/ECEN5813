@@ -11,41 +11,55 @@
 #include "spi.h"
 #include "MKL25Z4.h"
 
+/* TODO move chip enable to function in spi.c */
+
 void SPI_init()
 {
 	/* TODO implement function */
 
 	/* Enable the clock for the SPI */
-	SIM->SCGC5 |= SIM_SCGC5_PORTD_MASK;
-	SIM->SCGC4 |= SIM_SCGC4_SPI0_MASK;
+	SIM_SCGC5 |= SIM_SCGC5_PORTD_MASK;
+	SIM_SCGC4 |= SIM_SCGC4_SPI0_MASK;
 
 	/* configure output pins */
-	PORTD->PCR[0] = PORT_PCR_MUX(2); /*PCS*/
-	PORTD->PCR[1] = PORT_PCR_MUX(2); /*SCLK*/
-	PORTD->PCR[2] = PORT_PCR_MUX(2); /*MOSI*/
-	PORTD->PCR[3] = PORT_PCR_MUX(2); /*MISO*/
+	PORTD_PCR0 = PORT_PCR_MUX(1); /*CE*/
+    GPIOD_PDDR |= (1 << 0); /* set to output */
+    GPIOD_PSOR |= (1 << 0); /* set high (off) */
+	PORTD_PCR1 = PORT_PCR_MUX(2); /*SCLK*/
+	PORTD_PCR2 = PORT_PCR_MUX(2); /*MOSI*/
+	PORTD_PCR3 = PORT_PCR_MUX(2); /*MISO*/
+	/*PORTD_PCR5 = PORT_PCR_MUX(1); CSN*/
+    /*GPIOD_PDDR |= (1 << 5); set to output */
 
-	/* set to master mode, enable spi, enable cpha */
-	SPI0->C1 = ((1<<SPI_C1_SPE_SHIFT)|(1<<SPI_C1_MSTR_SHIFT)|(1<<SPI_C1_CPHA_SHIFT));
-	/* set data mode */
-	SPI0->C2 = (1<<SPI_C2_SPISWAI_SHIFT);
-	/* set baud rate */
-	SPI0->BR = SPI_BR_SPPR(0x00);
+	/* set as master device: 0x10 */
+	SPI0_C1 = 0x10;
+	/* auto control CE */
+	SPI0_C2 = 0x00;
+	/* set the baud rate divisor to 64 */
+	SPI0_BR = 0x0A;
+	/* enable spi */
+	SPI0_C1 |= 0x40;
 }
 
 void SPI_read_byte(uint8_t * byte)
 {
-	SPI0->D = 0x00;
+	/* wait until empty*/
+	while((SPI0_S & SPI_S_SPTEF_MASK) != SPI_S_SPTEF_MASK);
+	SPI0_D = 0x00;
 	/* wait until byte exists*/
-	while((SPI0->S & 0x80) != 0x80);
-	*byte = SPI0->D;
+	while((SPI0_S & SPI_S_SPRF_MASK) != SPI_S_SPRF_MASK);
+	*byte = SPI0_D;
 }
 
 void SPI_write_byte(uint8_t byte)
 {
 	/* wait until empty*/
-	while((SPI0->S & 0x20) != 0x20);
-	SPI0->D = byte;
+	while((SPI0_S & SPI_S_SPTEF_MASK) != SPI_S_SPTEF_MASK);
+	SPI0_D = byte;
+	/* wait until byte exists in order to block*/
+	while((SPI0_S & SPI_S_SPRF_MASK) != SPI_S_SPRF_MASK);
+	/* discard byte */
+	byte = SPI0_D;
 }
 
 void SPI_send_packet(uint8_t * p, size_t length)

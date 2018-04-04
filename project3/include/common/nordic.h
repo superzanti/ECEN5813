@@ -111,7 +111,7 @@ void nrf_flush_rx_fifo();
  * @param none
  * @return void
  */
-void inline nrf_chip_enable();
+extern void inline nrf_chip_enable();
 
 /**
  * @brief disables the nrf chip
@@ -119,7 +119,7 @@ void inline nrf_chip_enable();
  * @param none
  * @return void
  */
-void inline nrf_chip_disable();
+extern void inline nrf_chip_disable();
 
 /**
  * @brief enables the ability to transmit over RF
