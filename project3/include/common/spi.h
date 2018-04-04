@@ -11,6 +11,9 @@
 #ifndef __SPI_H_
 #define __SPI_H_
 
+#include <stdint.h>
+#include <stdlib.h>
+
 /**
  * @brief initializes the spi controller
  *

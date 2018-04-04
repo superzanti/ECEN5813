@@ -17,6 +17,8 @@
 #define NRF_POWER_DOWN (0)
 #define NRF_POWER_UP_MASK (0x02)
 
+#include <stdint.h>
+
 /**
  * @brief reads a register and returns the value
  *

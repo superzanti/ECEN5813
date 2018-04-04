@@ -19,6 +19,9 @@
     #include "project2.h"
     #include "circbuf.h"
 #endif
+#ifdef PROJECT2
+    #include "project3.h"
+#endif
 #ifdef CMOCKA
     #include "unittest.h"
 #endif
@@ -37,15 +40,22 @@ CB_t* transmit_buffer;
 int main(void)
 {
     #ifdef CMOCKA
-	return unittest();
+		return unittest();
     #endif
+
     #ifdef PROJECT1
         project1();
     #endif
+
     #ifdef PROJECT2
-	recieve_buffer  = (CB_t*) malloc(sizeof(CB_t));
-	transmit_buffer  = (CB_t*) malloc(sizeof(CB_t));
+        recieve_buffer  = (CB_t*) malloc(sizeof(CB_t));
+        transmit_buffer  = (CB_t*) malloc(sizeof(CB_t));
         project2();
     #endif
+
+	#ifdef PROJECT3
+        project3();
+	#endif
+
     return 0;
 }

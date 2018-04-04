@@ -8,6 +8,9 @@
  *  @date March 15, 2018
  */
 
+#include "spi.h"
+#include "MKL25Z4.h"
+
 void SPI_init()
 {
 	/* TODO implement function */
@@ -34,14 +37,14 @@ void SPI_read_byte(uint8_t * byte)
 {
 	SPI0->D = 0x00;
 	/* wait until byte exists*/
-	while(SPI_status() & 0x80 != 0x80);
+	while((SPI0->S & 0x80) != 0x80);
 	*byte = SPI0->D;
 }
 
 void SPI_write_byte(uint8_t byte)
 {
 	/* wait until empty*/
-	while((SPI_status() & 0x20) != 0x20);
+	while((SPI0->S & 0x20) != 0x20);
 	SPI0->D = byte;
 }
 

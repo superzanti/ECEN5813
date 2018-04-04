@@ -13,6 +13,8 @@
  *  @date March 15, 2018
  */
 
+#include "nordic.h"
+
 uint8_t nrf_read_register(uint8_t readRegister)
 {
 	uint8_t command = 0x1F & readRegister;
@@ -24,7 +26,7 @@ uint8_t nrf_read_register(uint8_t readRegister)
 
 void nrf_write_register(uint8_t writeRegister, uint8_t value)
 {
-	uint8_t command = 0x3F & readRegister;
+	uint8_t command = 0x3F & writeRegister;
 	SPI_write_byte(command);
 	uint8_t readByte = 0x00;
 	SPI_write_byte(value);
