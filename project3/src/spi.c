@@ -64,8 +64,7 @@ void SPI_write_byte(uint8_t byte)
 
 void SPI_send_packet(uint8_t * p, size_t length)
 {
-	int i;
-	uint8_t byte;
+	uint8_t i;
 	for(i = 0; i < length; i++)
 		SPI_write_byte(p[i]);
 }

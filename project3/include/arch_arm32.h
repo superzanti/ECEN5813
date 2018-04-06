@@ -43,6 +43,7 @@
 #define __SYSTICK (__SCB_ADDRESS & __SYSTICK_ADDRESS_OFFSET)
 #define __CORE_CLOCK (48000000)   /* running at 48MHz */
 
+#define SysTick_Base_Ptr ((SysTick_Ptr)0xE000E010)
 /*
  * A struct to access the SysTick registers
  */
@@ -52,6 +53,19 @@ typedef struct {
   volatile uint32_t CVR;          /* SysTick Current Value Register: 0x8 */
   const uint32_t CALIB;           /* SysTick Calibration Value Register: 0xC */
 } volatile *SysTick_Ptr;
+/*
+ * @brief setup and enable the system tick
+ *
+ * @return none
+ */
+void InitSysTick();
+
+/*
+ * @brief interrupt handler for the sys tick
+ *
+ * @return none
+ */
+void SysTick_Handler();
 
 /*
  * @brief function to get the endianness of a processor

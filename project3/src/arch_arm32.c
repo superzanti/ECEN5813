@@ -10,6 +10,19 @@
  */
 #include "arch_arm32.h"
 
+
+void InitSysTick()
+{
+ SysTick_Base_Ptr->RVR = __CORE_CLOCK; /* one full second */
+ SysTick_Base_Ptr->CSR = __SYSTICK_CLKSOURCE_MASK;
+ /* | __SYSTICK_TICKINT_MASK; * enable the interrupt handler */
+}
+
+void SysTick_Handler()
+{
+}
+
+
 __attribute__((always_inline))
 uint32_t inline ARM32_AIRCR_get_endianness_setting()
 {
@@ -39,7 +52,7 @@ void inline ARM32_CCR_enable_divide_by_zero_trap()
 }
 
 __attribute__((always_inline))
-inline ARM32_CCR_enable_unaligned_access_trap()
+void inline ARM32_CCR_enable_unaligned_access_trap()
 {
     volatile uint32_t *CCR = (uint32_t *)__CCR; /* volatile for instant access */
     *CCR |= (1 << __CCR_UNALIGNED_ACCESS_TRAP_OFFSET);

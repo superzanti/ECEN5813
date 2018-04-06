@@ -32,6 +32,8 @@
 #define RGB_BLUE_OFF() (PORTB_Clear( RGB_BLUE_PIN ))
 #define RGB_BLUE_TOGGLE() (PORTB_Toggle( RGB_BLUE_PIN ))
 
+/* the systick for the KL25z */
+
 /*
  * @brief function to initialize the SysTick
  *

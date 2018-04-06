@@ -16,14 +16,33 @@
 /*
  *@brief tests SPI functionality
  *
- *
- *
- *
  * @param none
  * @return void returns nothing
  *
  */
 void project3();
+
+/*
+ *@brief profiles the memmove and memset functions
+ *
+ * outputs results to uart
+ *
+ * @param none
+ * @return void returns nothing
+ *
+ */
+void profiler();
+
+/*
+ *@brief tests a few outputs on the SPI
+ *
+ * outputs results to uart
+ *
+ * @param none
+ * @return void returns nothing
+ *
+ */
+void spi_setup_and_test();
 
 
 #endif /* __PROJECT3_H_ */

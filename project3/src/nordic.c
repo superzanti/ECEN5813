@@ -35,7 +35,6 @@ uint8_t nrf_read_register(uint8_t readRegister)
 void nrf_write_register(uint8_t writeRegister, uint8_t value)
 {
 	uint8_t command = 0x20 | (0x3F & writeRegister);
-	uint8_t readByte = 0x00;
 	nrf_chip_enable();
 	SPI_write_byte(command);
 	SPI_write_byte(value);
