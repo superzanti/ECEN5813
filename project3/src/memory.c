@@ -25,7 +25,10 @@
  */
 
 #include <stdlib.h>
+#include <stddef.h>
+#ifdef KL25Z
 #include "MKL25Z4.h"
+#endif
 
 extern uint8_t dma0_done;
 extern volatile uint32_t DMA_end_value;
