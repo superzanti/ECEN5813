@@ -34,7 +34,7 @@ uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value, size_t transfe
 	/* TODO implement function */
 	#ifdef KL25Z
     dma0_done=0;
-    size_t transfer = 1
+    size_t transfer = 1;
     setup_memtransfer_dma(&value, 1, src, transfer, length);
     while(dma0_done==0)
     {
@@ -58,7 +58,7 @@ uint8_t * memmove_dma(uint8_t * src, uint8_t * dst, size_t length, size_t transf
         {
             dma0_done=0;
         }
-        dma0_done==0
+        dma0_done==0;
         setup_memtransfer_dma(&temp, length, dst, transfer, length);
         while(dma0_done==0)
         {
@@ -232,7 +232,7 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
         /*TODO might need to clear the BCR register as well.*/
         DMA_DSR_BCR(0) |= DMA_DSR_BCR_BCR(length);
     }
-    else return BCR_LENGTH_OVERFLOW
+    else return BCR_LENGTH_OVERFLOW;
     /*enable interrupt on complete or error, keep peripheral requests off,
      * allow for continuous (non-cycle-steal) operation, dont auto-align
      * dont allow asynchronous requests during low power, enable the transfer
@@ -288,7 +288,7 @@ void DMA0_IRQHandler()
 	DMA_end_value = SysTick_Base_Ptr->CVR;
     NVIC_ClearPendingIRQ(DMA0_IRQn);
     NVIC_DisableIRQ(DMA0_IRQn);
-    DMAMMUX0_CHCFG(0) = 0
+    DMAMMUX0_CHCFG(0) = 0;
     DMA_DCR(0)=0;
     DMA_SAR(0)=0;
     DMA_DAR(0)=0;
