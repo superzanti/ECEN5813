@@ -37,6 +37,7 @@
 /* static to retain in any scope, const so that the compiler will complain if we touch this from this file */
 CB_t* recieve_buffer;
 CB_t* transmit_buffer;
+uint8_t dma0_done;
 #endif
 int main(void)
 {

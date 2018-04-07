@@ -16,6 +16,44 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#define DMAMUX_CLOCKGATE_ENABLE         (1)
+#define DMA_CLOCKGATE_ENABLE            (1)
+#define DMAMUX_CHCFG_SINGLETRIGGER      (0)
+#define DMAMUX_CHCFG_DISABLE            (0)
+#define DMAMUX_CHCFG_ENABLE             (1)
+#define DMAMUX_CHCFG_SOURCE_ALWAYSON_60 (0x3C)
+#define DMA_DSR_BCR_DONE_WRITETOCLEAR   (1)
+#define DMA_DSR_BCR_BCRMAXVALUE         (0x0FFFFF)
+#define DMA_DCR_INTERRUPT_ON_COMPLETE   (1)
+#define DMA_DCR_NO_PERIPHERAL_REQUEST   (0)
+#define DMA_DCR_CONTINUOUS_OPERATION    (0)
+#define DMA_DCR_NO_AUTOALIGN            (0)
+#define DMA_DCR_NO_ASYNCH_REQUESTS      (0)
+#define DMA_DCR_NO_SOURCE_INCREMENT     (0)
+#define DMA_DCR_INCREMENT_SOURCE        (1)
+#define DMA_DCR_TRANSFERSIZE_32BIT      (0)
+#define DMA_DCR_TRANSFERSIZE_8BIT       (1)
+#define DMA_DCR_TRANSFERSIZE_16BIT      (2)
+#define DMA_DCR_NO_DEST_INCREMENT       (0)
+#define DMA_DCR_INCREMENT_DEST          (1)
+#define DMA_DCR_STOP                    (0)
+#define DMA_DCR_START                   (1)
+#define DMA_DCR_NO_SOURCE_MODULO        (0)
+#define DMA_DCR_NO_DEST_MODULO          (0)
+#define DMA_DCR_DISABLE_REQUEST_OFF     (0)
+#define DMA_DCR_CHANNEL_LINK_DISABLED   (0)
+
+typedef enum {
+    SUCCESS,
+    BAD_INDEX,
+    BAD_POINTER,
+    NO_LENGTH,
+    BCR_LENGTH_OVERFLOW,
+    BAD_SIZE,
+    DMA_BUSY
+} DMA_e;
+
+uint8_t dma_first_setup = 0;
 /**
  * @brief function to set an array of bytes all to the same value using DMA.
  *
@@ -32,7 +70,7 @@
  * @param value the value to write to every byte in the array
  * @return uint8_t a pointer to the source (simply returns src)
  */
-uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value);
+uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value,size_t transfer);
 
 /**
  * @brief function to copy one byte array to another (overlap) using DMA.
@@ -53,7 +91,7 @@ uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value);
  * @param length the number of bytes to move
  * @return uint8_t a pointer to the destination
  */
-uint8_t * memmove_dma(uint8_t * src, uint8_t * dst, size_t length);
+uint8_t * memmove_dma(uint8_t * src, uint8_t * dst, size_t length,size_t transfer);
 
 /**
  * @brief function to copy one byte array to another (overlap)
@@ -177,4 +215,23 @@ void * reserve_words(size_t length);
  */
 uint8_t free_words(void * src);
 
+/*
+ * @brief function to setup dma for different transfers
+ *
+ * this function takes in the DMA to use, address(s), transfer size,
+ * and asociated DMA information and configures the registers properly to utilize DMA
+ *
+ * @param
+ * @return DMA_e, this function returns an error type related to improper dma configuration
+ * */
+DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
+                            size_t transfersize, size_t length);/*, uint8_t dma_index)*/
+
+/*
+ * @brief DMA IRQ handler, for use with the DMA complete trigger
+ *
+ * @param none, this function takes no inputs
+ * @return void, this function has no return value
+ * */
+void DMA0_IRQHandler();
 #endif /* __MEMORY_H__ */
