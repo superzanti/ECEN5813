@@ -46,6 +46,10 @@ uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value, size_t transfe
     {
         nooperation++;
     }
+    if(retval==DMA_ERROR)
+    {
+        return NULL;
+    }
 	return src;
 	#else
 	return my_memset(src, length, value);
@@ -65,11 +69,19 @@ uint8_t * memmove_dma(uint8_t * src, uint8_t * dst, size_t length, size_t transf
         {
             nooperation++;
         }
+        if(retval==DMA_ERROR)
+        {
+            return NULL;
+        }
         dma0_done=0;
         retval = setup_memtransfer_dma(src, templength2, dst, transfer, templength2);
         while(dma0_done==0 && retval==DMA_SUCCESS)
         {
             nooperation++;
+        }
+        if(retval==DMA_ERROR)
+        {
+            return NULL;
         }
     }
     else
@@ -79,6 +91,10 @@ uint8_t * memmove_dma(uint8_t * src, uint8_t * dst, size_t length, size_t transf
         while(dma0_done==0 && retval==DMA_SUCCESS)
         {
             nooperation++;
+        }
+        if(retval==DMA_ERROR)
+        {
+            return NULL;
         }
     }
 	return dst;
@@ -289,6 +305,10 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
     __enable_irq();
 
     DMA_DCR0=DCRregwrite;/*write DMA control register to start transfer*/
+    if(DMA_DSR_BCR_CE(0)&(DMA_DSR_BCR_CE_MASK)>>DMA_DSR_BCR_CE_SHIFT == 1)
+    {
+        return DMA_ERROR;
+    }
     return DMA_SUCCESS;
 }
 #endif

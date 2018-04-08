@@ -55,6 +55,7 @@ void profiler()
 	/* areas to copy and move to */
 	uint8_t *area_one = (uint8_t *) malloc(sizeof(uint8_t)*5020);
 	uint8_t *area_two = area_one+20;
+    uint8_t *retval = NULL;
 
 	/* timer values */
 	volatile uint32_t start_value = 0;
@@ -182,10 +183,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memset function with 10 bytes took ";
 	UART_send_n(my_string, 53);
 	start_value = SysTick_Base_Ptr->CVR;
-	memset_dma(area_one, 10, '1', 1);
+	retval = memset_dma(area_one, 10, '1', 1);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
@@ -194,10 +201,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memset function with 100 bytes took ";
 	UART_send_n(my_string, 54);
 	start_value = SysTick_Base_Ptr->CVR;
-	memset_dma(area_one, 100, '2', 1);
+	retval = memset_dma(area_one, 100, '2', 1);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
@@ -206,10 +219,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memset function with 1000 bytes took ";
 	UART_send_n(my_string, 55);
 	start_value = SysTick_Base_Ptr->CVR;
-	memset_dma(area_one, 1000, '3', 1);
+	retval = memset_dma(area_one, 1000, '3', 1);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
@@ -218,10 +237,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memset function with 5000 bytes took ";
 	UART_send_n(my_string, 55);
 	start_value = SysTick_Base_Ptr->CVR;
-	memset_dma(area_one, 5000, '4', 1);
+	retval = memset_dma(area_one, 5000, '4', 1);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
@@ -231,10 +256,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memset function with 10 bytes and 4 byte transfer took ";
 	UART_send_n(my_string, 73);
 	start_value = SysTick_Base_Ptr->CVR;
-	memset_dma(area_one, 10, '1', 4);
+	retval = memset_dma(area_one, 10, '1', 4);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
@@ -243,10 +274,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memset function with 100 bytes and 4 byte transfer took ";
 	UART_send_n(my_string, 74);
 	start_value = SysTick_Base_Ptr->CVR;
-	memset_dma(area_one, 100, '2', 4);
+	retval = memset_dma(area_one, 100, '2', 4);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
@@ -255,10 +292,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memset function with 1000 bytes and 4 byte transfer took ";
 	UART_send_n(my_string, 75);
 	start_value = SysTick_Base_Ptr->CVR;
-	memset_dma(area_one, 1000, '3', 4);
+	retval = memset_dma(area_one, 1000, '3', 4);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
@@ -267,10 +310,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memset function with 5000 bytes and 4 byte transfer took ";
 	UART_send_n(my_string, 75);
 	start_value = SysTick_Base_Ptr->CVR;
-	memset_dma(area_one, 5000, '4', 4);
+	retval = memset_dma(area_one, 5000, '4', 4);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
@@ -390,10 +439,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memmove function with 10 bytes took ";
 	UART_send_n(my_string, 54);
 	start_value = SysTick_Base_Ptr->CVR;
-	memmove_dma(area_one, area_two, 10, 1);
+	retval = memmove_dma(area_one, area_two, 10, 1);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
@@ -402,10 +457,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memmove function with 100 bytes took ";
 	UART_send_n(my_string, 55);
 	start_value = SysTick_Base_Ptr->CVR;
-	memmove_dma(area_one, area_two, 100, 1);
+	retval = memmove_dma(area_one, area_two, 100, 1);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
@@ -414,10 +475,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memmove function with 1000 bytes took ";
 	UART_send_n(my_string, 56);
 	start_value = SysTick_Base_Ptr->CVR;
-	memmove_dma(area_one, area_two, 1000, 1);
+	retval = memmove_dma(area_one, area_two, 1000, 1);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
@@ -426,10 +493,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memmove function with 5000 bytes took ";
 	UART_send_n(my_string, 56);
 	start_value = SysTick_Base_Ptr->CVR;
-	memmove_dma(area_one, area_two, 5000, 1);
+	retval = memmove_dma(area_one, area_two, 5000, 1);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
@@ -439,10 +512,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memmove function with 10 bytes and 4 byte transfer took ";
 	UART_send_n(my_string, 74);
 	start_value = SysTick_Base_Ptr->CVR;
-	memmove_dma(area_one, area_two, 10, 4);
+	retval = memmove_dma(area_one, area_two, 10, 4);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
@@ -451,10 +530,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memmove function with 100 bytes and 4 byte transfer took ";
 	UART_send_n(my_string, 75);
 	start_value = SysTick_Base_Ptr->CVR;
-	memmove_dma(area_one, area_two, 100, 4);
+	retval = memmove_dma(area_one, area_two, 100, 4);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
@@ -463,10 +548,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memmove function with 1000 bytes and 4 byte transfer took ";
 	UART_send_n(my_string, 76);
 	start_value = SysTick_Base_Ptr->CVR;
-	memmove_dma(area_one, area_two, 1000, 4);
+	retval = memmove_dma(area_one, area_two, 1000, 4);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
@@ -475,10 +566,16 @@ void profiler()
     my_string = (unsigned char *) "Profiling the DMA memmove function with 5000 bytes and 4 byte transfer took ";
 	UART_send_n(my_string, 76);
 	start_value = SysTick_Base_Ptr->CVR;
-	memmove_dma(area_one, area_two, 5000, 4);
+	retval = memmove_dma(area_one, area_two, 5000, 4);
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
+    if(retval==NULL)
+    {
+        num_string[0] = "-"
+        num_string[1] = "1"
+        printsize = 2
+    }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);

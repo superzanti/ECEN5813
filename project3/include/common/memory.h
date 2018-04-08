@@ -51,7 +51,8 @@ typedef enum {
     DMA_NO_LENGTH,
     DMA_BCR_LENGTH_OVERFLOW,
     DMA_BAD_SIZE,
-    DMA_BUSY
+    DMA_BUSY,
+    DMA_ERROR
 } DMA_e;
 
 /**
