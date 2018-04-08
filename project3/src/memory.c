@@ -38,7 +38,6 @@ uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value, size_t transfe
 	/* TODO implement function */
 	#ifdef KL25Z
     dma0_done=0;
-    size_t transfer = 1;
     setup_memtransfer_dma(&value, 1, src, transfer, length);
     while(dma0_done==0)
     {
@@ -46,7 +45,7 @@ uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value, size_t transfe
     }
 	return src;
 	#else
-	return my_memmove(src, length, value);
+	return my_memset(src, length, value);
 	#endif
 }
 
@@ -188,7 +187,7 @@ uint8_t free_words(void * src)
     free(src);
     return 0;
 }
-
+#ifdef KL25Z
 DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
                             size_t transfersize, size_t length)/*, uint8_t dma_index)*/
 {
@@ -198,11 +197,11 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
     if(dma_first_setup==0)
     {
         /*turn on clock gates to the mux and dma modules*/
-        SIM_SCGC6_DMAMUX(DMAMUX_CLOCKGATE_ENABLE);
-        SIM_SCGC7_DMA(DMA_CLOCKGATE_ENABLE);
+        SIM_SCGC6 |= SIM_SCGC6_DMAMUX(DMAMUX_CLOCKGATE_ENABLE);
+        SIM_SCGC7 |= SIM_SCGC7_DMA(DMA_CLOCKGATE_ENABLE);
         dma_first_setup=1;
     }
-    if((DMA_DSR_BCR(0)&DMA_DSR_BCR_DONE_MASK)>>DMA_DSR_BCR_DONE_SHIFT!=1)
+    if((DMA_DSR_BCR0&DMA_DSR_BCR_DONE_MASK)>>DMA_DSR_BCR_DONE_SHIFT!=1)
     {
         /*if a transfer is active, error out TODO this could optionally
          * search for an open channel instead*/
@@ -210,31 +209,31 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
     }
     /*enable dma channel 0, set it to non-periodic, and attach it to an always
      * active request source*/
-    DMAMMUX0_CHCFG(0) = DMAMUX_CHCFG_ENBL(DMAMUX_CHCFG_ENABLE)
+    DMAMMUX0_CHCFG0 = DMAMUX_CHCFG_ENBL(DMAMUX_CHCFG_ENABLE)
                         |DMAMUX_CHCFG_TRIG(DMAMUX_CHCFG_SINGLETRIGGER)
                         |DMAMUX_CHCFG_SOURCE(DMAMUX_CHCFG_SOURCE_ALWAYSON_60);
     uint32_t checkaddr = ((uint32_t)src&(uint32_t)0xfff00000)>>20;
     if(checkaddr==0x000 || checkaddr==0x1ff || checkaddr==0x200 || checkaddr==0x400)
     {
         /*if the source is allowed, put it  into the source register*/
-        DMA_SAR(0) = src;
+        DMA_SAR0 = src;
     }
     else return BAD_POINTER;
     checkaddr = ((uint32_t)dst&(uint32_t)0xfff00000)>>20;
     if(checkaddr==0x000 || checkaddr==0x1ff || checkaddr==0x200 || checkaddr==0x400)
     {
         /*if the destination is allowed, put it into the destination register*/
-        DMA_DAR(0) = dst;
+        DMA_DAR0 = dst;
     }
     else return BAD_POINTER;
     /*clear errors and disable active transfer*/
-    DMA_DSR_BCR(0) |= DMA_DSR_BCR_DONE(DMA_DSR_BCR_DONE_WRITETOCLEAR);
+    DMA_DSR_BCR0 |= DMA_DSR_BCR_DONE(DMA_DSR_BCR_DONE_WRITETOCLEAR);
     /*if the transfer is too large, turn it off*/
     if(length<DMA_DSR_BCR_BCRMAXVALUE)
     {
         /*put the number of bytes into the byte count register*/
         /*TODO might need to clear the BCR register as well.*/
-        DMA_DSR_BCR(0) |= DMA_DSR_BCR_BCR(length);
+        DMA_DSR_BCR0 |= DMA_DSR_BCR_BCR(length);
     }
     else return BCR_LENGTH_OVERFLOW;
     /*enable interrupt on complete or error, keep peripheral requests off,
@@ -283,19 +282,21 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
     NVIC_EnableIRQ(DMA0_IRQn);
     __enable_irq();
 
-    DMA_DCR(0)=DCRregwrite;/*write DMA control register to start transfer*/
+    DMA_DCR0=DCRregwrite;/*write DMA control register to start transfer*/
     return SUCCESS;
 }
-
+#endif
+#ifdef KL25Z
 void DMA0_IRQHandler()
 {
 	DMA_end_value = SysTick_Base_Ptr->CVR;
     NVIC_ClearPendingIRQ(DMA0_IRQn);
     NVIC_DisableIRQ(DMA0_IRQn);
-    DMAMMUX0_CHCFG(0) = 0;
-    DMA_DCR(0)=0;
-    DMA_SAR(0)=0;
-    DMA_DAR(0)=0;
-    DMA_DSR_BCR(0) |= DMA_DSR_BCR_DONE(DMA_DSR_BCR_DONE_WRITETOCLEAR);
+    DMAMMUX0_CHCFG0 = 0;
+    DMA_DCR0=0;
+    DMA_SAR0=0;
+    DMA_DAR0=0;
+    DMA_DSR_BCR0 |= DMA_DSR_BCR_DONE(DMA_DSR_BCR_DONE_WRITETOCLEAR);
     dma0_done=1;
 }
+#endif
