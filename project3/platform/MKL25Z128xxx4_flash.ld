@@ -50,8 +50,8 @@
 /* Entry Point */
 ENTRY(Reset_Handler)
 
-HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x0400;
-STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0400;
+HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x2000;
+STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x1000;
 
 /* Specify the memory areas */
 MEMORY
@@ -208,7 +208,7 @@ SECTIONS
     __bss_end__ = .;
     __END_BSS = .;
   } > m_data
-
+  
   .heap :
   {
     . = ALIGN(8);
