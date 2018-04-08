@@ -209,7 +209,7 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
     }
     /*enable dma channel 0, set it to non-periodic, and attach it to an always
      * active request source*/
-    DMAMMUX0_CHCFG0 = DMAMUX_CHCFG_ENBL(DMAMUX_CHCFG_ENABLE)
+    DMAMUX0_CHCFG0 = DMAMUX_CHCFG_ENBL(DMAMUX_CHCFG_ENABLE)
                         |DMAMUX_CHCFG_TRIG(DMAMUX_CHCFG_SINGLETRIGGER)
                         |DMAMUX_CHCFG_SOURCE(DMAMUX_CHCFG_SOURCE_ALWAYSON_60);
     uint32_t checkaddr = ((uint32_t)src&(uint32_t)0xfff00000)>>20;
