@@ -53,7 +53,6 @@ typedef enum {
     DMA_BUSY
 } DMA_e;
 
-uint8_t dma_first_setup = 0;
 /**
  * @brief function to set an array of bytes all to the same value using DMA.
  *

@@ -10,29 +10,39 @@
 
 #include "project3.h"
 
+#include "circbuf.h"
+#include "conversion.h"
+#include "memory.h"
+#include <string.h>
+#ifdef BBB
+	#include "nordic.h"
+	#include "spi.h"
+    #include <time.h>
+#endif
 #ifdef KL25Z
 	#include "nordic.h"
 	#include "spi.h"
 	#include "port.h"
 	#include "uart.h"
-	#include "circbuf.h"
-	#include "conversion.h"
 	#include "arch_arm32.h"
-	#include "memory.h"
-	#include <string.h>
 #endif
 
 extern CB_t* recieve_buffer;
 extern CB_t* transmit_buffer;
 
 extern volatile uint32_t DMA_end_value;
-
+extern volatile uint32_t nooperation;
 void project3()
 {
+#if defined(KL25Z) || defined (BBB)
 	spi_setup_and_test();
 	profiler();
+#else
+    nooperation++;
+#endif
 }
 
+#ifdef KL25Z
 void profiler()
 {
 	/* TODO buildtime settings must be adjusted so that the heap can support these regions (at least 1kB) */
@@ -470,7 +480,203 @@ void profiler()
     my_string = " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
 }
+#endif
+#ifdef BBB
+void profiler()
+{
+	/* TODO buildtime settings must be adjusted so that the heap can support these regions (at least 1kB) */
+	/* TODO refactor this code to be smaller */
+	/* TODO run with highest optimizations and lowest optimizations to see difference */
 
+	/* areas to copy and move to */
+	uint8_t *area_one = (uint8_t *) malloc(sizeof(uint8_t)*5001);
+	uint8_t *area_two = area_one+1;
+
+	/* timer values */
+	volatile clock_t start_value;
+	volatile clock_t end_value;
+
+	/* strings used for printing */
+    uint8_t *my_string;
+    uint8_t num_string[16];
+	uint8_t printsize = 0x00;
+
+	/*******************/
+	/* MEMSET PROFILER */
+	/*******************/
+
+	/* standard library */
+	/* 10 bytes */
+    my_string = "Profiling the standard memset library with 10 bytes took ";
+	UART_send_n(my_string, 57);
+	start_value = clock();
+	memset(area_one, '1', 10);
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+	/* 100 bytes */
+    my_string = "Profiling the standard memset library with 100 bytes took ";
+	UART_send_n(my_string, 58);
+	start_value = clock();
+	memset(area_one, '2', 100);
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+	/* 1000 bytes */
+    my_string = "Profiling the standard memset library with 1000 bytes took ";
+	UART_send_n(my_string, 59);
+	start_value = clock();
+	memset(area_one, '3', 1000);
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+	/* 5000 bytes */
+    my_string = "Profiling the standard memset library with 5000 bytes took ";
+	UART_send_n(my_string, 59);
+	start_value = clock();
+	memset(area_one, '4', 5000);
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+	/* my library */
+	/* 10 bytes */
+    my_string = "Profiling the custom memset function with 10 bytes took ";
+	UART_send_n(my_string, 56);
+	start_value = clock();
+	my_memset(area_one, 10, '1');
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+	/* 100 bytes */
+    my_string = "Profiling the custom memset function with 100 bytes took ";
+	UART_send_n(my_string, 57);
+	start_value = clock();
+	my_memset(area_one, 100, '2');
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+	/* 1000 bytes */
+    my_string = "Profiling the custom memset function with 1000 bytes took ";
+	UART_send_n(my_string, 58);
+	start_value = clock();
+	my_memset(area_one, 1000, '3');
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+	/* 5000 bytes */
+    my_string = "Profiling the custom memset function with 5000 bytes took ";
+	UART_send_n(my_string, 58);
+	start_value = clock();
+	my_memset(area_one, 5000, '4');
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+
+	/********************/
+	/* MEMMOVE PROFILER */
+	/********************/
+	/* standard library */
+	/* 10 bytes */
+    my_string = "Profiling the standard memmove library with 10 bytes took ";
+	UART_send_n(my_string, 58);
+	start_value = clock();
+	memmove(area_one, area_two, 10);
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+	/* 100 bytes */
+    my_string = "Profiling the standard memmove library with 100 bytes took ";
+	UART_send_n(my_string, 59);
+	start_value = clock();
+	memmove(area_one, area_two, 100);
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+	/* 1000 bytes */
+    my_string = "Profiling the standard memmove library with 1000 bytes took ";
+	UART_send_n(my_string, 60);
+	start_value = clock();
+	memmove(area_one, area_two, 1000);
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+	/* 5000 bytes */
+    my_string = "Profiling the standard memmove library with 5000 bytes took ";
+	UART_send_n(my_string, 60);
+	start_value = clock();
+	memmove(area_one, area_two, 5000);
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+	/* my library */
+	/* 10 bytes */
+    my_string = "Profiling the custom memmove function with 10 bytes took ";
+	UART_send_n(my_string, 57);
+	start_value = clock();
+	my_memmove(area_one, area_two, 10);
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+	/* 100 bytes */
+    my_string = "Profiling the custom memmove function with 100 bytes took ";
+	UART_send_n(my_string, 58);
+	start_value = clock();
+	my_memmove(area_one, area_two, 100);
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+	/* 1000 bytes */
+    my_string = "Profiling the custom memmove function with 1000 bytes took ";
+	UART_send_n(my_string, 59);
+	start_value = clock();
+	my_memmove(area_one, area_two, 1000);
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+	/* 5000 bytes */
+    my_string = "Profiling the custom memsmovefunction with 5000 bytes took ";
+	UART_send_n(my_string, 59);
+	start_value = clock();
+	my_memmove(area_one, area_two, 5000);
+	end_value = clock();
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+}
+#endif
+
+#ifdef KL25Z
 void spi_setup_and_test()
 {
 	GPIO_Configure();
@@ -492,3 +698,27 @@ void spi_setup_and_test()
 	UART_send_n(my_string, printsize);
 	UART_send_n(return_string, sizeof(return_string));
 }
+#endif
+#ifdef BBB
+void spi_setup_and_test()
+{
+	GPIO_Configure();
+	SPI_init();
+    UART_configure();
+    uint8_t my_string[] = "Starting project 3...";
+    uint8_t return_string[] = "\r\n";
+    uint8_t hex_string[] = "Status Reg is: 0x";
+    UART_send_n(my_string, sizeof(my_string));
+    UART_send_n(return_string, sizeof(return_string));
+	uint16_t i = 0x00;
+	uint8_t j = 0x00;
+	uint8_t statreg = 0x00;
+	uint8_t printsize = 0x00;
+	nrf_write_register(0x05, j);
+	statreg = nrf_read_register(0x05);
+	printsize = my_itoa((int32_t)statreg, my_string, 16);
+	UART_send_n(hex_string, sizeof(hex_string));
+	UART_send_n(my_string, printsize);
+	UART_send_n(return_string, sizeof(return_string));
+}
+#endif

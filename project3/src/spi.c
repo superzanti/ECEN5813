@@ -9,12 +9,15 @@
  */
 
 #include "spi.h"
+#ifdef KL25z
 #include "MKL25Z4.h"
+#endif
 
 /* TODO move chip enable to function in spi.c */
 
 void SPI_init()
 {
+#ifdef KL25z
 	/* TODO implement function */
 
 	/* Enable the clock for the SPI */
@@ -39,20 +42,30 @@ void SPI_init()
 	SPI0_BR = 0x0A;
 	/* enable spi */
 	SPI0_C1 |= 0x40;
+#endif
+#ifdef BBB
+	/* TODO implement function */
+#endif
 }
 
 void SPI_read_byte(uint8_t * byte)
 {
+#ifdef KL25z
 	/* wait until empty*/
 	while((SPI0_S & SPI_S_SPTEF_MASK) != SPI_S_SPTEF_MASK);
 	SPI0_D = 0x00;
 	/* wait until byte exists*/
 	while((SPI0_S & SPI_S_SPRF_MASK) != SPI_S_SPRF_MASK);
 	*byte = SPI0_D;
+#endif
+#ifdef BBB
+	/* TODO implement function */
+#endif
 }
 
 void SPI_write_byte(uint8_t byte)
 {
+#ifdef KL25Z
 	/* wait until empty*/
 	while((SPI0_S & SPI_S_SPTEF_MASK) != SPI_S_SPTEF_MASK);
 	SPI0_D = byte;
@@ -60,16 +73,30 @@ void SPI_write_byte(uint8_t byte)
 	while((SPI0_S & SPI_S_SPRF_MASK) != SPI_S_SPRF_MASK);
 	/* discard byte */
 	byte = SPI0_D;
+#endif
+#ifdef BBB
+	/* TODO implement function */
+#endif
 }
 
 void SPI_send_packet(uint8_t * p, size_t length)
 {
+#ifdef KL25Z
 	uint8_t i;
 	for(i = 0; i < length; i++)
 		SPI_write_byte(p[i]);
+#endif
+#ifdef BBB
+	/* TODO implement function */
+#endif
 }
 
 void SPI_flush()
 {
+#ifdef KL25Z
 	/* TODO implement function */
+#endif
+#ifdef BBB
+	/* TODO implement function */
+#endif
 }

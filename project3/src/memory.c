@@ -29,10 +29,12 @@
 #ifdef KL25Z
 #include "MKL25Z4.h"
 #include "arch_arm32.h"
+extern uint8_t dma_first_setup;
 #endif
 
 extern uint8_t dma0_done;
 extern volatile uint32_t DMA_end_value;
+extern volatile uint32_t nooperation;
 uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value, size_t transfer)
 {
 	/* TODO implement function */
@@ -41,7 +43,7 @@ uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value, size_t transfe
     setup_memtransfer_dma(&value, 1, src, transfer, length);
     while(dma0_done==0)
     {
-        dma0_done=0;
+        nooperation++;
     }
 	return src;
 	#else
@@ -59,13 +61,13 @@ uint8_t * memmove_dma(uint8_t * src, uint8_t * dst, size_t length, size_t transf
         setup_memtransfer_dma(src, length, temp, transfer, length);
         while(dma0_done==0)
         {
-            dma0_done=0;
+            nooperation++;
         }
         dma0_done=0;
         setup_memtransfer_dma(temp, length, dst, transfer, length);
         while(dma0_done==0)
         {
-            dma0_done=0;
+            nooperation++;
         }
     }
     else
@@ -74,7 +76,7 @@ uint8_t * memmove_dma(uint8_t * src, uint8_t * dst, size_t length, size_t transf
         setup_memtransfer_dma(src, length, dst, transfer, length);
         while(dma0_done==0)
         {
-            dma0_done=0;
+            nooperation++;
         }
     }
 	return dst;
