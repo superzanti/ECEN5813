@@ -40,8 +40,8 @@ uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value, size_t transfe
 	/* TODO implement function */
 	#ifdef KL25Z
     dma0_done=0;
-    setup_memtransfer_dma(&value, 1, src, transfer, length);
-    while(dma0_done==0)
+    DMA_e retval = setup_memtransfer_dma(&value, 1, src, transfer, length);
+    while(dma0_done==0 && retval==DMA_SUCCESS)
     {
         nooperation++;
     }
@@ -54,18 +54,19 @@ uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value, size_t transfe
 uint8_t * memmove_dma(uint8_t * src, uint8_t * dst, size_t length, size_t transfer)
 {
 	#ifdef KL25Z
-    if(dst>src && dst<=src+length)
+    if(dst>src && dst<src+length)
     {/*the case where overlap will occur, but isn't exactly on top of itself*/
         dma0_done=0;
-        uint8_t temp[length];
-        setup_memtransfer_dma(src, length, temp, transfer, length);
-        while(dma0_done==0)
+        uint32_t templength1 = ((uint32_t)src+length)-(uint32_t)dst;
+        uint32_t templength2 = (uint32_t)dst-(uint32_t)src;
+        DMA_e retval = setup_memtransfer_dma(dst, templength1, src+length, transfer, templength1);
+        while(dma0_done==0 && retval==DMA_SUCCESS)
         {
             nooperation++;
         }
         dma0_done=0;
-        setup_memtransfer_dma(temp, length, dst, transfer, length);
-        while(dma0_done==0)
+        retval = setup_memtransfer_dma(src, templength2, dst, transfer, templength2);
+        while(dma0_done==0 && retval==DMA_SUCCESS)
         {
             nooperation++;
         }
@@ -73,8 +74,8 @@ uint8_t * memmove_dma(uint8_t * src, uint8_t * dst, size_t length, size_t transf
     else
     {
         dma0_done=0;
-        setup_memtransfer_dma(src, length, dst, transfer, length);
-        while(dma0_done==0)
+        DMA_e retval = setup_memtransfer_dma(src, length, dst, transfer, length);
+        while(dma0_done==0 && retval==DMA_SUCCESS)
         {
             nooperation++;
         }
@@ -203,14 +204,16 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
         SIM_SCGC7 |= SIM_SCGC7_DMA(DMA_CLOCKGATE_ENABLE);
         dma_first_setup=1;
     }
-    if((DMA_DSR_BCR0&DMA_DSR_BCR_DONE_MASK)>>DMA_DSR_BCR_DONE_SHIFT!=1)
+    /*if((DMA_DSR_BCR0&DMA_DSR_BCR_DONE_MASK)>>DMA_DSR_BCR_DONE_SHIFT!=1)
     {
-        /*if a transfer is active, error out TODO this could optionally
-         * search for an open channel instead*/
+        if a transfer is active, error out TODO this could optionally
+          search for an open channel instead
         return DMA_BUSY;
-    }
+    }*/
     /*enable dma channel 0, set it to non-periodic, and attach it to an always
      * active request source*/
+    /*clear errors and disable active transfer*/
+    DMA_DSR_BCR0 |= DMA_DSR_BCR_DONE(DMA_DSR_BCR_DONE_WRITETOCLEAR);
     DMAMUX0_CHCFG0 = DMAMUX_CHCFG_ENBL(DMAMUX_CHCFG_ENABLE)
                         |DMAMUX_CHCFG_TRIG(DMAMUX_CHCFG_SINGLETRIGGER)
                         |DMAMUX_CHCFG_SOURCE(DMAMUX_CHCFG_SOURCE_ALWAYSON_60);
@@ -228,8 +231,6 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
         DMA_DAR0 = (uint32_t)dst;
     }
     else return DMA_BAD_POINTER;
-    /*clear errors and disable active transfer*/
-    DMA_DSR_BCR0 |= DMA_DSR_BCR_DONE(DMA_DSR_BCR_DONE_WRITETOCLEAR);
     /*if the transfer is too large, turn it off*/
     if(length<DMA_DSR_BCR_BCRMAXVALUE)
     {
