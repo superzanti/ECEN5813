@@ -34,6 +34,9 @@ extern volatile uint32_t DMA_end_value;
 extern volatile uint32_t nooperation;
 void project3()
 {
+	GPIO_Configure();
+	SPI_init();
+    UART_configure();
 #if defined(KL25Z) || defined (BBB)
 	spi_setup_and_test();
 	profiler();
@@ -679,9 +682,6 @@ void profiler()
 #ifdef KL25Z
 void spi_setup_and_test()
 {
-	GPIO_Configure();
-	SPI_init();
-    UART_configure();
     uint8_t my_string[] = "Starting project 3...";
     uint8_t return_string[] = "\r\n";
     uint8_t hex_string[] = "Status Reg is: 0x";
@@ -701,9 +701,6 @@ void spi_setup_and_test()
 #ifdef BBB
 void spi_setup_and_test()
 {
-	GPIO_Configure();
-	SPI_init();
-    UART_configure();
     uint8_t my_string[] = "Starting project 3...";
     uint8_t return_string[] = "\r\n";
     uint8_t hex_string[] = "Status Reg is: 0x";

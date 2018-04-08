@@ -40,8 +40,8 @@ uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value, size_t transfe
 	/* TODO implement function */
 	#ifdef KL25Z
     dma0_done=0;
-    uint32_t valholder= (value)+(value<<8)+(value<<16)+(value<<24)
-    DMA_e retval = setup_memtransfer_dma(&valholder, 1, src, transfer, length);
+    uint32_t valholder= (value)+(value<<8)+(value<<16)+(value<<24);
+    DMA_e retval = setup_memtransfer_dma((uint8_t *)&valholder, 1, src, transfer, length);
     while(dma0_done==0 && retval==DMA_SUCCESS)
     {
         nooperation++;

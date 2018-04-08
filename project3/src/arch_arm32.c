@@ -13,7 +13,8 @@
 
 void InitSysTick()
 {
- SysTick_Base_Ptr->RVR = __CORE_CLOCK; /* one full second */
+ SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
+ SysTick_Base_Ptr->RVR = 0xFFFFFF; /* max value */
  SysTick_Base_Ptr->CSR = __SYSTICK_CLKSOURCE_MASK;
  SysTick_Base_Ptr->CSR |= __SYSTICK_ENABLE_MASK; /* enable counting */
 /* | __SYSTICK_TICKINT_MASK; * enable the interrupt handler */
