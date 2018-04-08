@@ -18,6 +18,7 @@
 	#include "nordic.h"
 	#include "spi.h"
     #include <time.h>
+    #include <stdio.h>
 #endif
 #ifdef KL25Z
 	#include "nordic.h"
