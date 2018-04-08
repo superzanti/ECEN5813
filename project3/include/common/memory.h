@@ -28,6 +28,7 @@
 #define DMA_DCR_NO_PERIPHERAL_REQUEST   (0)
 #define DMA_DCR_CONTINUOUS_OPERATION    (0)
 #define DMA_DCR_NO_AUTOALIGN            (0)
+#define DMA_DCR_AUTOALIGN               (1)
 #define DMA_DCR_NO_ASYNCH_REQUESTS      (0)
 #define DMA_DCR_NO_SOURCE_INCREMENT     (0)
 #define DMA_DCR_INCREMENT_SOURCE        (1)

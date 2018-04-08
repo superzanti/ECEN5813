@@ -40,7 +40,8 @@ uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value, size_t transfe
 	/* TODO implement function */
 	#ifdef KL25Z
     dma0_done=0;
-    DMA_e retval = setup_memtransfer_dma(&value, 1, src, transfer, length);
+    uint32_t valholder= (value)+(value<<8)+(value<<16)+(value<<24)
+    DMA_e retval = setup_memtransfer_dma(&valholder, 1, src, transfer, length);
     while(dma0_done==0 && retval==DMA_SUCCESS)
     {
         nooperation++;
@@ -248,7 +249,6 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
     uint32_t DCRregwrite = DMA_DCR_EINT(DMA_DCR_INTERRUPT_ON_COMPLETE)
                         |DMA_DCR_ERQ(DMA_DCR_NO_PERIPHERAL_REQUEST)
                         |DMA_DCR_CS(DMA_DCR_CONTINUOUS_OPERATION)
-                        |DMA_DCR_AA(DMA_DCR_NO_AUTOALIGN)
                         |DMA_DCR_EADREQ(DMA_DCR_NO_ASYNCH_REQUESTS)
                         |DMA_DCR_START(DMA_DCR_START_ENABLE)
                         |DMA_DCR_SMOD(DMA_DCR_NO_SOURCE_MODULO)
@@ -267,17 +267,20 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
     if(transfersize==1)/*set transfer size if passed appropriately*/
     {
         DCRregwrite|=DMA_DCR_SSIZE(DMA_DCR_TRANSFERSIZE_8BIT)
-                    |DMA_DCR_DSIZE(DMA_DCR_TRANSFERSIZE_8BIT);
+                    |DMA_DCR_DSIZE(DMA_DCR_TRANSFERSIZE_8BIT)
+                    |DMA_DCR_AA(DMA_DCR_NO_AUTOALIGN);
     }
     else if(transfersize==2)
     {
         DCRregwrite|=DMA_DCR_SSIZE(DMA_DCR_TRANSFERSIZE_16BIT)
-                    |DMA_DCR_DSIZE(DMA_DCR_TRANSFERSIZE_16BIT);
+                    |DMA_DCR_DSIZE(DMA_DCR_TRANSFERSIZE_16BIT)
+                    |DMA_DCR_AA(DMA_DCR_AUTOALIGN);
     }
     else if(transfersize==4)
     {
         DCRregwrite|=DMA_DCR_SSIZE(DMA_DCR_TRANSFERSIZE_32BIT)
-                    |DMA_DCR_DSIZE(DMA_DCR_TRANSFERSIZE_32BIT);
+                    |DMA_DCR_DSIZE(DMA_DCR_TRANSFERSIZE_32BIT)
+                    |DMA_DCR_AA(DMA_DCR_AUTOALIGN);
     }
     else return DMA_BAD_SIZE;
 
