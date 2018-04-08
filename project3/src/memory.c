@@ -28,6 +28,7 @@
 #include <stddef.h>
 #ifdef KL25Z
 #include "MKL25Z4.h"
+#include "arch_arm32.h"
 #endif
 
 extern uint8_t dma0_done;
@@ -201,7 +202,7 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
         SIM_SCGC7_DMA(DMA_CLOCKGATE_ENABLE);
         dma_first_setup=1;
     }
-    if((DMA_DSR_BCR(0)&DMA_DSR_BCR_DONE_MASK)>>DMAA_DSR_BCR_DONE_SHIFT!=1)
+    if((DMA_DSR_BCR(0)&DMA_DSR_BCR_DONE_MASK)>>DMA_DSR_BCR_DONE_SHIFT!=1)
     {
         /*if a transfer is active, error out TODO this could optionally
          * search for an open channel instead*/
@@ -212,14 +213,14 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
     DMAMMUX0_CHCFG(0) = DMAMUX_CHCFG_ENBL(DMAMUX_CHCFG_ENABLE)
                         |DMAMUX_CHCFG_TRIG(DMAMUX_CHCFG_SINGLETRIGGER)
                         |DMAMUX_CHCFG_SOURCE(DMAMUX_CHCFG_SOURCE_ALWAYSON_60);
-    uint16_t checkaddr = (src&0xfff00000)>>20;
+    uint32_t checkaddr = ((uint32_t)src&(uint32_t)0xfff00000)>>20;
     if(checkaddr==0x000 || checkaddr==0x1ff || checkaddr==0x200 || checkaddr==0x400)
     {
         /*if the source is allowed, put it  into the source register*/
         DMA_SAR(0) = src;
     }
     else return BAD_POINTER;
-    checkaddr = (dst&0xfff00000)>>20;
+    checkaddr = ((uint32_t)dst&(uint32_t)0xfff00000)>>20;
     if(checkaddr==0x000 || checkaddr==0x1ff || checkaddr==0x200 || checkaddr==0x400)
     {
         /*if the destination is allowed, put it into the destination register*/
@@ -247,7 +248,7 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
                         |DMA_DCR_CS(DMA_DCR_CONTINUOUS_OPERATION)
                         |DMA_DCR_AA(DMA_DCR_NO_AUTOALIGN)
                         |DMA_DCR_EADREQ(DMA_DCR_NO_ASYNCH_REQUESTS)
-                        |DMA_DCR_START(DMA_DCR_START)
+                        |DMA_DCR_START(DMA_DCR_START_ENABLE)
                         |DMA_DCR_SMOD(DMA_DCR_NO_SOURCE_MODULO)
                         |DMA_DCR_DMOD(DMA_DCR_NO_DEST_MODULO)
                         |DMA_DCR_D_REQ(DMA_DCR_DISABLE_REQUEST_OFF)
@@ -255,25 +256,25 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
                         |DMA_DCR_DINC(DMA_DCR_INCREMENT_DEST);
     if(src_len==1)/*set the source to increment iff there is more than  1 byte of source*/
     {
-        DCRregwrite|=DMA_DCR_SINC(DMA_NO_SOURCE_INCREMENT);
+        DCRregwrite|=DMA_DCR_SINC(DMA_DCR_NO_SOURCE_INCREMENT);
     }
     else
     {
-        DCRRegwrite|=DMA_DCR_SINC(DMA_INCREMENT_SOURCE);
+        DCRregwrite|=DMA_DCR_SINC(DMA_DCR_INCREMENT_SOURCE);
     }
     if(transfersize==1)/*set transfer size if passed appropriately*/
     {
-        DCRRegwrite|=DMA_DCR_SSIZE(DMA_DCR_TRANSFERSIZE_8BIT)
+        DCRregwrite|=DMA_DCR_SSIZE(DMA_DCR_TRANSFERSIZE_8BIT)
                     |DMA_DCR_DSIZE(DMA_DCR_TRANSFERSIZE_8BIT);
     }
     else if(transfersize==2)
     {
-        DCRRegwrite|=DMA_DCR_SSIZE(DMA_DCR_TRANSFERSIZE_16BIT)
+        DCRregwrite|=DMA_DCR_SSIZE(DMA_DCR_TRANSFERSIZE_16BIT)
                     |DMA_DCR_DSIZE(DMA_DCR_TRANSFERSIZE_16BIT);
     }
     else if(transfersize==4)
     {
-        DCRRegwrite|=DMA_DCR_SSIZE(DMA_DCR_TRANSFERSIZE_32BIT)
+        DCRregwrite|=DMA_DCR_SSIZE(DMA_DCR_TRANSFERSIZE_32BIT)
                     |DMA_DCR_DSIZE(DMA_DCR_TRANSFERSIZE_32BIT);
     }
     else return BAD_SIZE;
