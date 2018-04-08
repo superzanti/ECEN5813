@@ -56,13 +56,13 @@ uint8_t * memmove_dma(uint8_t * src, uint8_t * dst, size_t length, size_t transf
     {/*the case where overlap will occur, but isn't exactly on top of itself*/
         dma0_done=0;
         uint8_t temp[length];
-        setup_memtransfer_dma(src, length, &temp, transfer, length);
+        setup_memtransfer_dma(src, length, temp, transfer, length);
         while(dma0_done==0)
         {
             dma0_done=0;
         }
-        dma0_done==0;
-        setup_memtransfer_dma(&temp, length, dst, transfer, length);
+        dma0_done=0;
+        setup_memtransfer_dma(temp, length, dst, transfer, length);
         while(dma0_done==0)
         {
             dma0_done=0;
@@ -192,8 +192,8 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
                             size_t transfersize, size_t length)/*, uint8_t dma_index)*/
 {
     /*if(dma_index>4) return BAD_INDEX;*/
-    if(src_len==0 || length==0) return NO_LENGTH;
-    if(src==NULL || dst==NULL) return BAD_POINTER;
+    if(src_len==0 || length==0) return DMA_NO_LENGTH;
+    if(src==NULL || dst==NULL) return DMA_BAD_POINTER;
     if(dma_first_setup==0)
     {
         /*turn on clock gates to the mux and dma modules*/
@@ -216,16 +216,16 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
     if(checkaddr==0x000 || checkaddr==0x1ff || checkaddr==0x200 || checkaddr==0x400)
     {
         /*if the source is allowed, put it  into the source register*/
-        DMA_SAR0 = src;
+        DMA_SAR0 = (uint32_t)src;
     }
-    else return BAD_POINTER;
+    else return DMA_BAD_POINTER;
     checkaddr = ((uint32_t)dst&(uint32_t)0xfff00000)>>20;
     if(checkaddr==0x000 || checkaddr==0x1ff || checkaddr==0x200 || checkaddr==0x400)
     {
         /*if the destination is allowed, put it into the destination register*/
-        DMA_DAR0 = dst;
+        DMA_DAR0 = (uint32_t)dst;
     }
-    else return BAD_POINTER;
+    else return DMA_BAD_POINTER;
     /*clear errors and disable active transfer*/
     DMA_DSR_BCR0 |= DMA_DSR_BCR_DONE(DMA_DSR_BCR_DONE_WRITETOCLEAR);
     /*if the transfer is too large, turn it off*/
@@ -235,7 +235,7 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
         /*TODO might need to clear the BCR register as well.*/
         DMA_DSR_BCR0 |= DMA_DSR_BCR_BCR(length);
     }
-    else return BCR_LENGTH_OVERFLOW;
+    else return DMA_BCR_LENGTH_OVERFLOW;
     /*enable interrupt on complete or error, keep peripheral requests off,
      * allow for continuous (non-cycle-steal) operation, dont auto-align
      * dont allow asynchronous requests during low power, enable the transfer
@@ -276,14 +276,14 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
         DCRregwrite|=DMA_DCR_SSIZE(DMA_DCR_TRANSFERSIZE_32BIT)
                     |DMA_DCR_DSIZE(DMA_DCR_TRANSFERSIZE_32BIT);
     }
-    else return BAD_SIZE;
+    else return DMA_BAD_SIZE;
 
     NVIC_ClearPendingIRQ(DMA0_IRQn);/*enable interrupts on DMA0 ocmplete and error*/
     NVIC_EnableIRQ(DMA0_IRQn);
     __enable_irq();
 
     DMA_DCR0=DCRregwrite;/*write DMA control register to start transfer*/
-    return SUCCESS;
+    return DMA_SUCCESS;
 }
 #endif
 #ifdef KL25Z
@@ -292,7 +292,7 @@ void DMA0_IRQHandler()
 	DMA_end_value = SysTick_Base_Ptr->CVR;
     NVIC_ClearPendingIRQ(DMA0_IRQn);
     NVIC_DisableIRQ(DMA0_IRQn);
-    DMAMMUX0_CHCFG0 = 0;
+    DMAMUX0_CHCFG0 = 0;
     DMA_DCR0=0;
     DMA_SAR0=0;
     DMA_DAR0=0;

@@ -47,7 +47,7 @@ POSTFLAGS = -lcmocka
 endif
 
 ifndef PROJECT
-PROJECT=PROJECT2
+PROJECT=PROJECT3
 endif
 
 ifeq ($(PROJECT),PROJECT1)
@@ -61,6 +61,12 @@ OUTPUT=project2.elf
 LDFLAGS += ,-Map=project2.map
 FILES += project2.c
 OBJS += project2.o
+endif
+ifeq ($(PROJECT),PROJECT3)
+OUTPUT=project3.elf
+LDFLAGS += ,-Map=project3.map
+FILES += project3.c
+OBJS += project3.o
 endif
 
 ifeq ($(PLATFORM), HOST)
@@ -99,12 +105,16 @@ FILES +=startup_MKL25Z4.S\
 	system_MKL25Z4.c\
 	port.c\
 	arch_arm32.c\
-	uart.c
+	uart.c\
+	nordic.c\
+	spi.c
 OBJS += startup_MKL25Z4.o\
 	system_MKL25Z4.o\
 	port.o\
 	arch_arm32.o\
-	uart.o
+	uart.o\
+	nordic.o\
+	spi.o
 CFILES +=$(FILES)
 CFLAGS +=$(STD)\
 		-Wall\
@@ -125,6 +135,9 @@ LDFLAGS = ,-Map=project1.map,-T,$(KL25ZLD)
 endif
 ifeq ($(PROJECT),PROJECT2)
 LDFLAGS = ,-Map=project2.map,-T,$(KL25ZLD)
+endif
+ifeq ($(PROJECT),PROJECT3)
+LDFLAGS = ,-Map=project3.map,-T,$(KL25ZLD)
 endif
 endif
 
