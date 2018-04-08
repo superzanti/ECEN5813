@@ -126,7 +126,8 @@ CFLAGS +=$(STD)\
 		-mthumb\
 		-march=armv6-m\
 		-mfloat-abi=soft\
-		--specs=nosys.specs
+		--specs=nosys.specs\
+		-fgnu89-inline
 CPPFLAGS +=  $(INC_PARAMS)\
 			-D $(PLATFORM)\
 			-D $(PROJECT)

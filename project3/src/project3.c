@@ -50,8 +50,8 @@ void profiler()
 	/* TODO run with highest optimizations and lowest optimizations to see difference */
 
 	/* areas to copy and move to */
-	uint8_t *area_one = (uint8_t *) malloc(sizeof(uint8_t)*5001);
-	uint8_t *area_two = area_one+1;
+	uint8_t *area_one = (uint8_t *) malloc(sizeof(uint8_t)*5020);
+	uint8_t *area_two = area_one+20;
 
 	/* timer values */
 	volatile uint32_t start_value = 0;
