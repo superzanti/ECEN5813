@@ -42,7 +42,7 @@ void nrf_write_register(uint8_t writeRegister, uint8_t value)
 }
 
 __attribute((always_inline))
-uint8_t nrf_read_status()
+uint8_t inline nrf_read_status()
 {
 	uint8_t command = 0xFF;
 	uint8_t readByte = 0x00;
@@ -78,10 +78,10 @@ void nrf_write_tx_addr(uint8_t * tx_addr)
 	/* the tx_addr array has the LSB first and the MSB last, assumed to be 4 bytes long */
 	uint8_t command = 0x10;
 	SPI_write_byte(command);
-	SPI_write_byte(tx_addr++);
-	SPI_write_byte(tx_addr++);
-	SPI_write_byte(tx_addr++);
-	SPI_write_byte(tx_addr);
+	SPI_write_byte(*tx_addr++);
+	SPI_write_byte(*tx_addr++);
+	SPI_write_byte(*tx_addr++);
+	SPI_write_byte(*tx_addr);
 }
 
 uint8_t nrf_read_fifo_status()
