@@ -9,15 +9,22 @@
  */
 
 #include "spi.h"
-#ifdef KL25z
+#ifdef KL25Z
 #include "MKL25Z4.h"
+#endif
+#ifdef BBB
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <linux/types.h>
+#include <linux/spi/spidev.h>
 #endif
 
 /* TODO move chip enable to function in spi.c */
 
 void SPI_init()
 {
-#ifdef KL25z
+#ifdef KL25Z
 	/* TODO implement function */
 
 	/* Enable the clock for the SPI */
@@ -50,7 +57,7 @@ void SPI_init()
 
 void SPI_read_byte(uint8_t * byte)
 {
-#ifdef KL25z
+#ifdef KL25Z
 	/* wait until empty*/
 	while((SPI0_S & SPI_S_SPTEF_MASK) != SPI_S_SPTEF_MASK);
 	SPI0_D = 0x00;
