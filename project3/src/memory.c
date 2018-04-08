@@ -281,7 +281,7 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
     {
         DCRregwrite|=DMA_DCR_SINC(DMA_DCR_INCREMENT_SOURCE);
     }
-    if(transfersize==1)/*set transfer size if passed appropriately*/
+    if(transfersize==1 || length<=16)/*set transfer size if passed appropriately*/
     {
         DCRregwrite|=DMA_DCR_SSIZE(DMA_DCR_TRANSFERSIZE_8BIT)
                     |DMA_DCR_DSIZE(DMA_DCR_TRANSFERSIZE_8BIT)
