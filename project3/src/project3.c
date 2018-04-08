@@ -35,9 +35,11 @@ extern volatile uint8_t dma_error_flag;
 extern volatile uint32_t nooperation;
 void project3()
 {
+#ifdef KL25Z
 	GPIO_Configure();
 	SPI_init();
     UART_configure();
+#endif
 #if defined(KL25Z) || defined (BBB)
 	spi_setup_and_test();
 	profiler();
