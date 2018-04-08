@@ -31,6 +31,7 @@ extern CB_t* recieve_buffer;
 extern CB_t* transmit_buffer;
 
 extern volatile uint32_t DMA_end_value;
+extern volatile uint8_t dma_error_flag;
 extern volatile uint32_t nooperation;
 void project3()
 {
@@ -187,11 +188,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
@@ -205,11 +207,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
@@ -223,11 +226,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
@@ -241,11 +245,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
@@ -260,11 +265,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
@@ -278,11 +284,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
@@ -296,11 +303,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
@@ -314,11 +322,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
@@ -443,11 +452,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
@@ -461,11 +471,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
@@ -479,11 +490,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
@@ -497,11 +509,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
@@ -516,11 +529,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
@@ -534,11 +548,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
@@ -552,11 +567,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
@@ -570,11 +586,12 @@ void profiler()
 	SysTick_Base_Ptr->CVR = 0;
 	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
 	printsize = my_itoa((int32_t)(start_value-DMA_end_value), num_string, 10);
-    if(retval==NULL)
+    if(dma_error_flag)
     {
-        num_string[0] = "-"
-        num_string[1] = "1"
-        printsize = 2
+        dma_error_flag=0;
+        num_string[0] = "-";
+        num_string[1] = "1";
+        printsize = 2;
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";

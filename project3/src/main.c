@@ -44,6 +44,7 @@ volatile uint32_t DMA_end_value = 0;
 #endif
 #ifdef KL25Z
 volatile uint8_t dma_first_setup = 0;
+volatile uint8_t dma_error_flag = 0;
 #endif
 volatile uint32_t nooperation=0;
 int main(void)

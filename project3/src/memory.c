@@ -31,6 +31,7 @@
 #include "arch_arm32.h"
 extern uint8_t dma_first_setup;
 #endif
+extern volatile uint8_t dma_error_flag;
 
 extern uint8_t dma0_done;
 extern volatile uint32_t DMA_end_value;
@@ -305,10 +306,6 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
     __enable_irq();
 
     DMA_DCR0=DCRregwrite;/*write DMA control register to start transfer*/
-    if(DMA_DSR_BCR_CE(0)&(DMA_DSR_BCR_CE_MASK)>>DMA_DSR_BCR_CE_SHIFT == 1)
-    {
-        return DMA_ERROR;
-    }
     return DMA_SUCCESS;
 }
 #endif
@@ -322,6 +319,10 @@ void DMA0_IRQHandler()
     DMA_DCR0=0;
     DMA_SAR0=0;
     DMA_DAR0=0;
+    if(DMA_DSR_BCR(0)&(DMA_DSR_BCR_CE_MASK))
+    {
+        dma_error_flag=1;
+    }
     DMA_DSR_BCR0 |= DMA_DSR_BCR_DONE(DMA_DSR_BCR_DONE_WRITETOCLEAR);
     dma0_done=1;
 }
