@@ -1,6 +1,7 @@
 # exclude everything except for certain files
 /*
 !/.gitignore
+!/out.txt
 !/kl25z_noops.bmp
 !/kl25z_op3.bmp
 !/code_as_pdf.pdf
