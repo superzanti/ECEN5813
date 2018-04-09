@@ -35,6 +35,10 @@ extern CB_t* transmit_buffer;
 extern volatile uint32_t DMA_end_value;
 extern volatile uint8_t dma_error_flag;
 extern volatile uint32_t nooperation;
+
+/* start of stack, end of stack */
+extern int __StackTop, __StackLimit;
+
 void project3()
 {
 #ifdef KL25Z
@@ -43,11 +47,47 @@ void project3()
     UART_configure();
 #endif
 #if defined(KL25Z) || defined (BBB)
+	stack_tracker_init();
 	spi_setup_and_test();
 	profiler();
+	stackusage();
 #else
     nooperation++;
 #endif
+}
+
+void stack_tracker_init()
+{
+	uint8_t dummy_stack_var = 0xAA;
+	uint8_t *start_of_unused_stack = &dummy_stack_var;
+	uint8_t * stackend = (uint8_t *) (&__StackLimit);
+	while(start_of_unused_stack >= stackend)
+	{
+		*start_of_unused_stack = 0xAA;
+		start_of_unused_stack--;
+	}
+}
+
+void stackusage()
+{
+	uint8_t * stackend = (uint8_t *) (&__StackLimit);
+	uint8_t * stackbegin = (uint8_t *) (&__StackTop);
+	uint8_t * stackused = stackend;
+	uint8_t * my_string;
+    uint8_t num_string[16];
+	uint8_t printsize = 0x00;
+	while(*stackused==0xAA)
+	{
+		stackused++;
+	}
+	printsize = my_itoa((int32_t)(stackbegin-stackused), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = (unsigned char *) " bytes of the stack used out of a ";
+	UART_send_n(my_string, 34);
+	printsize = my_itoa((int32_t)(stackbegin-stackend), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = (unsigned char *) " total bytes (at max not current)\r\n";
+	UART_send_n(my_string, 35);
 }
 
 #ifdef KL25Z

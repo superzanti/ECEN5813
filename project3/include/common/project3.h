@@ -23,6 +23,28 @@
 void project3();
 
 /*
+ *@brief initializes the stack to 0xAA
+ *
+ * @param none
+ * @return void returns nothing
+ *
+ */
+void stack_tracker_init();
+
+/*
+ *@brief displays the max used space on the stack
+ *
+ * counts backwards from the end of the stack until it reaches
+ * a byte that has been written to, it then uses this value
+ * to profile how much of the stack has been used.
+ *
+ * @param none
+ * @return void returns nothing
+ *
+ */
+void stackusage();
+
+/*
  *@brief profiles the memmove and memset functions
  *
  * outputs results to uart
