@@ -8,6 +8,7 @@
  *  @date March 15, 2018
  */
 
+#define _POSIX_C_SOURCE 199309L
 #include "project3.h"
 
 #include "circbuf.h"
@@ -609,16 +610,12 @@ void profiler()
 	/* TODO run with highest optimizations and lowest optimizations to see difference */
 
 	/* areas to copy and move to */
-	uint8_t *area_one = (uint8_t *) malloc(sizeof(uint8_t)*5001);
-	uint8_t *area_two = area_one+1;
+	uint8_t *area_one = (uint8_t *) malloc(sizeof(uint8_t)*5020);
+	uint8_t *area_two = area_one+20;
 
 	/* timer values */
-	volatile clock_t start_value;
-	volatile clock_t end_value;
-
-	/* strings used for printing */
-    uint8_t num_string[16];
-	uint8_t printsize = 0x00;
+	struct timespec start_value;
+	struct timespec end_value;
 
 	/*******************/
 	/* MEMSET PROFILER */
@@ -627,61 +624,61 @@ void profiler()
 	/* standard library */
 	/* 10 bytes */
     printf("Profiling the standard memset library with 10 bytes took ");
-	start_value = clock();
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memset(area_one, '1', 10);
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 	/* 100 bytes */
     printf("Profiling the standard memset library with 100 bytes took ");
-	start_value = clock();
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memset(area_one, '2', 100);
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 	/* 1000 bytes */
     printf("Profiling the standard memset library with 1000 bytes took ");
-	start_value = clock();
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memset(area_one, '3', 1000);
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 	/* 5000 bytes */
     printf("Profiling the standard memset library with 5000 bytes took ");
-	start_value = clock();
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memset(area_one, '4', 5000);
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 	/* my library */
 	/* 10 bytes */
     printf("Profiling the custom memset function with 10 bytes took ");
-	start_value = clock();
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memset(area_one, 10, '1');
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 	/* 100 bytes */
     printf("Profiling the custom memset function with 100 bytes took ");
-	start_value = clock();
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memset(area_one, 100, '2');
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 	/* 1000 bytes */
     printf("Profiling the custom memset function with 1000 bytes took ");
-	start_value = clock();
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memset(area_one, 1000, '3');
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 	/* 5000 bytes */
     printf("Profiling the custom memset function with 5000 bytes took ");
-	start_value = clock();
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memset(area_one, 5000, '4');
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 
 	/********************/
 	/* MEMMOVE PROFILER */
@@ -689,61 +686,61 @@ void profiler()
 	/* standard library */
 	/* 10 bytes */
     printf("Profiling the standard memmove library with 10 bytes took ");
-	start_value = clock();
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memmove(area_one, area_two, 10);
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 	/* 100 bytes */
     printf("Profiling the standard memmove library with 100 bytes took ");
-	start_value = clock();
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memmove(area_one, area_two, 100);
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 	/* 1000 bytes */
     printf("Profiling the standard memmove library with 1000 bytes took ");
-	start_value = clock();
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memmove(area_one, area_two, 1000);
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 	/* 5000 bytes */
     printf("Profiling the standard memmove library with 5000 bytes took ");
-	start_value = clock();
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memmove(area_one, area_two, 5000);
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 	/* my library */
 	/* 10 bytes */
     printf("Profiling the custom memmove function with 10 bytes took ");
-	start_value = clock();
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memmove(area_one, area_two, 10);
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 	/* 100 bytes */
     printf("Profiling the custom memmove function with 100 bytes took ");
-	start_value = clock();
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memmove(area_one, area_two, 100);
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 	/* 1000 bytes */
     printf("Profiling the custom memmove function with 1000 bytes took ");
-	start_value = clock();
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memmove(area_one, area_two, 1000);
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 	/* 5000 bytes */
-    printf("Profiling the custom memsmovefunction with 5000 bytes took ");
-	start_value = clock();
+    printf("Profiling the custom memmove function with 5000 bytes took ");
+	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memmove(area_one, area_two, 5000);
-	end_value = clock();
-	printf("%d",(int)(start_value-end_value));
-    printf(" clock cycles to run\r\n");
+	clock_gettime(CLOCK_MONOTONIC,&end_value);
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
+    printf(" nanoseconds to run\r\n");
 }
 #endif
 
@@ -770,12 +767,10 @@ void spi_setup_and_test()
 void spi_setup_and_test()
 {
     printf("Starting project 3...\r\n");
-	uint16_t i = 0x00;
-	uint8_t j = 0x00;
+	/*uint8_t j = 0x00;*/
 	uint8_t statreg = 0x00;
-	uint8_t printsize = 0x00;
-	nrf_write_register(0x05, j);
-	statreg = nrf_read_register(0x05);
+	/*nrf_write_register(0x05, j);
+	statreg = nrf_read_register(0x05);*/
 	printf("Status Reg is: 0x");
 	printf("%d\r\n",(int)statreg);
 }

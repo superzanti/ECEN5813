@@ -93,10 +93,12 @@ CFLAGS +=$(STD)\
 		-Werror\
 		-Wfatal-errors\
 		-O0\
+		-fgnu89-inline\
 		-g
 CPPFLAGS +=  $(INC_PARAMS)\
 			-D $(PLATFORM)\
 			-D $(PROJECT)
+POSTFLAGS += -lrt
 endif
 ifeq ($(PLATFORM), KL25Z)
 #	echo Building for platform: KL25Z
@@ -147,18 +149,18 @@ endif
 all: build
 
 %.i: %.c
-	$(CC) $(CPPFLAGS) -E $^ -o $@
+	$(CC) $(CPPFLAGS) -E $^ -o $@ $(POSTFLAGS)
 
 %.asm: %.c
-	$(CC) $(CPPFLAGS) $(LIBS) $(CFLAGS) -S $^ -o $@
+	$(CC) $(CPPFLAGS) $(LIBS) $(CFLAGS) -S $^ -o $@ $(POSTFLAGS)
 
 %.o: %.c
-	$(CC) $(CPPFLAGS) $(LIBS) $(CFLAGS) -c $^ -o $@
+	$(CC) $(CPPFLAGS) $(LIBS) $(CFLAGS) -c $^ -o $@ $(POSTFLAGS)
 %.o: %.S
-	$(CC) $(CPPFLAGS) $(LIBS) $(CFLAGS) -c $^ -o $@
+	$(CC) $(CPPFLAGS) $(LIBS) $(CFLAGS) -c $^ -o $@ $(POSTFLAGS)
 
 %.d: %.c
-	$(CC) $(CPPFLAGS) $(LIBS) -M $(CFLAGS) -c $^ -o $@
+	$(CC) $(CPPFLAGS) $(LIBS) -M $(CFLAGS) -c $^ -o $@ $(POSTFLAGS)
 
 .PHONY: compile-all
 compile-all: $(OBJS) $(DEPS)
