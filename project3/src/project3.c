@@ -47,15 +47,20 @@ void project3()
     UART_configure();
 #endif
 #if defined(KL25Z) || defined (BBB)
+#ifdef KL25Z
 	stack_tracker_init();
+#endif
 	spi_setup_and_test();
 	profiler();
+#ifdef KL25Z
 	stackusage();
+#endif
 #else
     nooperation++;
 #endif
 }
 
+#ifdef KL25Z
 void stack_tracker_init()
 {
 	uint8_t dummy_stack_var = 0xAA;
@@ -90,7 +95,6 @@ void stackusage()
 	UART_send_n(my_string, 35);
 }
 
-#ifdef KL25Z
 void profiler()
 {
 	/* TODO buildtime settings must be adjusted so that the heap can support these regions (at least 1kB) */
