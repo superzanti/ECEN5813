@@ -4,6 +4,18 @@
  *
  * Abstraction layer for the nordic NRF chip
  *
+ * it's assumed that the NRF is connected to the KL25Z in the following manner
+ *       NRF     |     KL25z
+ *---------------|---------------
+ *        GND    ->    GND
+ *        VCC    ->    3.3V
+ *        CSN    ->    PTD0
+ *        CE     ->    PTD5
+ *        SCK    ->    PTD1
+ *        MOSI   ->    PTD2
+ *        MISO   ->    PTD3
+ *        IRQ    ->    NC
+ *
  *  @author Seth Miers and Jake Cazden
  *  @date March 15, 2018
  */

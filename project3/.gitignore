@@ -1,6 +1,8 @@
 # exclude everything except for certain files
 /*
 !/.gitignore
+!/kl25z_noops.bmp
+!/kl25z_op3.bmp
 !/code_as_pdf.pdf
 !/Architecture Diagram.xml
 !/Architecture_diagram_jakeCazden_SethMiers_V2.0.PNG
