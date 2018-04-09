@@ -36,6 +36,9 @@ extern volatile uint8_t dma_error_flag;
 extern uint8_t dma0_done;
 extern volatile uint32_t DMA_end_value;
 extern volatile uint32_t nooperation;
+
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
 uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value, size_t transfer)
 {
 	/* TODO implement function */
@@ -56,7 +59,10 @@ uint8_t * memset_dma(uint8_t * src, size_t length, uint8_t value, size_t transfe
 	return my_memset(src, length, value);
 	#endif
 }
+#pragma GCC pop_options
 
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
 uint8_t * memmove_dma(uint8_t * src, uint8_t * dst, size_t length, size_t transfer)
 {
 	#ifdef KL25Z
@@ -103,6 +109,7 @@ uint8_t * memmove_dma(uint8_t * src, uint8_t * dst, size_t length, size_t transf
 	return my_memmove(src, dst, length);
 	#endif
 }
+#pragma GCC pop_options
 
 uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length)
 {
@@ -310,6 +317,8 @@ DMA_e setup_memtransfer_dma(uint8_t* src, uint8_t src_len, uint8_t* dst,
 }
 #endif
 #ifdef KL25Z
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
 void DMA0_IRQHandler()
 {
 	DMA_end_value = SysTick_Base_Ptr->CVR;
@@ -326,4 +335,5 @@ void DMA0_IRQHandler()
     DMA_DSR_BCR0 |= DMA_DSR_BCR_DONE(DMA_DSR_BCR_DONE_WRITETOCLEAR);
     dma0_done=1;
 }
+#pragma GCC pop_options
 #endif

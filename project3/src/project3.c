@@ -671,58 +671,58 @@ void profiler()
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memset(area_one, '1', 10);
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 	/* 100 bytes */
     printf("Profiling the standard memset library with 100 bytes took ");
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memset(area_one, '2', 100);
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 	/* 1000 bytes */
     printf("Profiling the standard memset library with 1000 bytes took ");
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memset(area_one, '3', 1000);
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 	/* 5000 bytes */
     printf("Profiling the standard memset library with 5000 bytes took ");
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memset(area_one, '4', 5000);
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 	/* my library */
 	/* 10 bytes */
     printf("Profiling the custom memset function with 10 bytes took ");
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memset(area_one, 10, '1');
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 	/* 100 bytes */
     printf("Profiling the custom memset function with 100 bytes took ");
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memset(area_one, 100, '2');
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 	/* 1000 bytes */
     printf("Profiling the custom memset function with 1000 bytes took ");
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memset(area_one, 1000, '3');
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 	/* 5000 bytes */
     printf("Profiling the custom memset function with 5000 bytes took ");
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memset(area_one, 5000, '4');
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 
 	/********************/
 	/* MEMMOVE PROFILER */
@@ -733,58 +733,58 @@ void profiler()
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memmove(area_one, area_two, 10);
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 	/* 100 bytes */
     printf("Profiling the standard memmove library with 100 bytes took ");
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memmove(area_one, area_two, 100);
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 	/* 1000 bytes */
     printf("Profiling the standard memmove library with 1000 bytes took ");
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memmove(area_one, area_two, 1000);
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 	/* 5000 bytes */
     printf("Profiling the standard memmove library with 5000 bytes took ");
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	memmove(area_one, area_two, 5000);
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 	/* my library */
 	/* 10 bytes */
     printf("Profiling the custom memmove function with 10 bytes took ");
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memmove(area_one, area_two, 10);
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 	/* 100 bytes */
     printf("Profiling the custom memmove function with 100 bytes took ");
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memmove(area_one, area_two, 100);
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 	/* 1000 bytes */
     printf("Profiling the custom memmove function with 1000 bytes took ");
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memmove(area_one, area_two, 1000);
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 	/* 5000 bytes */
     printf("Profiling the custom memmove function with 5000 bytes took ");
 	clock_gettime(CLOCK_MONOTONIC,&start_value);
 	my_memmove(area_one, area_two, 5000);
 	clock_gettime(CLOCK_MONOTONIC,&end_value);
-	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec));
-    printf(" nanoseconds to run\r\n");
+	printf("%ld",(end_value.tv_nsec-start_value.tv_nsec)*3/10);
+    printf(" clock cycles to run\r\n");
 }
 #endif
 
