@@ -18,6 +18,7 @@
 	#include "nordic.h"
 	#include "spi.h"
     #include <time.h>
+    #include <stdio.h>
 #endif
 #ifdef KL25Z
 	#include "nordic.h"
@@ -39,9 +40,11 @@ extern int __StackTop, __StackLimit;
 
 void project3()
 {
+#ifdef KL25Z
 	GPIO_Configure();
 	SPI_init();
     UART_configure();
+#endif
 #if defined(KL25Z) || defined (BBB)
 	stack_tracker_init();
 	spi_setup_and_test();
@@ -654,7 +657,6 @@ void profiler()
 	volatile clock_t end_value;
 
 	/* strings used for printing */
-    uint8_t *my_string;
     uint8_t num_string[16];
 	uint8_t printsize = 0x00;
 
@@ -664,172 +666,124 @@ void profiler()
 
 	/* standard library */
 	/* 10 bytes */
-    my_string = (unsigned char *) "Profiling the standard memset library with 10 bytes took ";
-	UART_send_n(my_string, 57);
+    printf("Profiling the standard memset library with 10 bytes took ");
 	start_value = clock();
 	memset(area_one, '1', 10);
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 	/* 100 bytes */
-    my_string = (unsigned char *) "Profiling the standard memset library with 100 bytes took ";
-	UART_send_n(my_string, 58);
+    printf("Profiling the standard memset library with 100 bytes took ");
 	start_value = clock();
 	memset(area_one, '2', 100);
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 	/* 1000 bytes */
-    my_string = (unsigned char *) "Profiling the standard memset library with 1000 bytes took ";
-	UART_send_n(my_string, 59);
+    printf("Profiling the standard memset library with 1000 bytes took ");
 	start_value = clock();
 	memset(area_one, '3', 1000);
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 	/* 5000 bytes */
-    my_string = (unsigned char *) "Profiling the standard memset library with 5000 bytes took ";
-	UART_send_n(my_string, 59);
+    printf("Profiling the standard memset library with 5000 bytes took ");
 	start_value = clock();
 	memset(area_one, '4', 5000);
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 	/* my library */
 	/* 10 bytes */
-    my_string = (unsigned char *) "Profiling the custom memset function with 10 bytes took ";
-	UART_send_n(my_string, 56);
+    printf("Profiling the custom memset function with 10 bytes took ");
 	start_value = clock();
 	my_memset(area_one, 10, '1');
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 	/* 100 bytes */
-    my_string = (unsigned char *) "Profiling the custom memset function with 100 bytes took ";
-	UART_send_n(my_string, 57);
+    printf("Profiling the custom memset function with 100 bytes took ");
 	start_value = clock();
 	my_memset(area_one, 100, '2');
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 	/* 1000 bytes */
-    my_string = (unsigned char *) "Profiling the custom memset function with 1000 bytes took ";
-	UART_send_n(my_string, 58);
+    printf("Profiling the custom memset function with 1000 bytes took ");
 	start_value = clock();
 	my_memset(area_one, 1000, '3');
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 	/* 5000 bytes */
-    my_string = (unsigned char *) "Profiling the custom memset function with 5000 bytes took ";
-	UART_send_n(my_string, 58);
+    printf("Profiling the custom memset function with 5000 bytes took ");
 	start_value = clock();
 	my_memset(area_one, 5000, '4');
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 
 	/********************/
 	/* MEMMOVE PROFILER */
 	/********************/
 	/* standard library */
 	/* 10 bytes */
-    my_string = (unsigned char *) "Profiling the standard memmove library with 10 bytes took ";
-	UART_send_n(my_string, 58);
+    printf("Profiling the standard memmove library with 10 bytes took ");
 	start_value = clock();
 	memmove(area_one, area_two, 10);
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 	/* 100 bytes */
-    my_string = (unsigned char *) "Profiling the standard memmove library with 100 bytes took ";
-	UART_send_n(my_string, 59);
+    printf("Profiling the standard memmove library with 100 bytes took ");
 	start_value = clock();
 	memmove(area_one, area_two, 100);
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 	/* 1000 bytes */
-    my_string = (unsigned char *) "Profiling the standard memmove library with 1000 bytes took ";
-	UART_send_n(my_string, 60);
+    printf("Profiling the standard memmove library with 1000 bytes took ");
 	start_value = clock();
 	memmove(area_one, area_two, 1000);
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 	/* 5000 bytes */
-    my_string = (unsigned char *) "Profiling the standard memmove library with 5000 bytes took ";
-	UART_send_n(my_string, 60);
+    printf("Profiling the standard memmove library with 5000 bytes took ");
 	start_value = clock();
 	memmove(area_one, area_two, 5000);
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 	/* my library */
 	/* 10 bytes */
-    my_string = (unsigned char *) "Profiling the custom memmove function with 10 bytes took ";
-	UART_send_n(my_string, 57);
+    printf("Profiling the custom memmove function with 10 bytes took ");
 	start_value = clock();
 	my_memmove(area_one, area_two, 10);
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 	/* 100 bytes */
-    my_string = (unsigned char *) "Profiling the custom memmove function with 100 bytes took ";
-	UART_send_n(my_string, 58);
+    printf("Profiling the custom memmove function with 100 bytes took ");
 	start_value = clock();
 	my_memmove(area_one, area_two, 100);
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 	/* 1000 bytes */
-    my_string = (unsigned char *) "Profiling the custom memmove function with 1000 bytes took ";
-	UART_send_n(my_string, 59);
+    printf("Profiling the custom memmove function with 1000 bytes took ");
 	start_value = clock();
 	my_memmove(area_one, area_two, 1000);
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 	/* 5000 bytes */
-    my_string = (unsigned char *) "Profiling the custom memsmovefunction with 5000 bytes took ";
-	UART_send_n(my_string, 59);
+    printf("Profiling the custom memsmovefunction with 5000 bytes took ");
 	start_value = clock();
 	my_memmove(area_one, area_two, 5000);
 	end_value = clock();
-	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
-	UART_send_n(num_string, printsize);
-    my_string = (unsigned char *) " clock cycles to run\r\n";
-	UART_send_n(my_string, 22);
+	printf("%d",(int)(start_value-end_value));
+    printf(" clock cycles to run\r\n");
 }
 #endif
 
@@ -855,20 +809,14 @@ void spi_setup_and_test()
 #ifdef BBB
 void spi_setup_and_test()
 {
-    uint8_t my_string[] = "Starting project 3...";
-    uint8_t return_string[] = "\r\n";
-    uint8_t hex_string[] = "Status Reg is: 0x";
-    UART_send_n(my_string, sizeof(my_string));
-    UART_send_n(return_string, sizeof(return_string));
+    printf("Starting project 3...\r\n");
 	uint16_t i = 0x00;
 	uint8_t j = 0x00;
 	uint8_t statreg = 0x00;
 	uint8_t printsize = 0x00;
 	nrf_write_register(0x05, j);
 	statreg = nrf_read_register(0x05);
-	printsize = my_itoa((int32_t)statreg, my_string, 16);
-	UART_send_n(hex_string, sizeof(hex_string));
-	UART_send_n(my_string, printsize);
-	UART_send_n(return_string, sizeof(return_string));
+	printf("Status Reg is: 0x");
+	printf("%d\r\n",(int)statreg);
 }
 #endif
