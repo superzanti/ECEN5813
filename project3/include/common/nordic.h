@@ -29,6 +29,51 @@
 #define NRF_POWER_DOWN (0)
 #define NRF_POWER_UP_MASK (0x02)
 
+/* RF SETUP REGISTER
+ * The RF setup register on the NRF device is used
+ * for setting up how the device outputs.
+ * The output power, the low noise amplifier, the data rate,
+ * and the PLL are all configured here.
+ * For more information see the datasheet by searching for:
+ * nRF24L01_Product_Specification_v2_0.pdf
+ */
+
+/* CONFIG REGISTER
+ * The configuration register on the NRF device is used
+ * for setting up the device, enabling and disabling it,
+ * enabling or disabling TX, enabling or disabling RX, then
+ * powering up or powering down the device. For more information
+ * see the NRF datasheet by searching for:
+ * nRF24L01_Product_Specification_v2_0.pdf
+ */
+
+/* RF CHANNEL REGISTER
+ * The RF Channel register is used for setting up the transmit
+ * channel. This channel is used so that multiple devices all
+ * transmitting over the same frequency can still communicate properly.
+ * For more information see the NRF datasheet at:
+ * nRF24L01_Product_Specification_v2_0.pdf
+ */
+
+/* STATUS REGISTER
+ * The Status register on the NRF device is to show the current
+ * status of the device. The status includes things such as if the data
+ * has been properly transmitted, how many times data should attempt
+ * to transmit, if there is anything in the RX buffer, if a fifo
+ * should be used for the RX buffer, and if the TX buffer is full.
+ * For more information see the NRF datasheet by searching for:
+ * nRF24L01_Product_Specification_v2_0.pdf
+ */
+
+/* FIFO STATUS REGISTER
+ * The FIFO status register on the NRF device shows
+ * detailed information on the status of the RX and TX FIFO.
+ * This register will represent if the TX has had any reuse,
+ * and if the RX and TX FIFOs are full or empty. For more
+ * information see the NRF datasheet by searching for:
+ * nRF24L01_Product_Specification_v2_0.pdf
+ */
+
 #include <stdint.h>
 
 /**
@@ -56,6 +101,14 @@ void nrf_write_register(uint8_t writeRegister, uint8_t value);
 /**
  * @brief reads the status register and returns the result
  *
+ * The Status register on the NRF device is to show the current
+ * status of the device. The status includes things such as if the data
+ * has been properly transmitted, how many times data should attempt
+ * to transmit, if there is anything in the RX buffer, if a fifo
+ * should be used for the RX buffer, and if the TX buffer is full.
+ * For more information see the NRF datasheet by searching for:
+ * nRF24L01_Product_Specification_v2_0.pdf
+ *
  * @param none
  * @return uint8_t the value of the reigster
  */
@@ -64,6 +117,13 @@ uint8_t nrf_read_status();
 /**
  * @brief write to the nrf config register
  *
+ * The configuration register on the NRF device is used
+ * for setting up the device, enabling and disabling it,
+ * enabling or disabling TX, enabling or disabling RX, then
+ * powering up or powering down the device. For more information
+ * see the NRF datasheet by searching for:
+ * nRF24L01_Product_Specification_v2_0.pdf
+ *
  * @param uint8_t config the config to write
  * @return void
  */
@@ -71,6 +131,12 @@ void nrf_write_config(uint8_t config);
 
 /**
  * @brief read the rf_setup register
+ *
+ * The RF Channel register is used for setting up the transmit
+ * channel. This channel is used so that multiple devices all
+ * transmitting over the same frequency can still communicate properly.
+ * For more information see the NRF datasheet at:
+ * nRF24L01_Product_Specification_v2_0.pdf
  *
  * @param none
  * @return uint8_t the value of the reigster
@@ -95,6 +161,13 @@ void nrf_write_tx_addr(uint8_t * tx_addr);
 
 /**
  * @brief read the fifo_status register
+ *
+ * The FIFO status register on the NRF device shows
+ * detailed information on the status of the RX and TX FIFO.
+ * This register will represent if the TX has had any reuse,
+ * and if the RX and TX FIFOs are full or empty. For more
+ * information see the NRF datasheet by searching for:
+ * nRF24L01_Product_Specification_v2_0.pdf
  *
  * @param none
  * @return uint8_t the value of the reigster
