@@ -23,23 +23,23 @@ typedef enum {
 } log_ret;
 
 typedef enum {
-    CIRCBUF=0,
-    CONVERSION,
-    DATA,
-    DEBUG,
-    LOGGER,
-    LOGGER_QUEUE,
-    MAIN,
-    MEMORY,
-    NORDIC,
-    PORT,
-    PROJECT1,
-    PROJECT2,
-    PROJECT3,
-    PROJECT4,
-    SPI,
-    UART,
-    UNITTEST
+    FUNC_CIRCBUF=0,
+    FUNC_CONVERSION,
+    FUNC_DATA,
+    FUNC_DEBUG,
+    FUNC_LOGGER,
+    FUNC_LOGGER_QUEUE,
+    FUNC_MAIN,
+    FUNC_MEMORY,
+    FUNC_NORDIC,
+    FUNC_PORT,
+    FUNC_PROJECT1,
+    FUNC_PROJECT2,
+    FUNC_PROJECT3,
+    FUNC_PROJECT4,
+    FUNC_SPI,
+    FUNC_UART,
+    FUNC_UNITTEST
 } mod_e;
 
 typedef enum {

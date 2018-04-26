@@ -643,7 +643,41 @@ void profiler()
     }
 	UART_send_n(num_string, printsize);
     my_string = (unsigned char *) " clock cycles to run\r\n";
+
+    uint8_t return_string[] = "\r\n";
+    uint8_t hex_string[] = "RF CH  Reg is: 0x";
+	uint8_t statreg = 0x00;
+
+	/* IMPEMENTED THING FOR DEMO */
+	SysTick_Base_Ptr->CSR |= __SYSTICK_ENABLE_MASK; /* enable counting */
+    my_string = (unsigned char *) "Profiling the NRF write function - ";
+	UART_send_n(my_string, 35);
+	start_value = SysTick_Base_Ptr->CVR;
+	nrf_write_register(0x05, 0x30);
+	end_value = SysTick_Base_Ptr->CVR;
+	SysTick_Base_Ptr->CVR = 0;
+	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = (unsigned char *) " clock cycles to run\r\n";
 	UART_send_n(my_string, 22);
+	UART_send_n(return_string, sizeof(return_string));
+
+	SysTick_Base_Ptr->CSR |= __SYSTICK_ENABLE_MASK; /* enable counting */
+    my_string = (unsigned char *) "Profiling the NRF read function - ";
+	UART_send_n(my_string, 34);
+	start_value = SysTick_Base_Ptr->CVR;
+	statreg = nrf_read_register(0x05);
+	end_value = SysTick_Base_Ptr->CVR;
+	SysTick_Base_Ptr->CVR = 0;
+	SysTick_Base_Ptr->CSR &= ~(__SYSTICK_ENABLE_MASK); /* disable counting */
+	printsize = my_itoa((int32_t)(start_value-end_value), num_string, 10);
+	UART_send_n(num_string, printsize);
+    my_string = (unsigned char *) " clock cycles to run\r\n";
+	UART_send_n(my_string, 22);
+	UART_send_n(return_string, sizeof(return_string));
+
+UART_send_n(my_string, 22);
 }
 #endif
 #ifdef BBB
@@ -793,10 +827,10 @@ void spi_setup_and_test()
 {
     uint8_t my_string[] = "Starting project 3...";
     uint8_t return_string[] = "\r\n";
-    uint8_t hex_string[] = "Status Reg is: 0x";
+    uint8_t hex_string[] = "RF CH  Reg is: 0x";
     UART_send_n(my_string, sizeof(my_string));
     UART_send_n(return_string, sizeof(return_string));
-	uint8_t j = 0x00;
+	uint8_t j = 0x30;
 	uint8_t statreg = 0x00;
 	uint8_t printsize = 0x00;
 	nrf_write_register(0x05, j);
@@ -804,7 +838,6 @@ void spi_setup_and_test()
 	printsize = my_itoa((int32_t)statreg, my_string, 16);
 	UART_send_n(hex_string, sizeof(hex_string));
 	UART_send_n(my_string, printsize);
-	UART_send_n(return_string, sizeof(return_string));
 }
 #endif
 #ifdef BBB
