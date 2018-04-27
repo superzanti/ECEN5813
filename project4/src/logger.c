@@ -37,7 +37,7 @@ log_ret logger_init()
 #endif
 }
 
-log_ret log_data(uint8_t* data, uint16_t length, mod_e module)
+log_ret log_data(log_e log, mod_e module, uint16_t length, uint8_t* data)
 {
 #if defined(BBB) || defined (HOST)
 	time_t thetime = time(NULL);
@@ -45,8 +45,8 @@ log_ret log_data(uint8_t* data, uint16_t length, mod_e module)
 	uint8_t checksum = 0;
 	char* timeptr = (char*)(&thetime);
 	char* lengthptr = (char*)(&length);
-	printf("%c",(char)INFO);/*print LOG ID*/
-	checksum^=(uint8_t)INFO;
+	printf("%c",(char)log);/*print LOG ID*/
+	checksum^=(uint8_t)log;
 	printf("%c",(char)module);/*print module ID*/
 	checksum^=(uint8_t)module;
 	uint16_t i;
@@ -69,12 +69,39 @@ log_ret log_data(uint8_t* data, uint16_t length, mod_e module)
 	return LOGGER_SUCCESS;
 #endif
 #ifdef KL25Z
+	UART_e UART_send_n(uint8_t *data, size_t num_bytes)
+	time_t thetime = time(NULL);
+	uint8_t checksum = 0;
+	checksum^=(uint8_t)log;
+	checksum^=(uint8_t)module;/*calculate checksums over log and module ID*/
+	uint8_t* timeptr = (uint8_t*)(&thetime);
+	uint8_t* lengthptr = (uint8_t*)(&length);
+	uint8_t* dataptr = (data);
+	UART_send((uint8_t*)(&log));
+	UART_send((uint8_t*)(&module));/*send log id and module id*/
+	uint16_t i;
+	for(i=0;i<2;i++)
+	{
+		checksum^=(uint8_t)(*(lengthptr++));/*calculate checksum over length*/
+	}
+	UART_send_n((uint8_t*)(&length),2);/*print length*/
+	for(i=0;i<4;i++)
+	{
+		checksum^=(uint8_t)(*(timeptr++));/*calculate checksum over time*/
+	}
+	UART_send_n((uint8_t*)(&thetime),4);/*print time*/
+	for(i=0;i<length;i++)
+	{
+		checksum^=(uint8_t)(*(dataptr++));/*calculate checksum over data*/
+	}
+	if(length>0) UART_send_n(data,length);/*print payload*/
+	Uart_send(&checksum);/*print checksum*/
+	return LOGGER_SUCCESS;
 #endif
 }
 
-log_ret log_string(uint8_t* string, mod_e module)
+log_ret log_string(log_e log, mod_e module, uint8_t* string)
 {
-#if defined(BBB) || defined (HOST)
 	uint16_t i;
 	for(i=0;i<65535;i++)
 	{
@@ -83,21 +110,15 @@ log_ret log_string(uint8_t* string, mod_e module)
 			break;
 		}
 	}
-	return log_data(string,i+1,module);
-#endif
-#ifdef KL25Z
-#endif
+	if(i==65535) return LOGGER_FAILURE;
+	return log_data(log, module, string, i+1);
 }
 
-log_ret log_integer(uint32_t num, mod_e module)
+log_ret log_integer(log_e log, mod_e module, uint32_t num)
 {
-#if defined(BBB) || defined (HOST)
 	uint8_t outstring[16];
 	uint8_t length = my_itoa(num, outstring, 10);
 	return log_data(outstring,length,module);
-#endif
-#ifdef KL25Z
-#endif
 }
 
 void log_flush()
@@ -113,10 +134,13 @@ void log_flush()
 log_ret log_item(log_t loginput)
 {
 #if defined(BBB) || defined (HOST)
+	log_data(loginput.LogID, loginput.ModuleID, loginput.LogLength, loginput.PayloadData);
+#endif
+#ifdef KL25Z
 	if(LQ_is_full(log_buffer)==LOGQUEUE_SUCCESS)/*if logger is not full*/
 	{
 		loginput.Timestamp = (uint32_t)time(NULL);
-		/*TODO change how the time is acquired on the BBB, it needs calibration*/
+		/*TODO get the time accurately on the KL25z*/
 		loginput.Checksum = 0;
 		Loginput.Checksum^=(uint8_t)LogID;
 		Loginput.Checksum^=(uint8_t)loginput.ModuleID;
@@ -139,7 +163,5 @@ log_ret log_item(log_t loginput)
 		LQ_e LQ_buffer_add_item(log_buffer, loginpu);
 		return LOGGER_SUCCESS;
 	}
-#endif
-#ifdef KL25Z
 #endif
 }

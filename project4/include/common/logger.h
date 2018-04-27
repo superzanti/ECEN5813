@@ -88,14 +88,14 @@ log_ret logger_init();
  * @param[in] uint16_t the length of the data, no larger than 2^16-1 bytes
  * @return returns success or failure of logging attempt
  */
-log_ret log_data(uint8_t* data, uint16_t length, mod_e module);
+log_ret log_data(log_e log, mod_e module, uint16_t length, uint8_t* data);
 
 /* @brief log a c style string, relies on null termination.
  *
  * @param[in] uint8_t* a pointer to the c string to be logged
  * @return returns success or failure of logging attempt
  */
-log_ret log_string(uint8_t* string, mod_e module);
+log_ret log_string(log_e log, mod_e module, uint8_t* string);
 
 /* @brief log a numeric type cast as a uint32_t. 
  *
@@ -104,7 +104,7 @@ log_ret log_string(uint8_t* string, mod_e module);
  * @param[in] uint32_t a cast version of any 32 bit or smaller numeric type
  * @return returns success or failure of logging attempt
  */
-log_ret log_integer(uint32_t num, mod_e module);
+log_ret log_integer(log_e log, mod_e module, uint32_t num);
 
 /* @brief blocks until the log buffer is empty
  *
