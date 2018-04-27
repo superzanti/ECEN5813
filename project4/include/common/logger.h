@@ -73,7 +73,6 @@ typedef struct{
 	uint32_t Timestamp;
 	uint8_t* PayloadData;
 	uint8_t Checksum;
-	uint32_t totallength;
 }log_t;
 
 /* @brief initialize the logger engine

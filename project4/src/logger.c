@@ -10,7 +10,9 @@
  *
  */
 #include "logger.h"
+#include "conversion.h"
 
+#include "logger_queue.h" /* TODO fix circular dependency*/
 #include "circbuf.h" /* so we can use the circular buffer in our uart */
 
 #if defined(BBB) || defined(HOST)
@@ -23,16 +25,15 @@
 #include "uart.h"
 #endif
 
-extern CB_t* log_buffer;
+extern LQ_t* log_buffer;
 
 log_ret logger_init()
 {
-#ifdef BBB
-#endif
-#ifdef HOST
+	LQ_e logbufferinitreturn = LQ_init(log_buffer, LOG_BUFFER_LENGTH);
+#if defined(BBB) || defined(HOST)
 #endif
 #ifdef KL25Z
-	CB_e logbufferinitreturn = CB_init(log_buffer, LOG_BUFFER_LENGTH);
+	/*TODO put in the RTC initialization here*/
 #endif
 }
 
@@ -78,7 +79,11 @@ log_ret log_string(uint8_t* string, mod_e module)
 	for(i=0;i<65535;i++)
 	{
 		if(string[i]=='\0')
+		{
+			break;
+		}
 	}
+	return log_data(string,i+1,module);
 #endif
 #ifdef KL25Z
 #endif
@@ -87,6 +92,9 @@ log_ret log_string(uint8_t* string, mod_e module)
 log_ret log_integer(uint32_t num, mod_e module)
 {
 #if defined(BBB) || defined (HOST)
+	uint8_t outstring[16];
+	uint8_t length = my_itoa(num, outstring, 10);
+	return log_data(outstring,length,module);
 #endif
 #ifdef KL25Z
 #endif
@@ -94,6 +102,8 @@ log_ret log_integer(uint32_t num, mod_e module)
 
 void log_flush()
 {
+/*TODO do we want this to go through and print each one? or do we want it to pop them off
+ * the queue, and have the function in logger_queue do the printing over there*/
 #if defined(BBB) || defined (HOST)
 #endif
 #ifdef KL25Z
@@ -103,6 +113,32 @@ void log_flush()
 log_ret log_item(log_t loginput)
 {
 #if defined(BBB) || defined (HOST)
+	if(LQ_is_full(log_buffer)==LOGQUEUE_SUCCESS)/*if logger is not full*/
+	{
+		loginput.Timestamp = (uint32_t)time(NULL);
+		/*TODO change how the time is acquired on the BBB, it needs calibration*/
+		loginput.Checksum = 0;
+		Loginput.Checksum^=(uint8_t)LogID;
+		Loginput.Checksum^=(uint8_t)loginput.ModuleID;
+		uint8_t* timeptr = (uint8_t*)(&loginput.Timestamp);
+		uint8_t* lengthptr = (uint8_t*)(&LogLength);
+		uint8_t* dataptr = (PayloadData);
+		uint16_t i;
+		for(i=0;i<2;i++)
+		{
+			Loginput.Checksum^=(*(lengthptr++));
+		}
+		for(i=0;i<4;i++)
+		{
+			Loginput.Checksum^=(*(timeptr++));
+		}
+		for(i=0;i<length;i++)
+		{
+			Loginput.Checksum^=(*(dataptr++));
+		}
+		LQ_e LQ_buffer_add_item(log_buffer, loginpu);
+		return LOGGER_SUCCESS;
+	}
 #endif
 #ifdef KL25Z
 #endif
