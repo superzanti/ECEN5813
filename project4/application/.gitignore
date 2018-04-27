@@ -1,2 +1,3 @@
 # exclude everything except for certain files
 /build
+*.pyc
