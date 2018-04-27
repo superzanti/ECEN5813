@@ -9,6 +9,7 @@
  *
  */
 #include "circbuf.h"
+#include "uart.h"
 
 /* standard library for malloc */
 #include <stdlib.h>
@@ -34,7 +35,7 @@ LQ_e LQ_init(LQ_t* circbuff, size_t buffer_size)
     if ((void*)circbuff == NULL)
         return LOGQUEUE_BAD_POINTER;
     circbuff->buff_size = buffer_size;
-    circbuff->base = (BUFFER_TYPE*)malloc(((int)buffer_size)*sizeof(BUFFER_TYPE));
+    circbuff->base = (log_t**)malloc(((int)buffer_size)*sizeof(log_t*));
     circbuff->head = circbuff->base;
     circbuff->tail = circbuff->base;
     circbuff->num_in = 0;
@@ -80,10 +81,10 @@ LQ_e LQ_destroy(LQ_t* circbuff)
  *
  *
  * @param[in] LQ_t* the LQ_t object to operate on
- * @param[in] BUFFER_TYPE the object to add into the buffer
+ * @param[in] log_t* the object to add into the buffer
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_buffer_add_item(LQ_t* circbuff, BUFFER_TYPE data)
+LQ_e LQ_buffer_add_item(LQ_t* circbuff, log_t* data)
 {
     if ((void*)circbuff == NULL)
         return LOGQUEUE_BAD_POINTER;
@@ -98,7 +99,22 @@ LQ_e LQ_buffer_add_item(LQ_t* circbuff, BUFFER_TYPE data)
         return LOGQUEUE_FULL;
     }
     END_CRITICAL();
-    *circbuff->head = data;
+    log_t* temp= (log_t*)malloc(sizeof(log_t));/*declare new log_t on heap*/
+    temp->LogID = data->LogID;/*fill new heap data with stuff from data*/
+    temp->ModuleID=data->ModuleID;
+    temp->LogLength=data->LogLength;
+    temp->Timestamp= data->Timestamp;
+    temp->Checksum = data->Checksum;
+    if(temp->LogLength>0)
+    {
+	/*if there's a payload, allocate space for it, copy it into heap memory, 
+	 * and then put the new heap allocation of it into the new heap log structure.
+	 * put the pointer to this heap-allocated structure into the circular buffer*/
+    	uint8_t* Payloadtemp= (uint8_t*)malloc(((int)temp->LogLength)*sizeof(uint8_t));
+    	my_memmove(data->PayloadData, Payloadtemp, data->LogLength);
+    	temp->PayloadData = Payloadtemp;
+    }
+    *circbuff->head = temp;
     circbuff->head = circbuff->head + 1; /* or just circbuff->head++; */
     circbuff->num_in++;
     circbuff->buff_empty_flag = UNSET;
@@ -119,7 +135,8 @@ LQ_e LQ_buffer_add_item(LQ_t* circbuff, BUFFER_TYPE data)
         }
     }
     START_CRITICAL();
-    return LOGQUEUE_SUCCESS;
+    UART_start_buffered_transmission()
+    return LOGQUEUE_SUCCESS;/*TODO change this to activate the UART interrupt*/
 }
 
 /* @brief removes an item from the logger queue
@@ -128,10 +145,10 @@ LQ_e LQ_buffer_add_item(LQ_t* circbuff, BUFFER_TYPE data)
  * incrementing the tail an decrementing the num_in
  *
  * @param[in] LQ_t* the LQ_t object to operate on
- * @param[out] BUFFER_TYPE* put the data removed into this pointer
+ * @param[out] log_t** put the data removed into this pointer
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_buffer_remove_item(LQ_t* circbuff, BUFFER_TYPE* data)
+LQ_e LQ_buffer_remove_item(LQ_t* circbuff, log_t** data)
 {
     if ((void*)circbuff == NULL)
         return LOGQUEUE_BAD_POINTER;
@@ -210,12 +227,12 @@ LQ_e LQ_is_empty(LQ_t* circbuff)
  *
  * @param[in] LQ_t* the LQ_t object to operate on
  * @param[in] size_t the index away from the head
- * @param[out] BUFFER_TYPE* put the data peeked at into this pointer
+ * @param[out] log_t** put the data peeked at into this pointer
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_peek(LQ_t* circbuff, size_t position, BUFFER_TYPE* data)
+LQ_e LQ_peek(LQ_t* circbuff, size_t position, log_t** data)
 {
-    BUFFER_TYPE* peekdata = (BUFFER_TYPE*)circbuff->head;
+    log_t** peekdata = (log_t**)circbuff->head;
     if ((void*)circbuff == NULL)
         return LOGQUEUE_BAD_POINTER;
     /* since head points at an empty value we increment by one */
@@ -227,6 +244,6 @@ LQ_e LQ_peek(LQ_t* circbuff, size_t position, BUFFER_TYPE* data)
     {
         peekdata = 1*(size_t)(circbuff->buff_size-1) + peekdata;
     }
-    *data = *(BUFFER_TYPE*)peekdata;
+    *data = *(log_t**)peekdata;
     return LOGQUEUE_SUCCESS;
 }

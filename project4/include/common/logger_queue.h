@@ -27,10 +27,6 @@
 #include "MKL25Z4.h"
 #endif
 
-/*
- * quickly change what the type of the buffer is
- */
-#define BUFFER_TYPE log_t
 
 /*
  * The KL25Z needs to specifically disable interrupts
@@ -48,10 +44,10 @@
  * TODO need to understand volatile should it be used here?
  */
 typedef struct {
-    volatile BUFFER_TYPE* base;             // The base address of the buffer
+    volatile log_t** base;             // The base address of the buffer
     volatile size_t buff_size;              // the total size of the buffer
-    volatile BUFFER_TYPE* head;                   // Where next byte should be put in the buff
-    volatile BUFFER_TYPE* tail;                   // Oldest byte in buff
+    volatile log_t** head;                   // Where next byte should be put in the buff
+    volatile log_t** tail;                   // Oldest byte in buff
     volatile size_t num_in;                 // Number of bytes in buff
     volatile uint8_t buff_empty_flag:1;     // Flag to show if the buffer is empty
     volatile uint8_t buff_full_flag:1;      // Flag to show if the buffer is full
@@ -116,10 +112,10 @@ LQ_e LQ_destroy(LQ_t* circbuff);
  *
  *
  * @param[in] LQ_t* the LQ_t object to operate on
- * @param[in] BUFFER_TYPE the object to add into the buffer
+ * @param[in] log_t* the object to add into the buffer
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_buffer_add_item(LQ_t* circbuff, BUFFER_TYPE data);
+LQ_e LQ_buffer_add_item(LQ_t* circbuff, log_t* data);
 
 /* @brief removes an item from the circular buffer
  *
@@ -127,10 +123,10 @@ LQ_e LQ_buffer_add_item(LQ_t* circbuff, BUFFER_TYPE data);
  * incrementing the tail an decrementing the num_in
  *
  * @param[in] LQ_t* the LQ_t object to operate on
- * @param[out] BUFFER_TYPE* put the data removed into this pointer
+ * @param[out] log_t** put the data removed into this pointer
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_buffer_remove_item(LQ_t* circbuff, BUFFER_TYPE* data);
+LQ_e LQ_buffer_remove_item(LQ_t* circbuff, log_t** data);
 
 /* @brief checks to see if the buffer is full
  *
@@ -161,9 +157,9 @@ LQ_e LQ_is_empty(LQ_t* circbuff);
  *
  * @param[in] LQ_t* the LQ_t object to operate on
  * @param[in] size_t the index away from the head
- * @param[out] BUFFER_TYPE* put the data peeked at into this pointer
+ * @param[out] log_t** put the data peeked at into this pointer
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_peek(LQ_t* circbuff, size_t position, BUFFER_TYPE* data);
+LQ_e LQ_peek(LQ_t* circbuff, size_t position, log_t** data);
 
 #endif /*__LOGGER_QUEUE_H__*/

@@ -41,7 +41,6 @@ log_ret log_data(log_e log, mod_e module, uint16_t length, uint8_t* data)
 {
 #if defined(BBB) || defined (HOST)
 	time_t thetime = time(NULL);
-	/*TODO change how the time is acquired on the BBB, it needs calibration*/
 	uint8_t checksum = 0;
 	char* timeptr = (char*)(&thetime);
 	char* lengthptr = (char*)(&length);
@@ -71,6 +70,7 @@ log_ret log_data(log_e log, mod_e module, uint16_t length, uint8_t* data)
 #ifdef KL25Z
 	UART_e UART_send_n(uint8_t *data, size_t num_bytes)
 	time_t thetime = time(NULL);
+	/*TODO get the time using RTC, not the above code*/
 	uint8_t checksum = 0;
 	checksum^=(uint8_t)log;
 	checksum^=(uint8_t)module;/*calculate checksums over log and module ID*/
@@ -123,11 +123,12 @@ log_ret log_integer(log_e log, mod_e module, uint32_t num)
 
 void log_flush()
 {
-/*TODO do we want this to go through and print each one? or do we want it to pop them off
- * the queue, and have the function in logger_queue do the printing over there*/
 #if defined(BBB) || defined (HOST)
+	return;/*there should never be anything *in* the buffer on BBB and HOST*/
 #endif
 #ifdef KL25Z
+	/*TODO make this repeatedly check for the buffer being full, or maybe wait for
+	 * a flag we can set at the end of the uart interrupt handler*/
 #endif
 }
 

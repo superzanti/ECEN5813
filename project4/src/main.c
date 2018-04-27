@@ -26,6 +26,8 @@
 #ifdef PROJECT4
     #include "project4.h"
     #include "circbuf.h"
+    #include "logger_queue.h"
+    #include "logger.h"
 #endif
 #ifdef CMOCKA
     #include "unittest.h"
@@ -43,7 +45,8 @@
 /* static to retain in any scope, const so that the compiler will complain if we touch this from this file */
 CB_t* recieve_buffer;
 CB_t* transmit_buffer;
-CB_t* log_buffer;
+LQ_t* log_buffer;
+log_t* activeTransfer;
 uint8_t dma0_done=0;
 volatile uint32_t DMA_end_value = 0;
 #endif
@@ -76,7 +79,6 @@ int main(void)
     
     #ifdef PROJECT4
         recieve_buffer  = (CB_t*) malloc(sizeof(CB_t));
-        transmit_buffer  = (CB_t*) malloc(sizeof(CB_t));
         log_buffer  = (CB_t*) malloc(sizeof(CB_t));
         project4();
     #endif
