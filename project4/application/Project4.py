@@ -78,6 +78,7 @@ class convertFile(threading.Thread):
 
     def run(self):
         while not self.stop:
+            self.checksum = 0
             byte_s = [self.inqueue.get()]
             self.log.extend(byte_s)
             if not byte_s:
@@ -254,7 +255,10 @@ class convertFile(threading.Thread):
         self.newdata += packetstring
 
     def convert(self):
+        self.checksum = 0
         self.log = bytearray(b'')
+        self.totallog = ''
+        self.newdata = ''
         with open(self.filein, 'rb') as f:
             while(1):
                 byte_s = f.read(1)
