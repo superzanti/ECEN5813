@@ -78,29 +78,26 @@ class comPort(threading.Thread):
     def reader(self):
         while not self.stop:
             try:
-                buff_in = self.com.read(1).decode('utf-8')
+                buff_in = self.com.read(1)
                 if len(buff_in) > 0:
                     self.inqueue.put(buff_in)
             except:
                 pass
             finally:
-                buff_in = None
+                buff_in = ''
 
     def writer(self):
         while not self.stop:
             try:
                 buff_out = self.outqueue.get(timeout = 0)
                 if len(buff_out) > 0:
-                    if self.support_early:
-                        for c in buff_out:
-                            self.com.write(c)
-                            time.sleep(0.0001)
-                    else:
-                        self.com.write(buff_out)
+                    for c in buff_out:
+                        self.com.write(c)
+                        time.sleep(0.001)
             except:
                 pass
             finally:
-                buff_out = None
+                buff_out = ''
 
     def Stop(self):
         self.loggermain.debug("Stopping comPort thread")
