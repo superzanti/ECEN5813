@@ -59,6 +59,7 @@ log_ret logger_init()
 
     RTC_SR = RTC_SR_TCE(RTC_SR_TCE_ENABLE);
 #endif
+    log_item((log_t) {LOGGER_INITIALIZED,FUNC_LOGGER,0,0,NULL,0});
     return LOGGER_SUCCESS;
 }
 
@@ -200,5 +201,6 @@ log_ret log_item(log_t loginput)
 void RTC_Seconds_IRQHandler()
 {
 	/*TODO implement this. NB: the irq doesn't need to be cleared*/
+	log_item((log_t) {HEARTBEAT,FUNC_LOGGER,0,0,NULL,0});
 }
 #endif
