@@ -9,7 +9,9 @@
  *
  */
 #include "circbuf.h"
+#ifdef KL25Z
 #include "uart.h"
+#endif
 
 /* standard library for malloc */
 #include <stdlib.h>

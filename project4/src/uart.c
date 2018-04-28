@@ -155,7 +155,7 @@ UART_e UART_configure()
     CB_e bufferinitreturn1 = CB_init(recieve_buffer, BUFFER_LENGTH);
 #if defined(PROJECT1)||defined(PROJECT2)||defined(PROJECT3)
     CB_e bufferinitreturn2 = CB_init(transmit_buffer, BUFFER_LENGTH);
-#endif
+#endif/*the log buffer gets initialized in the logger code*/
 
     /*turn on UART0 transmit and recieve
      * UART0_C2[TE]=1

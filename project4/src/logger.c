@@ -31,10 +31,35 @@ log_ret logger_init()
 {
 	LQ_e logbufferinitreturn = LQ_init(log_buffer, LOG_BUFFER_LENGTH);
 #if defined(BBB) || defined(HOST)
+	/*nothing else is needed unless we want to set up the clock on the BBB*/
 #endif
 #ifdef KL25Z
-	/*TODO put in the RTC initialization here*/
+	/*sim_sopt1, osc32sel = 00, set rtc to use 32khz onboard oscillator*/
+	/*sim_sopt2, rtcclkoutsel = 0 or 1, largely irrelevent for our use*/
+	/*sim_scgc6, rtc = 1, enable clocking and interrupts for rtc*/
+	/*set up RTC_CR register - enable OSC and non-supervisor writes, etc*/
+	/*sleep 2 seconds for oscillator to calm down*/
+	/*block on waiting for program - get current time*/
+	/*set RTC_TSR register - set the current time*/
+	/*set up RTC_IER register - set up interrutps*/
+	/*set up RTC_SR register - enable counting*/
+    SIM_SOPT1 &= ~SIM_SOPT1_OSC32KSEL(SIM_SOPT1_OSC32KSEL_CLEAR);/*set bits to 00*/
+    SIM_SOPT2 &= ~SIM_SOPT2_RTCCLKOUTSEL(SIM_SOPT2_RTCCLKOUTSEL_CLEAR);/*set bits to 00*/
+    SIM_SOPT6 |= SIM_SCGC6_RTC(SIM_SCGC6_RTC_ENABLED);/*set bits to 1 to enable clock gate*/
+
+    RTC_CR = 	RTC_CR_OSCE(RTC_CR_OSCE_ENABLED)| RTC_CR_UM(RTC_CR_UM_DISABLED)|
+		RTC_CR_SUP(RTC_CR_SUP_ENABLED)| RTC_CR_WPE(RTC_CR_WPE_DISABLED)|
+		RTC_CR_SWR(RTC_CR_SWR_NORESET);
+    /*i looked around and there's no sleep function in C by default*/
+    uint32_t currenttime;
+    UART_e UART_recieve_n((uint8_t*)(&currenttime), 4);/*wait for 4 bytes of time data*/
+    RTC_TSR = currenttime;
+    RTC_IER = RTC_IER_TSIE(RTC_IER_TSIE_ENABLED) | RTC_IER_TAIE(RTC_IER_TAIE_DISABLED) |
+	    	RTC_IER_TOIE(RTC_IER_TOIE_DISABLED) | RTC_IER_TIIE(RTC_IER_TIIE_DISABLED);
+
+    RTC_SR = RTC_SR_TCE(RTC_SR_TCE_ENABLE);
 #endif
+    return LOGGER_SUCCESS;
 }
 
 log_ret log_data(log_e log, mod_e module, uint16_t length, uint8_t* data)
@@ -69,8 +94,7 @@ log_ret log_data(log_e log, mod_e module, uint16_t length, uint8_t* data)
 #endif
 #ifdef KL25Z
 	UART_e UART_send_n(uint8_t *data, size_t num_bytes)
-	time_t thetime = time(NULL);
-	/*TODO get the time using RTC, not the above code*/
+	uint32_t thetime = RTC_TSR;
 	uint8_t checksum = 0;
 	checksum^=(uint8_t)log;
 	checksum^=(uint8_t)module;/*calculate checksums over log and module ID*/
@@ -95,7 +119,7 @@ log_ret log_data(log_e log, mod_e module, uint16_t length, uint8_t* data)
 		checksum^=(uint8_t)(*(dataptr++));/*calculate checksum over data*/
 	}
 	if(length>0) UART_send_n(data,length);/*print payload*/
-	Uart_send(&checksum);/*print checksum*/
+	UART_send(&checksum);/*print checksum*/
 	return LOGGER_SUCCESS;
 #endif
 }
@@ -127,8 +151,14 @@ void log_flush()
 	return;/*there should never be anything *in* the buffer on BBB and HOST*/
 #endif
 #ifdef KL25Z
+	UART_start_buffered_transmission();/*do we need this here?*/
+	while(LQ_is_empty(log_buffer)!=LOGQUEUE_EMPTY)
+	{
+		nooperation++;
+	}
 	/*TODO make this repeatedly check for the buffer being full, or maybe wait for
 	 * a flag we can set at the end of the uart interrupt handler*/
+	return;
 #endif
 }
 
@@ -140,8 +170,7 @@ log_ret log_item(log_t loginput)
 #ifdef KL25Z
 	if(LQ_is_full(log_buffer)==LOGQUEUE_SUCCESS)/*if logger is not full*/
 	{
-		loginput.Timestamp = (uint32_t)time(NULL);
-		/*TODO get the time accurately on the KL25z*/
+		loginput.Timestamp = (uint32_t)RTC_TSR;
 		loginput.Checksum = 0;
 		Loginput.Checksum^=(uint8_t)LogID;
 		Loginput.Checksum^=(uint8_t)loginput.ModuleID;
@@ -161,8 +190,15 @@ log_ret log_item(log_t loginput)
 		{
 			Loginput.Checksum^=(*(dataptr++));
 		}
-		LQ_e LQ_buffer_add_item(log_buffer, loginpu);
+		LQ_e LQ_buffer_add_item(log_buffer, loginput);
 		return LOGGER_SUCCESS;
 	}
 #endif
 }
+
+#ifdef KL25Z
+void RTC_Seconds_IRQHandler()
+{
+	/*TODO implement this. NB: the irq doesn't need to be cleared*/
+}
+#endif

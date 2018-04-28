@@ -17,6 +17,22 @@
 /* what the circular buffer should initialize to *//*doubled this to fit tx message -JC*/
 #define LOG_BUFFER_LENGTH                   (256)
 
+#define  SIM_SOPT1_OSC32KSEL_CLEAR	(3)
+#define  SIM_SOPT2_RTCCLKOUTSEL_CLEAR	(1)
+#define  SIM_SCGC6_RTC_ENABLED		(1)
+
+#define  RTC_CR_OSCE_ENABLED		(1)
+#define  RTC_CR_UM_DISABLED		(0)
+#define  RTC_CR_SUP_ENABLED		(1)
+#define  RTC_CR_WPE_DISABLED		(0)
+#define  RTC_CR_SWR_NORESET		(0)
+
+#define  RTC_IER_TSIE_ENABLED		(1)
+#define  RTC_IER_TAIE_DISABLED		(0)
+#define  RTC_IER_TOIE_DISABLED		(0)
+#define  RTC_IER_TIIE_DISABLED		(0)
+
+#define RTC_SR_TCE_ENABLE		(1)
 typedef enum {
     LOGGER_SUCCESS=0,
     LOGGER_FAILURE
@@ -120,4 +136,12 @@ void log_flush();
  */
 log_ret log_item(log_t loginput);
 
+#ifdef KL25Z
+/*@brief acts as heartbeat timer interrupt
+ *
+ * @param none
+ * @return none
+ * */
+void RTC_Seconds_IRQHandler();
+#endif
 #endif /*__LOGGER_H__*/

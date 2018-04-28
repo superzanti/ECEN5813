@@ -36,6 +36,9 @@ endif
 ifdef DEBUG
 CFLAGS += -DDEBUG
 endif
+ifdef LOGGING
+CFLAGS += -DLOGGING
+endif
 
 ifdef CMOCKA
 FILES += unittest.c
