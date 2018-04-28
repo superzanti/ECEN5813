@@ -33,7 +33,7 @@ log_ret logger_init()
 #if defined(BBB) || defined(HOST)
 	/*nothing else is needed unless we want to set up the clock on the BBB*/
 #endif
-#ifdef KL25Z
+#ifdef KL25Z/*if we're on the KL25z, then turn on the RTC*/
 	/*sim_sopt1, osc32sel = 00, set rtc to use 32khz onboard oscillator*/
 	/*sim_sopt2, rtcclkoutsel = 0 or 1, largely irrelevent for our use*/
 	/*sim_scgc6, rtc = 1, enable clocking and interrupts for rtc*/
@@ -59,7 +59,9 @@ log_ret logger_init()
 
     RTC_SR = RTC_SR_TCE(RTC_SR_TCE_ENABLE);
 #endif
+#ifdef LOGGING
     log_item((log_t) {LOGGER_INITIALIZED,FUNC_LOGGER,0,0,NULL,0});
+#endif
     return LOGGER_SUCCESS;
 }
 
@@ -201,6 +203,8 @@ log_ret log_item(log_t loginput)
 void RTC_Seconds_IRQHandler()
 {
 	/*TODO implement this. NB: the irq doesn't need to be cleared*/
+#ifdef LOGGING
 	log_item((log_t) {HEARTBEAT,FUNC_LOGGER,0,0,NULL,0});
+#endif
 }
 #endif

@@ -2,20 +2,19 @@
 
 things that need doing:
 
-MOSTLY DONE, NEEDS CHECKING make project4.c, this needs to be project2.c, but with modifications to reporting code
 
 add in log commands to many locations.
 	SYSTEM_ID
 	SYSTEM_VERSION
 	GPIO_INITIALIZED
 	SYSTEM_HALTED
-	WARNING
+	WARNING - 1 implemented
 	ERROR
 	PROFILING_STARTED	
 	PROFILING_RESULT
 	PROFILING_COMPLETED
-	DATA_RECIEVED
 	CORE_DUMP
+		DONE	DATA_RECIEVED
 		DONE	DATA_ALPHA_COUNT
 		DONE	DATA_NUMERIC_COUNT
 		DONE	DATA_PUNCTUATION_COUNT	
@@ -32,6 +31,8 @@ surround log commands with #ifdef LOGGING
 figure out how to pipe output from BBB and HOST into a file (maybe use Tee?)
 
 debug all the shit
+
+MOSTLY DONE, NEEDS CHECKING make project4.c, this needs to be project2.c, but with modifications to reporting code
 
 DONE		add KL25z block on waiting for python script
 

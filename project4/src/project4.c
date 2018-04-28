@@ -21,6 +21,7 @@ extern LQ_t* log_buffer;
 
 void project4()
 {
+    uint8_t * my_string;
 #ifdef KL25Z
     UART_configure();/*TODO put in better UART setup control*/
 #endif
@@ -28,9 +29,18 @@ void project4()
 #if defined(HOST) || defined(BBB)
     if(CB_init(recieve_buffer, CIRCBUF_HOST_LENGTH)!=SUCCESS) return;
 #endif
-    if(recieve_buffer==NULL)return;
+    if(recieve_buffer==NULL)
+    {
+	    my_string = (uint8_t*) "recieve buffer failure";
+#ifdef LOGGING
+    	log_item((log_t){ERROR,FUNC_PROJECT4,22,0,my_string,0});
+#endif
+	    return;
+    }
     if(log_buffer==NULL)return;
+#ifdef LOGGING
     log_item((log_t){SYSTEM_INITIALIZED,FUNC_PROJECT4,0,0,NULL,0});
+#endif
     /*^^^ see  https://gcc.gnu.org/onlinedocs/gcc-4.3.2/gcc/Compound-Literals.html*/
     uint8_t data=0;
     CB_e retval=SUCCESS;
@@ -54,7 +64,9 @@ void project4()
         	CB_buffer_add_item(recieve_buffer,char_holder);
 	}while(char_holder!='\n'&&char_holder!='\r'&&char_holder!=ASCII_OFFSET_EOF&&char_holder!=EOF&&char_holder!=0xff);
 #endif
+#ifdef LOGGING
     	log_item((log_t){DATA_ANALYSIS_STARTED,FUNC_PROJECT4,0,0,NULL,0});
+#endif
         retval=CB_buffer_remove_item(recieve_buffer, &data);
         if(retval==SUCCESS)
         {
@@ -82,11 +94,13 @@ void project4()
             }
         }
     }
+#ifdef LOGGING
     log_item((log_t){DATA_ALPHA_COUNT,FUNC_PROJECT4,4,0,(uint8_t*) &statistics.alphabetic,0});
     log_item((log_t){DATA_NUMERIC_COUNT,FUNC_PROJECT4,4,0,(uint8_t*) &statistics.numeric,0});
     log_item((log_t){DATA_PUNCTUATION_COUNT,FUNC_PROJECT4,4,0,(uint8_t*) &statistics.punctuation,0});
     log_item((log_t){DATA_MISC_COUNT,FUNC_PROJECT4,4,0,(uint8_t*) &statistics.miscellaneous,0});
     log_item((log_t){DATA_ANALYSIS_COMPLETED,FUNC_PROJECT4,0,0,NULL,0});
+#endif
     dump_statistics();
     }
 }
