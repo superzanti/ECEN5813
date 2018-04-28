@@ -26,7 +26,8 @@ add in log commands to many locations.
 		DONE	INFO (COULD BE PLACED IN MORE LOCATIONS)
 		DONE	HEARTBEAT
 
-surround log commands with #ifdef LOGGING
+surround log commands with #ifdef LOGGING - this has been done for the ones that are in, so far. 
+	note, this shouldn't be done with the info logs, since we're using those to just transmit the data back
 
 figure out how to pipe output from BBB and HOST into a file (maybe use Tee?)
 
