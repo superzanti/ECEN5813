@@ -27,7 +27,7 @@
 #define UART0_C4_OSR_SAMPLERATE			(0x0f)
 #define BAUD_CLOCK						(CPU_INT_FAST_CLK_HZ)
 #define BAUD_CALCULATION(x)             (BAUD_CLOCK/((UART0_C4_OSR_SAMPLERATE+1)*(x)))
-#define BAUD_RATE						(19200)
+#define BAUD_RATE						(9600)
 #define CALCULATED_BAUD_MASK            (BAUD_CALCULATION(BAUD_RATE))
 #define CLEAR_PCR_ISF                   (1)
 #define DISABLE_PCR_IRQC                (0x00)
