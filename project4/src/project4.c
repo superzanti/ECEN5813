@@ -76,6 +76,9 @@ void project4()
         retval=CB_buffer_remove_item(recieve_buffer, &data);
         if(retval==SUCCESS)
         {
+#ifdef LOGGING
+            log_item((log_t){DATA_RECIEVED,FUNC_UART,1,0,&data,0});
+#endif
             if(data>=ASCII_OFFSET_0 && data<=ASCII_OFFSET_9)
             {
                 statistics.numeric++;

@@ -405,9 +405,6 @@ void UART0_IRQHandler()
         if(recieve_buffer!=NULL)
         {/*discard the data to clear the flag*/
             CB_buffer_add_item(recieve_buffer,sink);
-#ifdef LOGGING
-            log_item((log_t){DATA_RECIEVED,FUNC_UART,1,0,(uint8_t*)&sink,0});
-#endif
         }
         sink=0;
     }
