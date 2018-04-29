@@ -18,6 +18,7 @@
 #if defined(BBB) || defined(HOST)
 #include <stdio.h>
 #include <time.h>
+FILE* logfile=NULL;
 #endif
 
 #ifdef KL25Z
@@ -40,6 +41,11 @@ log_ret logger_init()
     }
     #endif
 #if defined(BBB) || defined(HOST)
+    logfile = fopen("Log_output.txt","a+");
+    if(logfile==NULL)
+    {
+        return LOGGER_FAILURE;
+    }
     /*nothing else is needed unless we want to set up the clock on the BBB*/
 #endif
 #ifdef KL25Z/*if we're on the KL25z, then turn on the RTC*/
@@ -81,27 +87,34 @@ log_ret log_data(log_e log, mod_e module, uint16_t length, uint8_t* data)
     uint8_t checksum = 0;
     char* timeptr = (char*)(&thetime);
     char* lengthptr = (char*)(&length);
-    printf("%c",(char)log);/*print LOG ID*/
+    if(log!=INFO) printf("%c",(char)log);/*print LOG ID*/
+    fprintf(logfile,"%c",(char)log);/*print LOG ID*/
     checksum^=(uint8_t)log;
-    printf("%c",(char)module);/*print module ID*/
+    if(log!=INFO) printf("%c",(char)module);/*print module ID*/
+    fprintf(logfile,"%c",(char)module);/*print module ID*/
     checksum^=(uint8_t)module;
     uint16_t i;
     for(i=0;i<2;i++)
     {
         checksum^=(uint8_t)(*lengthptr);
-        printf("%c",(char)(*(lengthptr++)));/*print length*/
+        if(log!=INFO) printf("%c",(char)(*(lengthptr++)));/*print length*/
+        fprintf(logfile,"%c",(char)(*(lengthptr)));/*print length*/
     }
     for(i=0;i<4;i++)
     {
         checksum^=(uint8_t)(*timeptr);
-        printf("%c",(char)(*(timeptr++)));/*print time*/
+        if(log!=INFO) printf("%c",(char)(*(timeptr++)));/*print time*/
+        fprintf(logfile,"%c",(char)(*(timeptr)));/*print time*/
     }
     for(i=0;i<length;i++)
     {
         checksum^=(uint8_t)(*data);
         printf("%c",(*((char*)data++)));/*print payload*/
+        fprintf(logfile,"%c",(*((char*)data)));/*print payload*/
     }
-    printf("%c",(char)checksum);/*print checksum*/
+    if(log!=INFO) printf("%c",(char)checksum);/*print checksum*/
+    fprintf(logfile,"%c",(char)checksum);/*print checksum*/
+    fflush(logfile);
     return LOGGER_SUCCESS;
 #endif
 #ifdef KL25Z
