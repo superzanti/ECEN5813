@@ -21,6 +21,7 @@
 
 extern CB_t* recieve_buffer;
 extern LQ_t* log_buffer;
+extern volatile uint32_t nooperation;
 
 void project4()
 {
@@ -57,6 +58,7 @@ void project4()
     {
     data=0;
     char_holder=0;
+    nooperation+=char_holder;
     while( data!=ASCII_OFFSET_EOF && data!=EOF && data!=0xff)
     {
 #ifdef HOST

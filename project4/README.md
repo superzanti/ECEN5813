@@ -2,7 +2,6 @@
 
 things that need doing:
 
-
 add in log commands to many locations.
     SYSTEM_ID
     SYSTEM_VERSION
@@ -14,6 +13,7 @@ add in log commands to many locations.
     PROFILING_RESULT
     PROFILING_COMPLETED
     CORE_DUMP
+
     DONE    DATA_RECIEVED
     DONE    DATA_ALPHA_COUNT
     DONE    DATA_NUMERIC_COUNT
@@ -26,14 +26,15 @@ add in log commands to many locations.
     DONE    INFO (COULD BE PLACED IN MORE LOCATIONS)
     DONE    HEARTBEAT
 
-surround log commands with #ifdef LOGGING - this has been done for the ones that are in, so far. 
-    note, this shouldn't be done with the info logs, since we're using those to just transmit the data back
 
-figure out how to pipe output from BBB and HOST into a file (maybe use Tee?)
 
 debug all the shit
 
-MOSTLY DONE, NEEDS CHECKING make project4.c, this needs to be project2.c, but with modifications to reporting code
+DONE        surround log commands with #ifdef LOGGING - this has been done for the ones that are in, so far. 
+
+DONE        figure out how to pipe output from BBB and HOST into a file (maybe use Tee?)
+
+DONE        make project4.c, this needs to be project2.c, but with modifications to reporting code
 
 DONE        add KL25z block on waiting for python script
 

@@ -486,6 +486,12 @@ void UART0_IRQHandler()
                     }
                     break;
                 case 4:/*step 4, LogLength byte sequence to transmit payload*/
+                    if(activeTransfer->LogLength==0)
+                    {
+                        step=6;
+                        UART0_D = activeTransfer->Checksum;
+                        break;
+                    }
                     if(datacounter==0)
                     {
                     /*set up continuous pointer
