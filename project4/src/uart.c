@@ -13,6 +13,7 @@
 
 #include "circbuf.h" /* so we can use the circular buffer in our uart */
 
+#include<stdlib.h>
 #if defined(PROJECT4)
 #include "logger.h"
 #include "logger_queue.h"
@@ -289,11 +290,11 @@ UART_e UART_recieve(uint8_t *data)
     }
     if(UART0_C2 & UART0_C2_RE_MASK)/*check if recieve is enabled*/
     {
-    	recieveenabledflag=1;/*save initial state*/
+        recieveenabledflag=1;/*save initial state*/
     }
     else
     {
-    	recieveenabledflag=0;/*save initial state*/
+        recieveenabledflag=0;/*save initial state*/
         UART0_C2 |= UART0_C2_RE(UART0_C2_RE_ENABLED);/*enable if off*/
     }
 
@@ -367,14 +368,14 @@ void UART0_IRQHandler()
     {
         volatile uint8_t sink = UART0_D;
         if(((UART0_S1 & UART0_S1_TC_MASK)>>UART0_S1_TC_SHIFT)==UART0_S1_TC_IDLE)
-	{
-		UART0_D = sink;
-	}
-	else if(transmit_buffer!=NULL)
-	{
-		CB_buffer_add_item(transmit_buffer,sink);
-            	UART0_C2 |= (UART0_C2_TIE(UART0_C2_TIE_ENABLED));
-	}
+    {
+        UART0_D = sink;
+    }
+    else if(transmit_buffer!=NULL)
+    {
+        CB_buffer_add_item(transmit_buffer,sink);
+                UART0_C2 |= (UART0_C2_TIE(UART0_C2_TIE_ENABLED));
+    }
         if(recieve_buffer!=NULL)
         {/*discard the data to clear the flag*/
             CB_buffer_add_item(recieve_buffer,sink);
@@ -383,8 +384,8 @@ void UART0_IRQHandler()
     }
     if(((UART0_S1 & UART0_S1_TDRE_MASK)>>UART0_S1_TDRE_SHIFT)==UART0_S1_TDRE_EMPTY)
     {
-    	CB_e ret = EMPTY;
-    	uint8_t temp;
+        CB_e ret = EMPTY;
+        uint8_t temp;
         if(transmit_buffer!=NULL)
         {
             ret = CB_buffer_remove_item(transmit_buffer, &temp);
@@ -405,139 +406,139 @@ void UART0_IRQHandler()
         {/*discard the data to clear the flag*/
             CB_buffer_add_item(recieve_buffer,sink);
 #ifdef LOGGING
-    	    log_item((log_t){DATA_RECEIVED,FUNC_UART,1,0,&sink,0});
+            log_item((log_t){DATA_RECIEVED,FUNC_UART,1,0,(uint8_t*)&sink,0});
 #endif
         }
         sink=0;
     }
     if(((UART0_S1 & UART0_S1_TDRE_MASK)>>UART0_S1_TDRE_SHIFT)==UART0_S1_TDRE_EMPTY)
     {
-    	LQ_e ret = LOGQUEUE_EMPTY;
+        LQ_e ret = LOGQUEUE_EMPTY;
         if(log_buffer!=NULL)
         {
-		if(activeTransfer==NULL)
-		{
-			/*if there's no active transfer, start one
-			 * by pulling a new log_t from the queue*/
-			step=0;
-			datacounter=0;
+        if(activeTransfer==NULL)
+        {
+            /*if there's no active transfer, start one
+             * by pulling a new log_t from the queue*/
+            step=0;
+            datacounter=0;
                         ret = LQ_buffer_remove_item(log_buffer, &activeTransfer);
-		}
-		if(activeTransfer!=NULL)
-		{/*if there's an active transfer, step through the transfer process*/
-			ret = LOGQUEUE_SUCCESS;
-			switch(step)/*switch on how far through the struct transfer you are*/
-			{
-				case 0:/*step 0, transfer log ID*/
-					step++;
-					UART0_D = activeTransfer->LogID;
-					break;
-				case 1:/*step 1, transfer module ID*/
-					step++;
-					UART0_D = activeTransfer->ModuleID;
-					break;
-				case 2:/*step 2, 2 byte sequence to transfer log length*/
-					if(datacounter==0)
-					{
-					/*set up continuous pointer
-					 * to current location in multibyte data*/
-						dataptr=(uint8_t*)(&activeTransfer->LogLength);
-					}
-					if(datacounter<1)
-					{
-					/*increment through multibyte data on
-					 * successive interrupts*/
-						UART0_D = *(dataptr++);
-						datacounter++;
-					}
-					else if(datacounter>=1)
-					{
-					/*on the last byte, increment to the next step
-					 * and return the tracking counter to zero for
-					 * the next piece of multibyte information*/
-						UART0_D=*dataptr;
-						datacounter=0;
-						step++;
-					}
-					break;
-				case 3:/*step 3, 4 byte sequence to transfer timestamp*/
-					if(datacounter==0)
-					{
-					/*set up continuous pointer
-					 * to current location in multibyte data*/
-						dataptr=(uint8_t*)(&activeTransfer->Timestamp);
-					}
-					if(datacounter<3)
-					{
-					/*increment through multibyte data on
-					 * successive interrupts*/
-						UART0_D = *(dataptr++);
-						datacounter++;
-					}
-					else if(datacounter>=3)
-					{
-					/*on the last byte, increment to the next step
-					 * and return the tracking counter to zero for
-					 * the next piece of multibyte information*/
-						UART0_D=*dataptr;
-						datacounter=0;
-						step++;
-					}
-					break;
-				case 4:/*step 4, LogLength byte sequence to transmit payload*/
-					if(datacounter==0)
-					{
-					/*set up continuous pointer
-					 * to current location in multibyte data*/
-						dataptr=(uint8_t*)(&activeTransfer->PayloadData);
-					}
-					if(datacounter < activeTransfer->LogLength-1)
-					{
-					/*increment through multibyte data on
-					 * successive interrupts*/
-						UART0_D = *(dataptr++);
-						datacounter++;
-					}
-					else if(datacounter>= activeTransfer->LogLength-1 )
-					{
-					/*on the last byte, increment to the next step
-					 * and return the tracking counter to zero for
-					 * the next piece of multibyte information*/
-						UART0_D=*dataptr;
-						datacounter=0;
-						step++;
-					}
-					break;
-				case 5:/*step 5, transmit checksum*/
-					step++;
-					UART0_D = activeTransfer->Checksum;
-					break;
-				default:
-					/*ostensibly step 6, because the transfer will still be active
-					 * after the step 5 case, we free that data here, but we then
-					 * have to check whether there's more data, in which case we
-					 * have to start the next one, or if we can turn off the
-					 * transmitter, just like in the outermost conditional*/
-					step=0;
-					free(activeTransfer->PayloadData);
-					free(activeTransfer);
-					activeTransfer=NULL;
-					dataptr=NULL;
-					datacounter=0;
-					ret=LQ_buffer_remove_item(log_buffer,&activeTransfer);
-					if(ret==LOGQUEUE_SUCCESS)
-					{/*succesfully pulled new data, do step 0*/
-						step++;
-						UART0_D = activeTransfer->LogID;
-					}
-					else if(ret==LOGQUEUE_EMPTY)
-					{/*the queue is empty, turn the transmitter off so we
-					 * dont come back to the interrupt handler*/
-						UART0_C2 &= ~(UART0_C2_TIE(UART0_C2_TIE_ENABLED));
-					}
-					break;
-			}
-		}
+        }
+        if(activeTransfer!=NULL)
+        {/*if there's an active transfer, step through the transfer process*/
+            ret = LOGQUEUE_SUCCESS;
+            switch(step)/*switch on how far through the struct transfer you are*/
+            {
+                case 0:/*step 0, transfer log ID*/
+                    step++;
+                    UART0_D = activeTransfer->LogID;
+                    break;
+                case 1:/*step 1, transfer module ID*/
+                    step++;
+                    UART0_D = activeTransfer->ModuleID;
+                    break;
+                case 2:/*step 2, 2 byte sequence to transfer log length*/
+                    if(datacounter==0)
+                    {
+                    /*set up continuous pointer
+                     * to current location in multibyte data*/
+                        dataptr=(uint8_t*)(&activeTransfer->LogLength);
+                    }
+                    if(datacounter<1)
+                    {
+                    /*increment through multibyte data on
+                     * successive interrupts*/
+                        UART0_D = *(dataptr++);
+                        datacounter++;
+                    }
+                    else if(datacounter>=1)
+                    {
+                    /*on the last byte, increment to the next step
+                     * and return the tracking counter to zero for
+                     * the next piece of multibyte information*/
+                        UART0_D=*dataptr;
+                        datacounter=0;
+                        step++;
+                    }
+                    break;
+                case 3:/*step 3, 4 byte sequence to transfer timestamp*/
+                    if(datacounter==0)
+                    {
+                    /*set up continuous pointer
+                     * to current location in multibyte data*/
+                        dataptr=(uint8_t*)(&activeTransfer->Timestamp);
+                    }
+                    if(datacounter<3)
+                    {
+                    /*increment through multibyte data on
+                     * successive interrupts*/
+                        UART0_D = *(dataptr++);
+                        datacounter++;
+                    }
+                    else if(datacounter>=3)
+                    {
+                    /*on the last byte, increment to the next step
+                     * and return the tracking counter to zero for
+                     * the next piece of multibyte information*/
+                        UART0_D=*dataptr;
+                        datacounter=0;
+                        step++;
+                    }
+                    break;
+                case 4:/*step 4, LogLength byte sequence to transmit payload*/
+                    if(datacounter==0)
+                    {
+                    /*set up continuous pointer
+                     * to current location in multibyte data*/
+                        dataptr=(uint8_t*)(&activeTransfer->PayloadData);
+                    }
+                    if(datacounter < activeTransfer->LogLength-1)
+                    {
+                    /*increment through multibyte data on
+                     * successive interrupts*/
+                        UART0_D = *(dataptr++);
+                        datacounter++;
+                    }
+                    else if(datacounter>= activeTransfer->LogLength-1 )
+                    {
+                    /*on the last byte, increment to the next step
+                     * and return the tracking counter to zero for
+                     * the next piece of multibyte information*/
+                        UART0_D=*dataptr;
+                        datacounter=0;
+                        step++;
+                    }
+                    break;
+                case 5:/*step 5, transmit checksum*/
+                    step++;
+                    UART0_D = activeTransfer->Checksum;
+                    break;
+                default:
+                    /*ostensibly step 6, because the transfer will still be active
+                     * after the step 5 case, we free that data here, but we then
+                     * have to check whether there's more data, in which case we
+                     * have to start the next one, or if we can turn off the
+                     * transmitter, just like in the outermost conditional*/
+                    step=0;
+                    free(activeTransfer->PayloadData);
+                    free(activeTransfer);
+                    activeTransfer=NULL;
+                    dataptr=NULL;
+                    datacounter=0;
+                    ret=LQ_buffer_remove_item(log_buffer,&activeTransfer);
+                    if(ret==LOGQUEUE_SUCCESS)
+                    {/*succesfully pulled new data, do step 0*/
+                        step++;
+                        UART0_D = activeTransfer->LogID;
+                    }
+                    else if(ret==LOGQUEUE_EMPTY)
+                    {/*the queue is empty, turn the transmitter off so we
+                     * dont come back to the interrupt handler*/
+                        UART0_C2 &= ~(UART0_C2_TIE(UART0_C2_TIE_ENABLED));
+                    }
+                    break;
+            }
+        }
         }
         if(ret==LOGQUEUE_EMPTY)
         {/*if we check and the log buffer is empty, then turn off the interrupt*/

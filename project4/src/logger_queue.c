@@ -11,6 +11,7 @@
 #include "logger_queue.h"
 #include "logger.h"
 #include "circbuf.h"
+#include "memory.h"
 #ifdef KL25Z
 #include "uart.h"
 #endif
@@ -39,7 +40,8 @@ LQ_e LQ_init(LQ_t* logbuff, size_t buffer_size)
     if ((void*)logbuff == NULL)
         return LOGQUEUE_BAD_POINTER;
     logbuff->buff_size = buffer_size;
-    logbuff->base = (log_t**)malloc(((int)buffer_size)*sizeof(log_t*));
+    logbuff->base = (volatile log_t**)malloc(((int)buffer_size)*sizeof(log_t*));
+    /*TODO*/
     logbuff->head = logbuff->base;
     logbuff->tail = logbuff->base;
     logbuff->num_in = 0;
@@ -139,7 +141,9 @@ LQ_e LQ_buffer_add_item(LQ_t* logbuff, log_t* data)
         }
     }
     START_CRITICAL();
-    UART_start_buffered_transmission()
+    #ifdef KL25Z
+    UART_start_buffered_transmission();
+    #endif
     return LOGQUEUE_SUCCESS;/*TODO change this to activate the UART interrupt*/
 }
 
@@ -162,7 +166,7 @@ LQ_e LQ_buffer_remove_item(LQ_t* logbuff, log_t** data)
     if ((LQ_f)logbuff->buff_empty_flag == LOGGER_SET)
         return LOGQUEUE_EMPTY;
     END_CRITICAL();
-    *data = *logbuff->tail;
+    *data = (log_t*)*logbuff->tail;
     logbuff->tail = logbuff->tail + 1; /* or just logbuff->tail++; */
     logbuff->num_in--;
     logbuff->buff_full_flag = LOGGER_UNSET;
@@ -244,7 +248,7 @@ LQ_e LQ_peek(LQ_t* logbuff, size_t position, log_t** data)
     if (position > logbuff->num_in)
         return LOGQUEUE_POSITION_TOO_LARGE;
     /* it's a circular buffer, so loop around if we go beyond the max */
-    if (peekdata < logbuff->base)
+    if ((void*)peekdata < (void*)logbuff->base)
     {
         peekdata = 1*(size_t)(logbuff->buff_size-1) + peekdata;
     }
