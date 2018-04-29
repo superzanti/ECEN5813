@@ -25,16 +25,20 @@
 #include "uart.h"
 #endif
 
+#ifdef PROJECT4
 extern LQ_t* log_buffer;
+#endif
 extern uint32_t nooperation;
 
 log_ret logger_init()
 {
+    #ifdef PROJECT4
     LQ_e logbufferinitreturn = LQ_init(log_buffer, LOG_BUFFER_LENGTH);
     if(logbufferinitreturn!=LOGQUEUE_SUCCESS)
     {
         return LOGGER_FAILURE;
     }
+    #endif
 #if defined(BBB) || defined(HOST)
     /*nothing else is needed unless we want to set up the clock on the BBB*/
 #endif
@@ -85,12 +89,12 @@ log_ret log_data(log_e log, mod_e module, uint16_t length, uint8_t* data)
     for(i=0;i<2;i++)
     {
         checksum^=(uint8_t)(*lengthptr);
-        printf("%c",(*(lengthptr++)));/*print length*/
+        printf("%c",(char)(*(lengthptr++)));/*print length*/
     }
     for(i=0;i<4;i++)
     {
         checksum^=(uint8_t)(*timeptr);
-        printf("%c",(*(timeptr++)));/*print time*/
+        printf("%c",(char)(*(timeptr++)));/*print time*/
     }
     for(i=0;i<length;i++)
     {
