@@ -26,10 +26,15 @@
 #endif
 
 extern LQ_t* log_buffer;
+extern uint32_t nooperation;
 
 log_ret logger_init()
 {
     LQ_e logbufferinitreturn = LQ_init(log_buffer, LOG_BUFFER_LENGTH);
+    if(logbufferinitreturn!=LOGQUEUE_SUCCESS)
+    {
+        return LOGGER_FAILURE;
+    }
 #if defined(BBB) || defined(HOST)
     /*nothing else is needed unless we want to set up the clock on the BBB*/
 #endif
@@ -45,14 +50,14 @@ log_ret logger_init()
     /*set up RTC_SR register - enable counting*/
     SIM_SOPT1 &= ~SIM_SOPT1_OSC32KSEL(SIM_SOPT1_OSC32KSEL_CLEAR);/*set bits to 00*/
     SIM_SOPT2 &= ~SIM_SOPT2_RTCCLKOUTSEL(SIM_SOPT2_RTCCLKOUTSEL_CLEAR);/*set bits to 00*/
-    SIM_SOPT6 |= SIM_SCGC6_RTC(SIM_SCGC6_RTC_ENABLED);/*set bits to 1 to enable clock gate*/
+    SIM_SCGC6 |= SIM_SCGC6_RTC(SIM_SCGC6_RTC_ENABLED);/*set bits to 1 to enable clock gate*/
 
     RTC_CR =    RTC_CR_OSCE(RTC_CR_OSCE_ENABLED)| RTC_CR_UM(RTC_CR_UM_DISABLED)|
         RTC_CR_SUP(RTC_CR_SUP_ENABLED)| RTC_CR_WPE(RTC_CR_WPE_DISABLED)|
         RTC_CR_SWR(RTC_CR_SWR_NORESET);
     /*i looked around and there's no sleep function in C by default*/
     uint32_t currenttime;
-    UART_e UART_recieve_n((uint8_t*)(&currenttime), 4);/*wait for 4 bytes of time data*/
+    UART_recieve_n((uint8_t*)(&currenttime), 4);/*wait for 4 bytes of time data*/
     RTC_TSR = currenttime;
     RTC_IER = RTC_IER_TSIE(RTC_IER_TSIE_ENABLED) | RTC_IER_TAIE(RTC_IER_TAIE_DISABLED) |
             RTC_IER_TOIE(RTC_IER_TOIE_DISABLED) | RTC_IER_TIIE(RTC_IER_TIIE_DISABLED);
@@ -96,7 +101,6 @@ log_ret log_data(log_e log, mod_e module, uint16_t length, uint8_t* data)
     return LOGGER_SUCCESS;
 #endif
 #ifdef KL25Z
-    UART_e UART_send_n(uint8_t *data, size_t num_bytes)
     uint32_t thetime = RTC_TSR;
     uint8_t checksum = 0;
     checksum^=(uint8_t)log;
@@ -138,14 +142,14 @@ log_ret log_string(log_e log, mod_e module, uint8_t* string)
         }
     }
     if(i==65535) return LOGGER_FAILURE;
-    return log_data(log, module, string, i+1);
+    return log_data(log, module, i+1, string);
 }
 
 log_ret log_integer(log_e log, mod_e module, uint32_t num)
 {
     uint8_t outstring[16];
     uint8_t length = my_itoa(num, outstring, 10);
-    return log_data(outstring,length,module);
+    return log_data(log, module, length, outstring);
 }
 
 void log_flush()
@@ -168,34 +172,35 @@ void log_flush()
 log_ret log_item(log_t loginput)
 {
 #if defined(BBB) || defined (HOST)
-    log_data(loginput.LogID, loginput.ModuleID, loginput.LogLength, loginput.PayloadData);
+    return log_data(loginput.LogID, loginput.ModuleID, loginput.LogLength, loginput.PayloadData);
 #endif
 #ifdef KL25Z
     if(LQ_is_full(log_buffer)==LOGQUEUE_SUCCESS)/*if logger is not full*/
     {
         loginput.Timestamp = (uint32_t)RTC_TSR;
         loginput.Checksum = 0;
-        Loginput.Checksum^=(uint8_t)LogID;
-        Loginput.Checksum^=(uint8_t)loginput.ModuleID;
+        loginput.Checksum^=(uint8_t)loginput.LogID;
+        loginput.Checksum^=(uint8_t)loginput.ModuleID;
         uint8_t* timeptr = (uint8_t*)(&loginput.Timestamp);
-        uint8_t* lengthptr = (uint8_t*)(&LogLength);
-        uint8_t* dataptr = (PayloadData);
+        uint8_t* lengthptr = (uint8_t*)(&loginput.LogLength);
+        uint8_t* dataptr = (loginput.PayloadData);
         uint16_t i;
         for(i=0;i<2;i++)
         {
-            Loginput.Checksum^=(*(lengthptr++));
+            loginput.Checksum^=(*(lengthptr++));
         }
         for(i=0;i<4;i++)
         {
-            Loginput.Checksum^=(*(timeptr++));
+            loginput.Checksum^=(*(timeptr++));
         }
-        for(i=0;i<length;i++)
+        for(i=0;i<loginput.LogLength;i++)
         {
-            Loginput.Checksum^=(*(dataptr++));
+            loginput.Checksum^=(*(dataptr++));
         }
-        LQ_e LQ_buffer_add_item(log_buffer, loginput);
+        LQ_buffer_add_item(log_buffer, &loginput);
         return LOGGER_SUCCESS;
     }
+    return LOGGER_FAILURE;
 #endif
 }
 

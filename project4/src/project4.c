@@ -11,6 +11,9 @@
 #include "project4.h"
 #include "logger.h"
 #include "logger_queue.h"
+#include "circbuf.h"
+#include<stdio.h>
+#include<stdint.h>
 
 #ifdef KL25Z
 #include "uart.h"
@@ -46,7 +49,6 @@ void project4()
     CB_e retval=SUCCESS;
 #ifdef HOST
     uint8_t char_holder=data;
-    uint8_t * my_string;
     my_string = (unsigned char*) "Type a string to be processed, return to submit\n";
     log_item((log_t){INFO,FUNC_PROJECT4,48,0,my_string,0});
 #endif
@@ -107,8 +109,6 @@ void project4()
 
 void dump_statistics()
 {
-    uint32_t i=0;
-
     uint8_t * my_string;
     uint8_t bufferstring[32] = {};
     uint8_t * stringnewline = (unsigned char*)"\r\n";

@@ -79,7 +79,7 @@ int main(void)
     
     #ifdef PROJECT4
         recieve_buffer  = (CB_t*) malloc(sizeof(CB_t));
-        log_buffer  = (CB_t*) malloc(sizeof(CB_t));
+        log_buffer  = (LQ_t*) malloc(sizeof(LQ_t));
         project4();
     #endif
 

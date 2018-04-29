@@ -8,6 +8,8 @@
  * @date April 29, 2018
  *
  */
+#include "logger_queue.h"
+#include "logger.h"
 #include "circbuf.h"
 #ifdef KL25Z
 #include "uart.h"
@@ -30,27 +32,27 @@
  * @param[in] size_t the size of the buffer to initialize
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_init(LQ_t* circbuff, size_t buffer_size)
+LQ_e LQ_init(LQ_t* logbuff, size_t buffer_size)
 {
     if ((int)buffer_size == 0)
         return LOGQUEUE_NO_LENGTH;
-    if ((void*)circbuff == NULL)
+    if ((void*)logbuff == NULL)
         return LOGQUEUE_BAD_POINTER;
-    circbuff->buff_size = buffer_size;
-    circbuff->base = (log_t**)malloc(((int)buffer_size)*sizeof(log_t*));
-    circbuff->head = circbuff->base;
-    circbuff->tail = circbuff->base;
-    circbuff->num_in = 0;
-    circbuff->buff_empty_flag = SET;
-    circbuff->buff_full_flag = UNSET;
-    circbuff->buff_ovf_flag = UNSET;
-    circbuff->buff_destroyed_flag = UNSET;
-    if ((void*)circbuff->base == NULL)
+    logbuff->buff_size = buffer_size;
+    logbuff->base = (log_t**)malloc(((int)buffer_size)*sizeof(log_t*));
+    logbuff->head = logbuff->base;
+    logbuff->tail = logbuff->base;
+    logbuff->num_in = 0;
+    logbuff->buff_empty_flag = LOGGER_SET;
+    logbuff->buff_full_flag = LOGGER_UNSET;
+    logbuff->buff_ovf_flag = LOGGER_UNSET;
+    logbuff->buff_destroyed_flag = LOGGER_UNSET;
+    if ((void*)logbuff->base == NULL)
     {
-        circbuff->buff_size = 0;
-        circbuff->buff_full_flag = SET;
-        circbuff->buff_destroyed_flag = SET;
-        circbuff->buff_ovf_flag = SET;
+        logbuff->buff_size = 0;
+        logbuff->buff_full_flag = LOGGER_SET;
+        logbuff->buff_destroyed_flag = LOGGER_SET;
+        logbuff->buff_ovf_flag = LOGGER_SET;
         return LOGQUEUE_NO_BUFFER_IN_MEMORY;
     }
     return LOGQUEUE_SUCCESS;
@@ -64,15 +66,15 @@ LQ_e LQ_init(LQ_t* circbuff, size_t buffer_size)
  * @param[in] LQ_t* the LQ_t object to destroy
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_destroy(LQ_t* circbuff)
+LQ_e LQ_destroy(LQ_t* logbuff)
 {
-    if ((void*)circbuff == NULL)
+    if ((void*)logbuff == NULL)
         return LOGQUEUE_BAD_POINTER;
     /* we don't want to free something twice */
-    if ((LQ_f)circbuff->buff_destroyed_flag == SET)
+    if ((LQ_f)logbuff->buff_destroyed_flag == LOGGER_SET)
         return LOGQUEUE_DOUBLE_FREE;
-    free((void*)circbuff->base);
-    circbuff->buff_destroyed_flag = SET;
+    free((void*)logbuff->base);
+    logbuff->buff_destroyed_flag = LOGGER_SET;
     return LOGQUEUE_SUCCESS;
 }
 
@@ -86,17 +88,17 @@ LQ_e LQ_destroy(LQ_t* circbuff)
  * @param[in] log_t* the object to add into the buffer
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_buffer_add_item(LQ_t* circbuff, log_t* data)
+LQ_e LQ_buffer_add_item(LQ_t* logbuff, log_t* data)
 {
-    if ((void*)circbuff == NULL)
+    if ((void*)logbuff == NULL)
         return LOGQUEUE_BAD_POINTER;
     /* if we have already destroyed the buffer */
-    if ((LQ_f)circbuff->buff_destroyed_flag == SET)
+    if ((LQ_f)logbuff->buff_destroyed_flag == LOGGER_SET)
         return LOGQUEUE_NO_BUFFER_IN_MEMORY;
     /* the buffer is already full */
-    if ((LQ_f)circbuff->buff_full_flag == SET)
+    if ((LQ_f)logbuff->buff_full_flag == LOGGER_SET)
     {
-        circbuff->buff_ovf_flag = SET;
+        logbuff->buff_ovf_flag = LOGGER_SET;
         /* data is trashed */
         return LOGQUEUE_FULL;
     }
@@ -116,21 +118,21 @@ LQ_e LQ_buffer_add_item(LQ_t* circbuff, log_t* data)
         my_memmove(data->PayloadData, Payloadtemp, data->LogLength);
         temp->PayloadData = Payloadtemp;
     }
-    *circbuff->head = temp;
-    circbuff->head = circbuff->head + 1; /* or just circbuff->head++; */
-    circbuff->num_in++;
-    circbuff->buff_empty_flag = UNSET;
+    *(logbuff->head) = temp;
+    logbuff->head = logbuff->head + 1; /* or just logbuff->head++; */
+    logbuff->num_in++;
+    logbuff->buff_empty_flag = LOGGER_UNSET;
     /* it's a circular buffer, so loop around if we go beyond the max */
-    if (circbuff->head > (circbuff->base + (circbuff->buff_size - 1)))
+    if (logbuff->head > (logbuff->base + (logbuff->buff_size - 1)))
     {
-        circbuff->head = circbuff->base;
+        logbuff->head = logbuff->base;
     }
     /* the buffer must be full since we added something and the following is true*/
-    if (circbuff->head == circbuff->tail)
+    if (logbuff->head == logbuff->tail)
     {
-        circbuff->buff_full_flag = SET;
+        logbuff->buff_full_flag = LOGGER_SET;
         /* this should never happen */
-        if (circbuff->num_in != circbuff->buff_size)
+        if (logbuff->num_in != logbuff->buff_size)
         {
             START_CRITICAL();
             return LOGQUEUE_CRITICAL_ERROR;
@@ -150,32 +152,32 @@ LQ_e LQ_buffer_add_item(LQ_t* circbuff, log_t* data)
  * @param[out] log_t** put the data removed into this pointer
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_buffer_remove_item(LQ_t* circbuff, log_t** data)
+LQ_e LQ_buffer_remove_item(LQ_t* logbuff, log_t** data)
 {
-    if ((void*)circbuff == NULL)
+    if ((void*)logbuff == NULL)
         return LOGQUEUE_BAD_POINTER;
     /* if we have already destroyed the buffer */
-    if ((LQ_f)circbuff->buff_destroyed_flag == SET)
+    if ((LQ_f)logbuff->buff_destroyed_flag == LOGGER_SET)
         return LOGQUEUE_NO_BUFFER_IN_MEMORY;
-    if ((LQ_f)circbuff->buff_empty_flag == SET)
+    if ((LQ_f)logbuff->buff_empty_flag == LOGGER_SET)
         return LOGQUEUE_EMPTY;
     END_CRITICAL();
-    *data = *circbuff->tail;
-    circbuff->tail = circbuff->tail + 1; /* or just circbuff->tail++; */
-    circbuff->num_in--;
-    circbuff->buff_full_flag = UNSET;
+    *data = *logbuff->tail;
+    logbuff->tail = logbuff->tail + 1; /* or just logbuff->tail++; */
+    logbuff->num_in--;
+    logbuff->buff_full_flag = LOGGER_UNSET;
     /* it's a circular buffer, so loop around if we go beyond the max */
-    if (circbuff->tail > (circbuff->base + (circbuff->buff_size - 1)))
+    if (logbuff->tail > (logbuff->base + (logbuff->buff_size - 1)))
     {
-        circbuff->tail = circbuff->base;
+        logbuff->tail = logbuff->base;
     }
     /* the buffer must be empty since we removed something and the following is true */
-    if (circbuff->head == circbuff->tail)
+    if (logbuff->head == logbuff->tail)
     {
-        circbuff->buff_empty_flag = SET;
+        logbuff->buff_empty_flag = LOGGER_SET;
         /* this should never happen */
 
-        if (circbuff->num_in != 0)
+        if (logbuff->num_in != 0)
         {
             START_CRITICAL();
             return LOGQUEUE_CRITICAL_ERROR;
@@ -194,11 +196,11 @@ LQ_e LQ_buffer_remove_item(LQ_t* circbuff, log_t** data)
  * @param[in] LQ_t* the LQ_t object to operate on
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_is_full(LQ_t* circbuff)
+LQ_e LQ_is_full(LQ_t* logbuff)
 {
-    if ((void*)circbuff == NULL)
+    if ((void*)logbuff == NULL)
         return LOGQUEUE_BAD_POINTER;
-    if ((LQ_f)circbuff->buff_full_flag == SET)
+    if ((LQ_f)logbuff->buff_full_flag == LOGGER_SET)
         return LOGQUEUE_FULL;
     return LOGQUEUE_SUCCESS;
 }
@@ -213,11 +215,11 @@ LQ_e LQ_is_full(LQ_t* circbuff)
  * @param[in] LQ_t* the LQ_t object to operate on
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_is_empty(LQ_t* circbuff)
+LQ_e LQ_is_empty(LQ_t* logbuff)
 {
-    if ((void*)circbuff == NULL)
+    if ((void*)logbuff == NULL)
         return LOGQUEUE_BAD_POINTER;
-    if ((LQ_f)circbuff->buff_empty_flag == SET)
+    if ((LQ_f)logbuff->buff_empty_flag == LOGGER_SET)
         return LOGQUEUE_EMPTY;
     return LOGQUEUE_SUCCESS;
 }
@@ -232,19 +234,19 @@ LQ_e LQ_is_empty(LQ_t* circbuff)
  * @param[out] log_t** put the data peeked at into this pointer
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_peek(LQ_t* circbuff, size_t position, log_t** data)
+LQ_e LQ_peek(LQ_t* logbuff, size_t position, log_t** data)
 {
-    log_t** peekdata = (log_t**)circbuff->head;
-    if ((void*)circbuff == NULL)
+    log_t** peekdata = (log_t**)logbuff->head;
+    if ((void*)logbuff == NULL)
         return LOGQUEUE_BAD_POINTER;
     /* since head points at an empty value we increment by one */
     position++;
-    if (position > circbuff->num_in)
+    if (position > logbuff->num_in)
         return LOGQUEUE_POSITION_TOO_LARGE;
     /* it's a circular buffer, so loop around if we go beyond the max */
-    if (peekdata < circbuff->base)
+    if (peekdata < logbuff->base)
     {
-        peekdata = 1*(size_t)(circbuff->buff_size-1) + peekdata;
+        peekdata = 1*(size_t)(logbuff->buff_size-1) + peekdata;
     }
     *data = *(log_t**)peekdata;
     return LOGQUEUE_SUCCESS;

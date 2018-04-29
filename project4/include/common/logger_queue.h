@@ -75,8 +75,8 @@ typedef enum {
  * An enumerator to set and unset flags
  */
 typedef enum {
-    UNSET = 0,
-    SET = 1
+    LOGGER_UNSET = 0,
+    LOGGER_SET = 1
 } LQ_f;
 
 /* @brief initializes the circular buffer with default values
@@ -93,7 +93,7 @@ typedef enum {
  * @param[in] size_t the size of the buffer to initialize
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_init(LQ_t* circbuff, size_t buffer_size);
+LQ_e LQ_init(LQ_t* logbuff, size_t buffer_size);
 
 /* @brief frees the entire circular buffer
  *
@@ -103,7 +103,7 @@ LQ_e LQ_init(LQ_t* circbuff, size_t buffer_size);
  * @param[in] LQ_t* the LQ_t object to destroy
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_destroy(LQ_t* circbuff);
+LQ_e LQ_destroy(LQ_t* logbuff);
 
 /* @brief adds an item to the circular buffer
  *
@@ -115,7 +115,7 @@ LQ_e LQ_destroy(LQ_t* circbuff);
  * @param[in] log_t* the object to add into the buffer
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_buffer_add_item(LQ_t* circbuff, log_t* data);
+LQ_e LQ_buffer_add_item(LQ_t* logbuff, log_t* data);
 
 /* @brief removes an item from the circular buffer
  *
@@ -126,7 +126,7 @@ LQ_e LQ_buffer_add_item(LQ_t* circbuff, log_t* data);
  * @param[out] log_t** put the data removed into this pointer
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_buffer_remove_item(LQ_t* circbuff, log_t** data);
+LQ_e LQ_buffer_remove_item(LQ_t* logbuff, log_t** data);
 
 /* @brief checks to see if the buffer is full
  *
@@ -136,7 +136,7 @@ LQ_e LQ_buffer_remove_item(LQ_t* circbuff, log_t** data);
  * @param[in] LQ_t# the LQ_t object to operate on
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_is_full(LQ_t* circbuff);
+LQ_e LQ_is_full(LQ_t* logbuff);
 
 /* @brief checks to see if the buffer is empty
  *
@@ -148,7 +148,7 @@ LQ_e LQ_is_full(LQ_t* circbuff);
  * @param[in] LQ_t* the LQ_t object to operate on
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_is_empty(LQ_t* circbuff);
+LQ_e LQ_is_empty(LQ_t* logbuff);
 
 /* @brief returns the value in the buffer at a position back from the head
  *
@@ -160,6 +160,6 @@ LQ_e LQ_is_empty(LQ_t* circbuff);
  * @param[out] log_t** put the data peeked at into this pointer
  * @return LQ_e This function returns the LQ_e typedef to indicate errors
  */
-LQ_e LQ_peek(LQ_t* circbuff, size_t position, log_t** data);
+LQ_e LQ_peek(LQ_t* logbuff, size_t position, log_t** data);
 
 #endif /*__LOGGER_QUEUE_H__*/
