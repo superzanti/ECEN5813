@@ -493,7 +493,7 @@ void UART0_IRQHandler()
                     {
                     /*set up continuous pointer
                      * to current location in multibyte data*/
-                        dataptr=(uint8_t*)(&activeTransfer->PayloadData);
+                        dataptr=(activeTransfer->PayloadData);
                     }
                     if(datacounter < activeTransfer->LogLength-1)
                     {
