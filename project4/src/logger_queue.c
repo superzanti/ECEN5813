@@ -120,6 +120,7 @@ LQ_e LQ_buffer_add_item(LQ_t* logbuff, log_t* data)
         my_memmove(data->PayloadData, Payloadtemp, data->LogLength);
         temp->PayloadData = Payloadtemp;
     }
+    else temp->PayloadData=NULL;
     *(logbuff->head) = temp;
     logbuff->head = logbuff->head + 1; /* or just logbuff->head++; */
     logbuff->num_in++;

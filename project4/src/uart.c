@@ -523,8 +523,8 @@ void UART0_IRQHandler()
                      * have to start the next one, or if we can turn off the
                      * transmitter, just like in the outermost conditional*/
                     step=0;
-                    free(activeTransfer->PayloadData);
-                    free(activeTransfer);
+                    if(activeTransfer->PayloadData)free(activeTransfer->PayloadData);
+                    if(activeTransfer)free(activeTransfer);
                     activeTransfer=NULL;
                     dataptr=NULL;
                     datacounter=0;
