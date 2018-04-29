@@ -33,8 +33,9 @@ void project2()
     if(transmit_buffer==NULL)return;
     uint8_t data=0;
     CB_e retval=SUCCESS;
+    uint8_t char_holder=0;
 #ifdef HOST
-    uint8_t char_holder=data;
+    char_holder=data;
     printf("Type a string to be processed, return to submit\n");
 #endif
     while(1)
@@ -44,13 +45,13 @@ void project2()
     while( data!=ASCII_OFFSET_EOF && data!=EOF && data!=0xff)
     {
 #ifdef HOST
-	do
-	{
-		if(data==ASCII_OFFSET_EOF||data==EOF)break;
-		if(char_holder==ASCII_OFFSET_EOF||char_holder==EOF||data!=char_holder)break;
-        	char_holder = (uint8_t)getchar();
-        	CB_buffer_add_item(recieve_buffer,char_holder);
-	}while(char_holder!='\n'&&char_holder!='\r'&&char_holder!=ASCII_OFFSET_EOF&&char_holder!=EOF&&char_holder!=0xff);
+    do
+    {
+        if(data==ASCII_OFFSET_EOF||data==EOF)break;
+        if(char_holder==ASCII_OFFSET_EOF||char_holder==EOF||data!=char_holder)break;
+            char_holder = (uint8_t)getchar();
+            CB_buffer_add_item(recieve_buffer,char_holder);
+    }while(char_holder!='\n'&&char_holder!='\r'&&char_holder!=ASCII_OFFSET_EOF&&char_holder!=EOF&&char_holder!=0xff);
 #endif
         retval=CB_buffer_remove_item(recieve_buffer, &data);
         if(retval==SUCCESS)
