@@ -97,20 +97,23 @@ log_ret log_data(log_e log, mod_e module, uint16_t length, uint8_t* data)
     for(i=0;i<2;i++)
     {
         checksum^=(uint8_t)(*lengthptr);
-        if(log!=INFO) printf("%c",(char)(*(lengthptr++)));/*print length*/
+        if(log!=INFO) printf("%c",(char)(*(lengthptr)));/*print length*/
         fprintf(logfile,"%c",(char)(*(lengthptr)));/*print length*/
+        lengthptr++;
     }
     for(i=0;i<4;i++)
     {
         checksum^=(uint8_t)(*timeptr);
-        if(log!=INFO) printf("%c",(char)(*(timeptr++)));/*print time*/
+        if(log!=INFO) printf("%c",(char)(*(timeptr)));/*print time*/
         fprintf(logfile,"%c",(char)(*(timeptr)));/*print time*/
+        timeptr++;
     }
     for(i=0;i<length;i++)
     {
         checksum^=(uint8_t)(*data);
-        printf("%c",(*((char*)data++)));/*print payload*/
+        printf("%c",(*((char*)data)));/*print payload*/
         fprintf(logfile,"%c",(*((char*)data)));/*print payload*/
+        data++;
     }
     if(log!=INFO) printf("%c",(char)checksum);/*print checksum*/
     fprintf(logfile,"%c",(char)checksum);/*print checksum*/
