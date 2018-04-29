@@ -47,5 +47,5 @@ volatile charcounts statistics;
  */
 void project4();
 
-void dump_statistics();
+void project4_dump_statistics();
 #endif /* __PROJECT4_H_ */

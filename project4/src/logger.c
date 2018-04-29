@@ -59,7 +59,7 @@ log_ret logger_init()
     /*set up RTC_IER register - set up interrutps*/
     /*set up RTC_SR register - enable counting*/
     SIM_SOPT1 &= ~SIM_SOPT1_OSC32KSEL(SIM_SOPT1_OSC32KSEL_CLEAR);/*set bits to 00*/
-    SIM_SOPT2 &= ~SIM_SOPT2_RTCCLKOUTSEL(SIM_SOPT2_RTCCLKOUTSEL_CLEAR);/*set bits to 00*/
+    SIM_SOPT2 &= ~SIM_SOPT2_RTCCLKOUTSEL(SIM_SOPT2_RTCCLKOUTSEL_CLEAR);/*set bits to 0*/
     SIM_SCGC6 |= SIM_SCGC6_RTC(SIM_SCGC6_RTC_ENABLED);/*set bits to 1 to enable clock gate*/
 
     RTC_CR =    RTC_CR_OSCE(RTC_CR_OSCE_ENABLED)| RTC_CR_UM(RTC_CR_UM_DISABLED)|

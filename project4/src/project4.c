@@ -54,6 +54,9 @@ void project4()
     my_string = (unsigned char*) "Type a string to be processed, return to submit\n";
     log_item((log_t){INFO,FUNC_PROJECT4,48,0,my_string,0});
 #endif
+#ifdef LOGGING
+        log_item((log_t){DATA_ANALYSIS_STARTED,FUNC_PROJECT4,0,0,NULL,0});
+#endif
     while(1)
     {
     data=0;
@@ -75,9 +78,6 @@ void project4()
         {
 #ifdef LOGGING
             log_item((log_t){DATA_RECIEVED,FUNC_UART,1,0,&data,0});
-#endif
-#ifdef LOGGING
-        log_item((log_t){DATA_ANALYSIS_STARTED,FUNC_PROJECT4,0,0,NULL,0});
 #endif
             if(data>=ASCII_OFFSET_0 && data<=ASCII_OFFSET_9)
             {
@@ -110,11 +110,11 @@ void project4()
     log_item((log_t){DATA_MISC_COUNT,FUNC_PROJECT4,4,0,(uint8_t*) &statistics.miscellaneous,0});
     log_item((log_t){DATA_ANALYSIS_COMPLETED,FUNC_PROJECT4,0,0,NULL,0});
 #endif
-    dump_statistics();
+    project4_dump_statistics();
     }
 }
 
-void dump_statistics()
+void project4_dump_statistics()
 {
     uint8_t * my_string;
     uint8_t bufferstring[32] = {};
