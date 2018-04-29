@@ -47,8 +47,9 @@ void project4()
     /*^^^ see  https://gcc.gnu.org/onlinedocs/gcc-4.3.2/gcc/Compound-Literals.html*/
     uint8_t data=0;
     CB_e retval=SUCCESS;
+    uint8_t char_holder;
 #ifdef HOST
-    uint8_t char_holder=data;
+    char_holder=data;
     my_string = (unsigned char*) "Type a string to be processed, return to submit\n";
     log_item((log_t){INFO,FUNC_PROJECT4,48,0,my_string,0});
 #endif
