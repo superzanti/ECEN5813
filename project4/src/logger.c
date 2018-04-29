@@ -74,6 +74,8 @@ log_ret logger_init()
             RTC_IER_TOIE(RTC_IER_TOIE_DISABLED) | RTC_IER_TIIE(RTC_IER_TIIE_DISABLED);
 
     RTC_SR = RTC_SR_TCE(RTC_SR_TCE_ENABLE);
+    NVIC_ClearPendingIRQ(RTC_Seconds_IRQn);
+    NVIC_EnableIRQ(RTC_Seconds_IRQn);
 #endif
 #ifdef LOGGING
     log_item((log_t) {LOGGER_INITIALIZED,FUNC_LOGGER,0,0,NULL,0});
