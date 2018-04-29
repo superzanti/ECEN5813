@@ -39,7 +39,7 @@ volatile charcounts statistics;
 
 /*
  * @brief tests logging functionality using
- * 			the code from project 2 and 3
+ *          the code from project 2 and 3
  *
  * @param none
  * @return void returns nothing

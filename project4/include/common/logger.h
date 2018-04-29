@@ -15,24 +15,25 @@
 #include <stddef.h> /* for size_t */
 
 /* what the circular buffer should initialize to *//*doubled this to fit tx message -JC*/
-#define LOG_BUFFER_LENGTH                   (256)
+#define LOG_BUFFER_LENGTH               (256)
 
-#define  SIM_SOPT1_OSC32KSEL_CLEAR	(3)
-#define  SIM_SOPT2_RTCCLKOUTSEL_CLEAR	(1)
-#define  SIM_SCGC6_RTC_ENABLED		(1)
+#define  SIM_SOPT1_OSC32KSEL_CLEAR      (3)
+#define  SIM_SOPT2_RTCCLKOUTSEL_CLEAR   (1)
+#define  SIM_SCGC6_RTC_ENABLED          (1)
 
-#define  RTC_CR_OSCE_ENABLED		(1)
-#define  RTC_CR_UM_DISABLED		(0)
-#define  RTC_CR_SUP_ENABLED		(1)
-#define  RTC_CR_WPE_DISABLED		(0)
-#define  RTC_CR_SWR_NORESET		(0)
+#define  RTC_CR_OSCE_ENABLED            (1)
+#define  RTC_CR_UM_DISABLED             (0)
+#define  RTC_CR_SUP_ENABLED             (1)
+#define  RTC_CR_WPE_DISABLED            (0)
+#define  RTC_CR_SWR_NORESET             (0)
 
-#define  RTC_IER_TSIE_ENABLED		(1)
-#define  RTC_IER_TAIE_DISABLED		(0)
-#define  RTC_IER_TOIE_DISABLED		(0)
-#define  RTC_IER_TIIE_DISABLED		(0)
+#define  RTC_IER_TSIE_ENABLED           (1)
+#define  RTC_IER_TAIE_DISABLED          (0)
+#define  RTC_IER_TOIE_DISABLED          (0)
+#define  RTC_IER_TIIE_DISABLED          (0)
 
-#define RTC_SR_TCE_ENABLE		(1)
+#define RTC_SR_TCE_ENABLE               (1)
+
 typedef enum {
     LOGGER_SUCCESS=0,
     LOGGER_FAILURE
@@ -83,12 +84,12 @@ typedef enum {
 } log_e;
 
 typedef struct{
-	log_e LogID;
-	mod_e ModuleID;
-	uint16_t LogLength;
-	uint32_t Timestamp;
-	uint8_t* PayloadData;
-	uint8_t Checksum;
+    log_e LogID;
+    mod_e ModuleID;
+    uint16_t LogLength;
+    uint32_t Timestamp;
+    uint8_t* PayloadData;
+    uint8_t Checksum;
 }log_t;
 
 /* @brief initialize the logger engine

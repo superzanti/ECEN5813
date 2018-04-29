@@ -109,12 +109,12 @@ LQ_e LQ_buffer_add_item(LQ_t* circbuff, log_t* data)
     temp->Checksum = data->Checksum;
     if(temp->LogLength>0)
     {
-	/*if there's a payload, allocate space for it, copy it into heap memory, 
-	 * and then put the new heap allocation of it into the new heap log structure.
-	 * put the pointer to this heap-allocated structure into the circular buffer*/
-    	uint8_t* Payloadtemp= (uint8_t*)malloc(((int)temp->LogLength)*sizeof(uint8_t));
-    	my_memmove(data->PayloadData, Payloadtemp, data->LogLength);
-    	temp->PayloadData = Payloadtemp;
+    /*if there's a payload, allocate space for it, copy it into heap memory, 
+     * and then put the new heap allocation of it into the new heap log structure.
+     * put the pointer to this heap-allocated structure into the circular buffer*/
+        uint8_t* Payloadtemp= (uint8_t*)malloc(((int)temp->LogLength)*sizeof(uint8_t));
+        my_memmove(data->PayloadData, Payloadtemp, data->LogLength);
+        temp->PayloadData = Payloadtemp;
     }
     *circbuff->head = temp;
     circbuff->head = circbuff->head + 1; /* or just circbuff->head++; */

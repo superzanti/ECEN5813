@@ -2,7 +2,7 @@
  * @file project4.c
  * @brief implements project4.h
  *
- *	Project 4 functionality
+ *  Project 4 functionality
  *
  *  @author Seth Miers and Jake Cazden
  *  @date April 26, 2018
@@ -31,11 +31,11 @@ void project4()
 #endif
     if(recieve_buffer==NULL)
     {
-	    my_string = (uint8_t*) "recieve buffer failure";
+        my_string = (uint8_t*) "recieve buffer failure";
 #ifdef LOGGING
-    	log_item((log_t){ERROR,FUNC_PROJECT4,22,0,my_string,0});
+        log_item((log_t){ERROR,FUNC_PROJECT4,22,0,my_string,0});
 #endif
-	    return;
+        return;
     }
     if(log_buffer==NULL)return;
 #ifdef LOGGING
@@ -56,16 +56,16 @@ void project4()
     while( data!=ASCII_OFFSET_EOF && data!=EOF && data!=0xff)
     {
 #ifdef HOST
-	do
-	{
-		if(data==ASCII_OFFSET_EOF||data==EOF||data==0xff)break;
-		if(char_holder==ASCII_OFFSET_EOF||char_holder==EOF||char_holder==0xff||data!=char_holder)break;
-        	char_holder = (uint8_t)getchar();
-        	CB_buffer_add_item(recieve_buffer,char_holder);
-	}while(char_holder!='\n'&&char_holder!='\r'&&char_holder!=ASCII_OFFSET_EOF&&char_holder!=EOF&&char_holder!=0xff);
+    do
+    {
+        if(data==ASCII_OFFSET_EOF||data==EOF||data==0xff)break;
+        if(char_holder==ASCII_OFFSET_EOF||char_holder==EOF||char_holder==0xff||data!=char_holder)break;
+            char_holder = (uint8_t)getchar();
+            CB_buffer_add_item(recieve_buffer,char_holder);
+    }while(char_holder!='\n'&&char_holder!='\r'&&char_holder!=ASCII_OFFSET_EOF&&char_holder!=EOF&&char_holder!=0xff);
 #endif
 #ifdef LOGGING
-    	log_item((log_t){DATA_ANALYSIS_STARTED,FUNC_PROJECT4,0,0,NULL,0});
+        log_item((log_t){DATA_ANALYSIS_STARTED,FUNC_PROJECT4,0,0,NULL,0});
 #endif
         retval=CB_buffer_remove_item(recieve_buffer, &data);
         if(retval==SUCCESS)
