@@ -67,8 +67,8 @@ log_ret logger_init()
         RTC_CR_SWR(RTC_CR_SWR_NORESET);
     /*i looked around and there's no sleep function in C by default*/
     uint32_t currenttime;
-    UART_recieve_n((uint8_t*)(&currenttime), 4);/*wait for 4 bytes of time data*/
-    RTC_TSR = currenttime;
+    /*UART_recieve_n((uint8_t*)(&currenttime), 4);*/
+    RTC_TSR = 1514764800;
     RTC_IER = RTC_IER_TSIE(RTC_IER_TSIE_ENABLED) | RTC_IER_TAIE(RTC_IER_TAIE_DISABLED) |
             RTC_IER_TOIE(RTC_IER_TOIE_DISABLED) | RTC_IER_TIIE(RTC_IER_TIIE_DISABLED);
 

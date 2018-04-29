@@ -59,7 +59,7 @@ void project4()
     data=0;
     char_holder=0;
     nooperation+=char_holder;
-    while( data!=ASCII_OFFSET_EOF && data!=EOF && data!=0xff)
+    while( data!=ASCII_OFFSET_EOF && data!=EOF && data!=0xff && data!='~')
     {
 #ifdef HOST
     do
@@ -70,14 +70,14 @@ void project4()
             CB_buffer_add_item(recieve_buffer,char_holder);
     }while(char_holder!='\n'&&char_holder!='\r'&&char_holder!=ASCII_OFFSET_EOF&&char_holder!=EOF&&char_holder!=0xff);
 #endif
-#ifdef LOGGING
-        log_item((log_t){DATA_ANALYSIS_STARTED,FUNC_PROJECT4,0,0,NULL,0});
-#endif
         retval=CB_buffer_remove_item(recieve_buffer, &data);
         if(retval==SUCCESS)
         {
 #ifdef LOGGING
             log_item((log_t){DATA_RECIEVED,FUNC_UART,1,0,&data,0});
+#endif
+#ifdef LOGGING
+        log_item((log_t){DATA_ANALYSIS_STARTED,FUNC_PROJECT4,0,0,NULL,0});
 #endif
             if(data>=ASCII_OFFSET_0 && data<=ASCII_OFFSET_9)
             {
