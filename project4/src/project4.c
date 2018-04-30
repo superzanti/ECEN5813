@@ -44,8 +44,8 @@ void project4()
 #endif
     if(recieve_buffer==NULL)
     {
-        my_string = (uint8_t*) "recieve buffer failure";
 #ifdef LOGGING
+        my_string = (uint8_t*) "recieve buffer failure";
         log_item((log_t){ERROR,FUNC_PROJECT4,22,0,my_string,0});
 #endif
         return;
@@ -82,7 +82,7 @@ void project4()
     uint8_t data=0;
     CB_e retval=SUCCESS;
     uint8_t char_holder;
-#ifdef HOST
+#if defined(HOST) || defined(BBB)
     char_holder=data;
     my_string = (unsigned char*) "Type a string to be processed, return to submit\n";
     log_item((log_t){INFO,FUNC_PROJECT4,48,0,my_string,0});
@@ -150,12 +150,17 @@ project4_profiler();
 
 void project4_dump_statistics()
 {
+    #ifdef LOGGING
     uint8_t* loggererror = (uint8_t*)"logger_error";
+    #endif
     uint8_t * my_string;
     volatile uint8_t bufferstring[32] = {};
     uint8_t * stringnewline = (unsigned char*)"\r\n";
     my_string = (unsigned char*) "\r\nStatistics:";
     log_ret retval = log_item((log_t){INFO,FUNC_PROJECT4,14,0,my_string,0});
+    #ifndef LOGGING
+    nooperation+=(uint32_t)retval;
+    #endif
 #ifdef LOGGING
     if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
 #endif
