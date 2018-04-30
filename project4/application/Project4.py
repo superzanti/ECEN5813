@@ -4,6 +4,7 @@ import wx.adv
 import os
 
 import time
+import calendar
 import binascii
 
 import com
@@ -110,10 +111,11 @@ class convertFile(threading.Thread):
             for i in range(0,4):
                 self.checksum ^= int(byte_s[i].encode('hex'),16)
             for i in range(0,self.loglength):
-                self.payload.append(self.inqueue.get())
+                char = self.inqueue.get()
+                self.payload.append(ord(char))
             self.log.extend(self.payload)
             for i in range(0,self.loglength):
-                self.checksum ^= int(str(self.payload[i]).encode('hex'),16)
+                self.checksum ^= self.payload[i]
             byte_s = [self.inqueue.get()]
             self.log.extend(byte_s)
             self.checksum ^= int(byte_s[0].encode('hex'), 16)
@@ -125,8 +127,11 @@ class convertFile(threading.Thread):
 
     def convertint(self, packet, length):
         packet_int = 0
-        for i in range(0, length):
-            packet_int += (2^(i*8))*int(byte_s[i].encode('hex'),16)
+        for i in range(0, int(length)):
+            if type(packet[i]) == type('a'):
+                packet_int += (2**(i*8))*int(packet[i].encode('hex'),16)
+            else:
+                packet_int += (2**(i*8))*int(chr(packet[i]).encode('hex'),16)
         return str(packet_int)
 
     def convertraw(self, packet):
@@ -144,43 +149,43 @@ class convertFile(threading.Thread):
 
         # I really hate how python doesn't have a case switch
         if self.logid == self.SYSTEM_ID:
-            packetstring += "SYSTEM_ID\t\t"
+            packetstring += "SYSTEM_ID\t\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.SYSTEM_VERSION:
-            packetstring += "SYSTEM_VERSION\t\t"
+            packetstring += "SYSTEM_VERSION\t\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.LOGGER_INITIALIZED:
             packetstring += "LOGGER_INITIALIZED\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.GPIO_INITIALIZED:
-            packetstring += "GPIO_INITIALIZED\t\t"
+            packetstring += "GPIO_INITIALIZED\t\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.SYSTEM_INITIALIZED:
-            packetstring += "SYSTEM_INITIALIZED\t\t"
+            packetstring += "SYSTEM_INITIALIZED\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.SYSTEM_HALTED:
-            packetstring += "SYSTEM_HALTED\t\t"
+            packetstring += "SYSTEM_HALTED\t\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.INFO:
-            packetstring += "INFO\t\t\t"
+            packetstring += "INFO\t\t\t\t"
             payloadstring = self.convertascii(self.payload)
         elif self.logid == self.WARNING:
-            packetstring += "WARNING\t\t\t"
+            packetstring += "WARNING\t\t\t\t"
             payloadstring = self.convertascii(self.payload)
         elif self.logid == self.ERROR:
-            packetstring += "ERROR\t\t\t"
+            packetstring += "ERROR\t\t\t\t"
             payloadstring = self.convertascii(self.payload)
         elif self.logid == self.PROFILING_STARTED:
-            packetstring += "PROFILING_STARTED\t\t"
+            packetstring += "PROFILING_STARTED\t\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.PROFILING_RESULT:
-            packetstring += "PROFILING_RESULT\t\t"
+            packetstring += "PROFILING_RESULT\t\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.PROFILING_COMPLETED:
-            packetstring += "PROFILING_COMPLETED\t\t"
+            packetstring += "PROFILING_COMPLETED\t\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.DATA_RECIEVED:
-            packetstring += "DATA_RECIEVED\t\t"
+            packetstring += "DATA_RECIEVED\t\t\t"
             payloadstring = self.convertint(self.payload, self.loglength)
         elif self.logid == self.DATA_ANALYSIS_STARTED:
             packetstring += "DATA_ANALYSIS_STARTED\t\t"
@@ -195,19 +200,19 @@ class convertFile(threading.Thread):
             packetstring += "DATA_PUNCTUATION_COUNT\t\t"
             payloadstring = self.convertint(self.payload, self.loglength)
         elif self.logid == self.DATA_MISC_COUNT:
-            packetstring += "DATA_MISC_COUNT\t\t"
+            packetstring += "DATA_MISC_COUNT\t\t\t"
             payloadstring = self.convertint(self.payload, self.loglength)
         elif self.logid == self.DATA_ANALYSIS_COMPLETED:
             packetstring += "DATA_ANALYSIS_COMPLETED\t\t"
             payloadstring = self.convertint(self.payload, self.loglength)
         elif self.logid == self.HEARTBEAT:
-            packetstring += "HEARTBEAT\t\t"
+            packetstring += "HEARTBEAT\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.CORE_DUMP:
-            packetstring += "CORE_DUMP\t\t"
+            packetstring += "CORE_DUMP\t\t\t\t"
             payloadstring = self.convertraw(self.payload)
         else:
-            packetstring += "BAD_PACKET\t\t"
+            packetstring += "BAD_PACKET\t\t\t\t"
             payloadstring = self.convertraw(self.payload)
 
         if self.moduleid == self.FUNC_CIRCBUF:
@@ -248,7 +253,7 @@ class convertFile(threading.Thread):
             packetstring += "BAD_PACKET\t\t"
 
         packetstring += "Length = " + str(self.loglength) + " Bytes\t\t"
-        packetstring += "Data = " + payloadstring + "\r\n"
+        packetstring += "Data = " + repr(payloadstring) + "\r\n"
 
         self.payload = bytearray(b'')
         self.totallog += packetstring
@@ -262,15 +267,15 @@ class convertFile(threading.Thread):
         with open(self.filein, 'rb') as f:
             while(1):
                 byte_s = f.read(1)
-                self.log.extend(byte_s)
                 if not byte_s:
                     break
+                self.log.extend(byte_s)
                 self.logid = int(byte_s[0].encode('hex'), 16)
                 self.checksum ^= self.logid
                 byte_s = f.read(1)
-                self.log.extend(byte_s)
                 if not byte_s:
                     break
+                self.log.extend(byte_s)
                 self.moduleid = int(byte_s[0].encode('hex'), 16)
                 self.checksum ^= self.moduleid
                 byte_s = f.read(2)
@@ -289,8 +294,9 @@ class convertFile(threading.Thread):
                     self.checksum ^= int(byte_s[i].encode('hex'),16)
                 self.payload = f.read(self.loglength)
                 self.log.extend(self.payload)
-                for i in range(0,self.loglength):
-                    self.checksum ^= int(self.payload[i].encode('hex'),16)
+                if self.loglength > 0:
+                    for i in range(0,self.loglength):
+                        self.checksum ^= int(self.payload[i].encode('hex'),16)
                 byte_s = f.read(1)
                 self.log.extend(byte_s)
                 self.checksum ^= int(byte_s[0].encode('hex'), 16)
@@ -375,13 +381,18 @@ class Project4 ( wx.Frame ):
 
         self.inqueue = queue.Queue()
         self.outqueue = queue.Queue()
-        self.comport = com.comPort(self.inqueue, self.outqueue, device, 19200)
+        self.comport = com.comPort(self.inqueue, self.outqueue, device, 9600)
 
         #add in the ability for converting logs
         self.ConvertFile = convertFile('out.txt', 'log.txt', self.inqueue)
 
         # TODO: first 4 bytes on connect should send the epoch time
-        #calendar.timegm(time.gmtime())
+        cur_time = calendar.timegm(time.gmtime())
+        #self.outqueue.put(int(bytes(cur_time&0xFF)))
+        #self.outqueue.put(int(bytes(cur_time&0xFF00))>>8)
+        #self.outqueue.put(int(bytes(cur_time&0xFF0000))>>16)
+        #self.outqueue.put(int(bytes(cur_time&0xFF000000))>>24)
+
 
     def __del__( self ):
         self.comport.Stop()

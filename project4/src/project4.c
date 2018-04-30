@@ -59,9 +59,9 @@ void project4()
     uint32_t UIDML = SIM_UIDML;
     uint32_t UIDL = SIM_UIDL;
     uint8_t UID[10];
-    my_memcopy(&UIDL,&UID[0],4);
-    my_memcopy(&UIDML,&UID[4],4);
-    my_memcopy(&UIDMH,&UID[8],2);
+    my_memcpy((uint8_t*)&UIDL,&UID[0],4);
+    my_memcpy((uint8_t*)&UIDML,&UID[4],4);
+    my_memcpy((uint8_t*)&UIDMH,&UID[8],2);
     log_item((log_t){SYSTEM_ID,FUNC_PROJECT4,10,0,UID,0});
     uint32_t vers = SIM_SDID;
     log_item((log_t){SYSTEM_VERSION,FUNC_PROJECT4,4,0,&vers,0});
@@ -137,7 +137,7 @@ void project4()
 
 void project4_dump_statistics()
 {
-    uint8_t* loggererror = (uint8_t*)"logger_error"
+    uint8_t* loggererror = (uint8_t*)"logger_error";
     uint8_t * my_string;
     volatile uint8_t bufferstring[32] = {};
     uint8_t * stringnewline = (unsigned char*)"\r\n";
