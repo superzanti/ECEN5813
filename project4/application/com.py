@@ -83,7 +83,7 @@ class comPort(threading.Thread):
                 buff_in = self.com.read(1)
                 if len(buff_in) > 0:
                     self.inqueue.put(buff_in)
-                    print "Got: " + str(binascii.hexlify(buff_in))
+                    #print "Got: " + str(binascii.hexlify(buff_in))
             except:
                 pass
             finally:

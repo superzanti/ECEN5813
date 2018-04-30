@@ -149,7 +149,7 @@ class convertFile(threading.Thread):
 
         # I really hate how python doesn't have a case switch
         if self.logid == self.SYSTEM_ID:
-            packetstring += "SYSTEM_ID\t\t\t\t"
+            packetstring += "SYSTEM_ID\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.SYSTEM_VERSION:
             packetstring += "SYSTEM_VERSION\t\t\t\t"
@@ -158,7 +158,7 @@ class convertFile(threading.Thread):
             packetstring += "LOGGER_INITIALIZED\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.GPIO_INITIALIZED:
-            packetstring += "GPIO_INITIALIZED\t\t\t\t"
+            packetstring += "GPIO_INITIALIZED\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.SYSTEM_INITIALIZED:
             packetstring += "SYSTEM_INITIALIZED\t\t\t"
@@ -339,6 +339,10 @@ class Project4 ( wx.Frame ):
                 "This will start appending to the new log", wx.ITEM_NORMAL )
         self.file_menu.Append(self.open_existing_menu)
         self.Bind(wx.EVT_MENU, self.openexisting, id = self.open_existing_menu.GetId())
+        self.start_menu = wx.MenuItem(self.file_menu, wx.ID_ANY, u"Connect and start KL25z", \
+                "Connect tot he KL25z UART and program the RTC", wx.ITEM_NORMAL )
+        self.file_menu.Append(self.start_menu)
+        self.Bind(wx.EVT_MENU, self.startKL25z, id = self.start_menu.GetId())
 
         self.logging_menu = wx.Menu()
         self.menubar.Append( self.logging_menu, u"Logging" )
@@ -364,6 +368,17 @@ class Project4 ( wx.Frame ):
         self.Bind(wx.EVT_TIMER, self.OnTimer)
         self.timer.Start(10) # 10 times a second
 
+        self.inqueue = queue.Queue()
+        self.outqueue = queue.Queue()
+        self.comport = None
+
+        #add in the ability for converting logs
+        self.ConvertFile = convertFile('out.txt', 'log.txt', self.inqueue)
+
+    def __del__( self ):
+        self.comport.Stop()
+
+    def startKL25z(self,event):
         device = ""
         ports = list(list_ports.comports())
         search_ports = []
@@ -379,23 +394,21 @@ class Project4 ( wx.Frame ):
                 device = ports[i].device
         self.statusbar.SetStatusText("UART port is: " + str(device))
 
-        self.inqueue = queue.Queue()
-        self.outqueue = queue.Queue()
         self.comport = com.comPort(self.inqueue, self.outqueue, device, 9600)
 
-        #add in the ability for converting logs
-        self.ConvertFile = convertFile('out.txt', 'log.txt', self.inqueue)
-
-        # TODO: first 4 bytes on connect should send the epoch time
         cur_time = calendar.timegm(time.gmtime())
-        #self.outqueue.put(int(bytes(cur_time&0xFF)))
-        #self.outqueue.put(int(bytes(cur_time&0xFF00))>>8)
-        #self.outqueue.put(int(bytes(cur_time&0xFF0000))>>16)
-        #self.outqueue.put(int(bytes(cur_time&0xFF000000))>>24)
-
-
-    def __del__( self ):
-        self.comport.Stop()
+        cur_time0 = bytes((cur_time)&0xFF)
+        cur_time1 = bytes((cur_time>>8)&0xFF)
+        cur_time2 = bytes((cur_time>>16)&0xFF)
+        cur_time3 = bytes((cur_time>>24)&0xFF)
+        print cur_time0
+        print cur_time1
+        print cur_time2
+        print cur_time3
+        self.outqueue.put(chr(int(cur_time0)))
+        self.outqueue.put(chr(int(cur_time1)))
+        self.outqueue.put(chr(int(cur_time2)))
+        self.outqueue.put(chr(int(cur_time3)))
 
     def OnTimer(self, event):
         if len(self.ConvertFile.newdata) > 0:

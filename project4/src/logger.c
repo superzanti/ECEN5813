@@ -33,6 +33,12 @@ extern uint32_t nooperation;
 
 log_ret logger_init()
 {
+    uint32_t currenttime;
+    uint8_t* currenttime_byte = (uint8_t*)&currenttime;
+    UART_recieve((uint8_t*)(currenttime_byte++));
+    UART_recieve((uint8_t*)(currenttime_byte++));
+    UART_recieve((uint8_t*)(currenttime_byte++));
+    UART_recieve((uint8_t*)(currenttime_byte));
     #ifdef PROJECT4
     LQ_e logbufferinitreturn = LQ_init(log_buffer, LOG_BUFFER_LENGTH);
     if(logbufferinitreturn!=LOGQUEUE_SUCCESS)
@@ -66,10 +72,9 @@ log_ret logger_init()
         RTC_CR_SUP(RTC_CR_SUP_ENABLED)| RTC_CR_WPE(RTC_CR_WPE_DISABLED)|
         RTC_CR_SWR(RTC_CR_SWR_NORESET);
     /*i looked around and there's no sleep function in C by default*/
-    /*uint32_t currenttime;*/
-    /*UART_recieve_n((uint8_t*)(&currenttime), 4);*/
-    RTC_TSR = 0;
-    RTC_TSR = 1514764800;
+    RTC_SR = 0;
+    RTC_TSR = currenttime;
+
     RTC_IER = RTC_IER_TSIE(RTC_IER_TSIE_ENABLED) | RTC_IER_TAIE(RTC_IER_TAIE_DISABLED) |
             RTC_IER_TOIE(RTC_IER_TOIE_DISABLED) | RTC_IER_TIIE(RTC_IER_TIIE_DISABLED);
 
