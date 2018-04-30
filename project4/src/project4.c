@@ -117,7 +117,7 @@ void project4()
 void project4_dump_statistics()
 {
     uint8_t * my_string;
-    uint8_t bufferstring[32] = {};
+    volatile uint8_t bufferstring[32] = {};
     uint8_t * stringnewline = (unsigned char*)"\r\n";
     my_string = (unsigned char*) "\r\nStatistics:";
     log_item((log_t){INFO,FUNC_PROJECT4,14,0,my_string,0});
@@ -125,7 +125,7 @@ void project4_dump_statistics()
 
     my_string = (unsigned char*) "\tAlphabetic Characters: ";
     log_item((log_t){INFO,FUNC_PROJECT4,24,0,my_string,0});
-    uint32_t length = my_itoa(statistics.alphabetic,bufferstring,10);
+    volatile uint32_t length = my_itoa(statistics.alphabetic,bufferstring,10);
     log_item((log_t){INFO,FUNC_PROJECT4,length,0,bufferstring,0});
     log_item((log_t){INFO,FUNC_PROJECT4,2,0,stringnewline,0});
 

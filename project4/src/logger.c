@@ -124,7 +124,7 @@ log_ret log_data(log_e log, mod_e module, uint16_t length, uint8_t* data)
     return LOGGER_SUCCESS;
 #endif
 #ifdef KL25Z
-    uint32_t thetime = RTC_TSR;
+    uint32_t thetime = RTC_TSR<<5+RTC_TPR>>10;
     uint8_t checksum = 0;
     checksum^=(uint8_t)log;
     checksum^=(uint8_t)module;/*calculate checksums over log and module ID*/
@@ -200,7 +200,7 @@ log_ret log_item(log_t loginput)
 #ifdef KL25Z
     if(LQ_is_full(log_buffer)==LOGQUEUE_SUCCESS)/*if logger is not full*/
     {
-        loginput.Timestamp = (uint32_t)RTC_TSR;
+        loginput.Timestamp = (uint32_t)(RTC_TSR<<5+RTC_TPR>>10);
         loginput.Checksum = 0;
         loginput.Checksum^=(uint8_t)loginput.LogID;
         loginput.Checksum^=(uint8_t)loginput.ModuleID;
