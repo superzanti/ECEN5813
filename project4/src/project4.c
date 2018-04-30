@@ -12,11 +12,13 @@
 #include "logger.h"
 #include "logger_queue.h"
 #include "circbuf.h"
+#include "memory.h"
 #include<stdio.h>
 #include<stdint.h>
 
 #ifdef KL25Z
 #include "uart.h"
+#include "MKL25Z4.h"
 #endif
 
 extern CB_t* recieve_buffer;
@@ -44,6 +46,18 @@ void project4()
     if(log_buffer==NULL)return;
 #ifdef LOGGING
     log_item((log_t){SYSTEM_INITIALIZED,FUNC_PROJECT4,0,0,NULL,0});
+#endif
+#ifdef LOGGING
+    uint16_t UIDMH = SIM_UIDMH;
+    uint32_t UIDML = SIM_UIDML;
+    uint32_t UIDL = SIM_UIDL;
+    uint8_t UID[10];
+    my_memcopy(&UIDL,&UID[0],4);
+    my_memcopy(&UIDML,&UID[4],4);
+    my_memcopy(&UIDMH,&UID[8],2);
+    log_item((log_t){SYSTEM_ID,FUNC_PROJECT4,10,0,UID,0});
+    uint32_t vers = SIM_SDID;
+    log_item((log_t){SYSTEM_VERSION,FUNC_PROJECT4,4,0,&vers,0});
 #endif
     /*^^^ see  https://gcc.gnu.org/onlinedocs/gcc-4.3.2/gcc/Compound-Literals.html*/
     uint8_t data=0;
@@ -116,36 +130,79 @@ void project4()
 
 void project4_dump_statistics()
 {
+    uint8_t* loggererror = (uint8_t*)"logger_error"
     uint8_t * my_string;
     volatile uint8_t bufferstring[32] = {};
     uint8_t * stringnewline = (unsigned char*)"\r\n";
     my_string = (unsigned char*) "\r\nStatistics:";
-    log_item((log_t){INFO,FUNC_PROJECT4,14,0,my_string,0});
-    log_item((log_t){INFO,FUNC_PROJECT4,2,0,stringnewline,0});
+    log_ret retval = log_item((log_t){INFO,FUNC_PROJECT4,14,0,my_string,0});
+#ifdef LOGGING
+    if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
+#endif
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,2,0,stringnewline,0});
+#ifdef LOGGING
+    if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
+#endif
 
     my_string = (unsigned char*) "\tAlphabetic Characters: ";
-    log_item((log_t){INFO,FUNC_PROJECT4,24,0,my_string,0});
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,24,0,my_string,0});
+#ifdef LOGGING
+    if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
+#endif
     volatile uint32_t length = my_itoa(statistics.alphabetic,bufferstring,10);
-    log_item((log_t){INFO,FUNC_PROJECT4,length,0,bufferstring,0});
-    log_item((log_t){INFO,FUNC_PROJECT4,2,0,stringnewline,0});
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,length,0,bufferstring,0});
+#ifdef LOGGING
+    if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
+#endif
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,2,0,stringnewline,0});
+#ifdef LOGGING
+    if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
+#endif
 
     my_string = (unsigned char*) "\tNumeric Characters: ";
-    log_item((log_t){INFO,FUNC_PROJECT4,21,0,my_string,0});
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,21,0,my_string,0});
+#ifdef LOGGING
+    if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
+#endif
     length = my_itoa(statistics.numeric,bufferstring,10);
-    log_item((log_t){INFO,FUNC_PROJECT4,length,0,bufferstring,0});
-    log_item((log_t){INFO,FUNC_PROJECT4,2,0,stringnewline,0});
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,length,0,bufferstring,0});
+#ifdef LOGGING
+    if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
+#endif
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,2,0,stringnewline,0});
+#ifdef LOGGING
+    if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
+#endif
 
     my_string = (unsigned char*) "\tPunctuation Characters: ";
-    log_item((log_t){INFO,FUNC_PROJECT4,25,0,my_string,0});
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,25,0,my_string,0});
+#ifdef LOGGING
+    if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
+#endif
     length = my_itoa(statistics.punctuation,bufferstring,10);
-    log_item((log_t){INFO,FUNC_PROJECT4,length,0,bufferstring,0});
-    log_item((log_t){INFO,FUNC_PROJECT4,2,0,stringnewline,0});
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,length,0,bufferstring,0});
+#ifdef LOGGING
+    if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
+#endif
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,2,0,stringnewline,0});
+#ifdef LOGGING
+    if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
+#endif
 
     my_string = (unsigned char*) "\tMiscellaneous Characters: ";
-    log_item((log_t){INFO,FUNC_PROJECT4,27,0,my_string,0});
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,27,0,my_string,0});
+#ifdef LOGGING
+    if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
+#endif
     length = my_itoa(statistics.miscellaneous,bufferstring,10);
-    log_item((log_t){INFO,FUNC_PROJECT4,length,0,bufferstring,0});
-    log_item((log_t){INFO,FUNC_PROJECT4,2,0,stringnewline,0});
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,length,0,bufferstring,0});
+#ifdef LOGGING
+    if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
+#endif
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,2,0,stringnewline,0});
+#ifdef LOGGING
+    if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
+#endif
 
     log_flush();
 }

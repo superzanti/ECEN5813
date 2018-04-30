@@ -223,10 +223,6 @@ log_ret log_item(log_t loginput)
         LQ_buffer_add_item(log_buffer, &loginput);
         return LOGGER_SUCCESS;
     }
-#ifdef LOGGING
-    uint8_t* my_string = (uint8_t*)"logger_error"
-    log_item((log_t) {ERROR,FUNC_LOGGER,12,0,my_string,0});
-#endif
     return LOGGER_FAILURE;
 #endif
 }
