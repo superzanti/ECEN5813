@@ -84,6 +84,9 @@ int main(void)
         log_buffer  = (LQ_t*) malloc(sizeof(LQ_t));
         project4();
     #endif
+#ifdef LOGGING
+    log_item((log_t) {SYSTEM_HALTED,FUNC_MAIN,0,0,NULL,0});
+#endif
 
     return 0;
 }

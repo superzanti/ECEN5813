@@ -45,6 +45,13 @@ void project4()
     }
     if(log_buffer==NULL)return;
 #ifdef LOGGING
+    log_item((log_t){GPIO_INITIALIZED,FUNC_PROJECT4,0,0,NULL,0});
+#endif
+#ifdef LOGGING
+    my_string = "GPIO is not in use!!";
+    log_item((log_t){WARNING,FUNC_PROJECT4,20,0,my_string,0});
+#endif
+#ifdef LOGGING
     log_item((log_t){SYSTEM_INITIALIZED,FUNC_PROJECT4,0,0,NULL,0});
 #endif
 #ifdef LOGGING
