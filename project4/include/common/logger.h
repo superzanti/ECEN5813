@@ -17,7 +17,7 @@
 /* what the circular buffer should initialize to *//*doubled this to fit tx message -JC*/
 #define LOG_BUFFER_LENGTH               (256)
 
-#define  SIM_SOPT1_OSC32KSEL_CLEAR      (3)
+#define  SIM_SOPT1_OSC32KSEL_1KLPO      (3)
 #define  SIM_SOPT2_RTCCLKOUTSEL_CLEAR   (1)
 #define  SIM_SCGC6_RTC_ENABLED          (1)
 
