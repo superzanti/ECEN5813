@@ -66,7 +66,7 @@ log_ret logger_init()
         RTC_CR_SUP(RTC_CR_SUP_ENABLED)| RTC_CR_WPE(RTC_CR_WPE_DISABLED)|
         RTC_CR_SWR(RTC_CR_SWR_NORESET);
     /*i looked around and there's no sleep function in C by default*/
-    uint32_t currenttime;
+    /*uint32_t currenttime;*/
     /*UART_recieve_n((uint8_t*)(&currenttime), 4);*/
     RTC_TSR = 0;
     RTC_TSR = 1514764800;
@@ -124,7 +124,7 @@ log_ret log_data(log_e log, mod_e module, uint16_t length, uint8_t* data)
     return LOGGER_SUCCESS;
 #endif
 #ifdef KL25Z
-    uint32_t thetime = RTC_TSR<<5+RTC_TPR>>10;
+    uint32_t thetime = (RTC_TSR<<5)+(RTC_TPR>>10);
     uint8_t checksum = 0;
     checksum^=(uint8_t)log;
     checksum^=(uint8_t)module;/*calculate checksums over log and module ID*/

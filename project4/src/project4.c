@@ -44,11 +44,12 @@ void project4()
         return;
     }
     if(log_buffer==NULL)return;
+#ifdef KL25Z
 #ifdef LOGGING
     log_item((log_t){GPIO_INITIALIZED,FUNC_PROJECT4,0,0,NULL,0});
 #endif
 #ifdef LOGGING
-    my_string = "GPIO is not in use!!";
+    my_string = (uint8_t*)"GPIO is not in use!!";
     log_item((log_t){WARNING,FUNC_PROJECT4,20,0,my_string,0});
 #endif
 #ifdef LOGGING
@@ -64,7 +65,8 @@ void project4()
     my_memcpy((uint8_t*)&UIDMH,&UID[8],2);
     log_item((log_t){SYSTEM_ID,FUNC_PROJECT4,10,0,UID,0});
     uint32_t vers = SIM_SDID;
-    log_item((log_t){SYSTEM_VERSION,FUNC_PROJECT4,4,0,&vers,0});
+    log_item((log_t){SYSTEM_VERSION,FUNC_PROJECT4,4,0,(uint8_t*)&vers,0});
+#endif
 #endif
     /*^^^ see  https://gcc.gnu.org/onlinedocs/gcc-4.3.2/gcc/Compound-Literals.html*/
     uint8_t data=0;
@@ -156,8 +158,8 @@ void project4_dump_statistics()
 #ifdef LOGGING
     if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
 #endif
-    volatile uint32_t length = my_itoa(statistics.alphabetic,bufferstring,10);
-    retval = log_item((log_t){INFO,FUNC_PROJECT4,length,0,bufferstring,0});
+    volatile uint32_t length = my_itoa(statistics.alphabetic,(uint8_t*)bufferstring,10);
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,length,0,(uint8_t*)bufferstring,0});
 #ifdef LOGGING
     if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
 #endif
@@ -171,8 +173,8 @@ void project4_dump_statistics()
 #ifdef LOGGING
     if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
 #endif
-    length = my_itoa(statistics.numeric,bufferstring,10);
-    retval = log_item((log_t){INFO,FUNC_PROJECT4,length,0,bufferstring,0});
+    length = my_itoa(statistics.numeric,(uint8_t*)bufferstring,10);
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,length,0,(uint8_t*)bufferstring,0});
 #ifdef LOGGING
     if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
 #endif
@@ -186,8 +188,8 @@ void project4_dump_statistics()
 #ifdef LOGGING
     if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
 #endif
-    length = my_itoa(statistics.punctuation,bufferstring,10);
-    retval = log_item((log_t){INFO,FUNC_PROJECT4,length,0,bufferstring,0});
+    length = my_itoa(statistics.punctuation,(uint8_t*)bufferstring,10);
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,length,0,(uint8_t*)bufferstring,0});
 #ifdef LOGGING
     if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
 #endif
@@ -201,8 +203,8 @@ void project4_dump_statistics()
 #ifdef LOGGING
     if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
 #endif
-    length = my_itoa(statistics.miscellaneous,bufferstring,10);
-    retval = log_item((log_t){INFO,FUNC_PROJECT4,length,0,bufferstring,0});
+    length = my_itoa(statistics.miscellaneous,(uint8_t*)bufferstring,10);
+    retval = log_item((log_t){INFO,FUNC_PROJECT4,length,0,(uint8_t*)bufferstring,0});
 #ifdef LOGGING
     if(retval==LOGGER_FAILURE)log_item((log_t) {ERROR,FUNC_LOGGER,12,0,loggererror,0});
 #endif
