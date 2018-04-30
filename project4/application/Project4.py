@@ -152,7 +152,7 @@ class convertFile(threading.Thread):
             packetstring += "SYSTEM_ID\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.SYSTEM_VERSION:
-            packetstring += "SYSTEM_VERSION\t\t\t\t"
+            packetstring += "SYSTEM_VERSION\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.LOGGER_INITIALIZED:
             packetstring += "LOGGER_INITIALIZED\t\t"
@@ -176,13 +176,13 @@ class convertFile(threading.Thread):
             packetstring += "ERROR\t\t\t\t"
             payloadstring = self.convertascii(self.payload)
         elif self.logid == self.PROFILING_STARTED:
-            packetstring += "PROFILING_STARTED\t\t\t\t"
+            packetstring += "PROFILING_STARTED\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.PROFILING_RESULT:
-            packetstring += "PROFILING_RESULT\t\t\t\t"
+            packetstring += "PROFILING_RESULT\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.PROFILING_COMPLETED:
-            packetstring += "PROFILING_COMPLETED\t\t\t\t"
+            packetstring += "PROFILING_COMPLETED\t\t\t"
             payloadstring = self.convertraw(self.payload)
         elif self.logid == self.DATA_RECIEVED:
             packetstring += "DATA_RECIEVED\t\t\t"

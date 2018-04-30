@@ -31,6 +31,8 @@ extern LQ_t* log_buffer;
 #endif
 extern uint32_t nooperation;
 
+uint32_t time_orig = 0;
+
 log_ret logger_init()
 {
     uint32_t currenttime;
@@ -39,6 +41,7 @@ log_ret logger_init()
     UART_recieve((uint8_t*)(currenttime_byte++));
     UART_recieve((uint8_t*)(currenttime_byte++));
     UART_recieve((uint8_t*)(currenttime_byte));
+    time_orig = currenttime;
     #ifdef PROJECT4
     LQ_e logbufferinitreturn = LQ_init(log_buffer, LOG_BUFFER_LENGTH);
     if(logbufferinitreturn!=LOGQUEUE_SUCCESS)
@@ -72,13 +75,16 @@ log_ret logger_init()
         RTC_CR_SUP(RTC_CR_SUP_ENABLED)| RTC_CR_WPE(RTC_CR_WPE_DISABLED)|
         RTC_CR_SWR(RTC_CR_SWR_NORESET);
     /*i looked around and there's no sleep function in C by default*/
-    RTC_SR = 0;
-    RTC_TSR = currenttime;
 
     RTC_IER = RTC_IER_TSIE(RTC_IER_TSIE_ENABLED) | RTC_IER_TAIE(RTC_IER_TAIE_DISABLED) |
             RTC_IER_TOIE(RTC_IER_TOIE_DISABLED) | RTC_IER_TIIE(RTC_IER_TIIE_DISABLED);
 
     RTC_SR = RTC_SR_TCE(RTC_SR_TCE_ENABLE);
+
+    RTC_SR &= ~RTC_SR_TCE_MASK;
+    RTC_TSR = currenttime; //Reset counter
+    RTC_SR |= RTC_SR_TCE_MASK;
+
     NVIC_ClearPendingIRQ(RTC_Seconds_IRQn);
     NVIC_EnableIRQ(RTC_Seconds_IRQn);
 #endif
@@ -129,7 +135,8 @@ log_ret log_data(log_e log, mod_e module, uint16_t length, uint8_t* data)
     return LOGGER_SUCCESS;
 #endif
 #ifdef KL25Z
-    uint32_t thetime = (RTC_TSR<<5)+(RTC_TPR>>10);
+    uint32_t thetime = RTC_TSR+(RTC_TSR-time_orig)*30+((RTC_TPR>>10)&0x1F);
+    /*uint32_t thetime = RTC_TSR;*/
     uint8_t checksum = 0;
     checksum^=(uint8_t)log;
     checksum^=(uint8_t)module;/*calculate checksums over log and module ID*/
@@ -205,7 +212,8 @@ log_ret log_item(log_t loginput)
 #ifdef KL25Z
     if(LQ_is_full(log_buffer)==LOGQUEUE_SUCCESS)/*if logger is not full*/
     {
-        loginput.Timestamp = (uint32_t)((RTC_TSR<<5)+(RTC_TPR>>10));
+        loginput.Timestamp = RTC_TSR+(RTC_TSR-time_orig)*30+((RTC_TPR>>10)&0x1F);
+        /*loginput.Timestamp = (uint32_t)(RTC_TSR);*/
         loginput.Checksum = 0;
         loginput.Checksum^=(uint8_t)loginput.LogID;
         loginput.Checksum^=(uint8_t)loginput.ModuleID;
