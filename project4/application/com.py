@@ -3,6 +3,8 @@ import threading
 # we need to communicate with a serial device
 import serial
 
+import binascii
+
 # for printing and logging errors
 import traceback
 import logging
@@ -81,6 +83,7 @@ class comPort(threading.Thread):
                 buff_in = self.com.read(1)
                 if len(buff_in) > 0:
                     self.inqueue.put(buff_in)
+                    print "Got: " + str(binascii.hexlify(buff_in))
             except:
                 pass
             finally:
@@ -93,7 +96,8 @@ class comPort(threading.Thread):
                 if len(buff_out) > 0:
                     for c in buff_out:
                         self.com.write(c)
-                        time.sleep(0.001)
+                        print "Sent: " + str(binascii.hexlify(c))
+                        time.sleep(0.02)
             except:
                 pass
             finally:

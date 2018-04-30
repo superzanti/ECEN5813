@@ -200,7 +200,7 @@ log_ret log_item(log_t loginput)
 #ifdef KL25Z
     if(LQ_is_full(log_buffer)==LOGQUEUE_SUCCESS)/*if logger is not full*/
     {
-        loginput.Timestamp = (uint32_t)(RTC_TSR<<5+RTC_TPR>>10);
+        loginput.Timestamp = (uint32_t)((RTC_TSR<<5)+(RTC_TPR>>10));
         loginput.Checksum = 0;
         loginput.Checksum^=(uint8_t)loginput.LogID;
         loginput.Checksum^=(uint8_t)loginput.ModuleID;

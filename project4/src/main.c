@@ -46,7 +46,7 @@
 CB_t* recieve_buffer;
 CB_t* transmit_buffer;
 #ifdef PROJECT4
-LQ_t* log_buffer;
+volatile LQ_t* log_buffer;
 log_t* activeTransfer;
 #endif
 uint8_t dma0_done=0;

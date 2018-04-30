@@ -15,7 +15,7 @@
 #include <stddef.h> /* for size_t */
 
 /* what the circular buffer should initialize to *//*doubled this to fit tx message -JC*/
-#define LOG_BUFFER_LENGTH               (256)
+#define LOG_BUFFER_LENGTH               (1024)
 
 #define  SIM_SOPT1_OSC32KSEL_1KLPO      (3)
 #define  SIM_SOPT2_RTCCLKOUTSEL_CLEAR   (1)
