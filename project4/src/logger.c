@@ -35,6 +35,7 @@ uint32_t time_orig = 0;
 
 log_ret logger_init()
 {
+    #ifdef KL25Z
     uint32_t currenttime;
     uint8_t* currenttime_byte = (uint8_t*)&currenttime;
     UART_recieve((uint8_t*)(currenttime_byte++));
@@ -42,6 +43,7 @@ log_ret logger_init()
     UART_recieve((uint8_t*)(currenttime_byte++));
     UART_recieve((uint8_t*)(currenttime_byte));
     time_orig = currenttime;
+    #endif
     #ifdef PROJECT4
     LQ_e logbufferinitreturn = LQ_init(log_buffer, LOG_BUFFER_LENGTH);
     if(logbufferinitreturn!=LOGQUEUE_SUCCESS)

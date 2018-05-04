@@ -98,7 +98,7 @@ project4_profiler();
     nooperation+=char_holder;
     while( data!=ASCII_OFFSET_EOF && data!=EOF && data!=0xff && data!='~')
     {
-#ifdef HOST
+#if defined(HOST) || defined(BBB)
     do
     {
         if(data==ASCII_OFFSET_EOF||data==EOF)break;
